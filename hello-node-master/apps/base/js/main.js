@@ -42,7 +42,7 @@ class Base {
 
 	/**
 	 * @method onDummyData : dummy data received from io server
-	 * @param {Object} data 
+	 * @param {Object} data
 	 */
 	onDummyData(data) {
 		trace("IO data", data);
@@ -98,6 +98,28 @@ class MyView extends View {
 		// get dataset display
 		this.table = document.createElement("table");
 		this.stage.appendChild(this.table);
+
+		this.cvs = document.createElement("canvas");
+		this.ctx = this.cvs.getContext("2d");
+		this.img = document.createElement("img");
+		this.img.src = 'images/spr_background4.jpg';
+
+		this.img.onload = () => {
+			this.ratio = window.innerWidth/this.img.naturalWidth;
+			this.width = this.img.naturalWidth;
+			this.height = this.img.naturalHeight;
+			this.cvs.width = window.innerWidth;
+			this.cvs.height = window.innerHeight;
+			this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.img.naturalWidth*this.ratio, this.img.naturalHeight*this.ratio);
+		}
+
+		window.onresize = () => {
+			this.img.onload();
+		};
+
+		this.stage.appendChild(this.cvs);
+
+
 	}
 
 	// activate UI
