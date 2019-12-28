@@ -1,4 +1,4 @@
-class balls{
+class Ball{
 
   constructor (x, y, ball_number, in_out, ball_color){
     this.x = x;
@@ -14,6 +14,16 @@ class balls{
   get in_out(){ return this.in_out;}
   get ball_color(){ return this.ball_color;}
 
-  
+}
 
+class Stick{
+
+  constructor (force, angle){
+    this.force = force;
+    this.angle = angle;
+  }
+
+  get force(){ return this.force;}
+  get angle(){ return this.angle;}
+  
 }
