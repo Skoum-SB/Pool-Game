@@ -98,13 +98,12 @@ class MyView extends View {
 		// get dataset display
 		this.table = document.createElement("table");
 		this.stage.appendChild(this.table);
-	}
 
-	// load background
+		// load background
 	this.cvs = document.createElement("canvas");
 	this.ctx = this.cvs.getContext("2d");
 	this.img = document.createElement("img");
-	this.img.src = 'images/spr_background4.png';
+	this.img.src = 'images/sprbackground4.png';
 
 	this.img.onload = () => {
 		this.imageRatio = window.innerHeight/this.img.naturalHeight;
@@ -128,6 +127,10 @@ class MyView extends View {
 	};
 
 	this.stage.appendChild(this.cvs);
+
+
+	}
+
 
 	// activate UI
 	activate() {
