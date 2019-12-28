@@ -99,18 +99,27 @@ class MyView extends View {
 		this.table = document.createElement("table");
 		this.stage.appendChild(this.table);
 
+		// load background
 		this.cvs = document.createElement("canvas");
 		this.ctx = this.cvs.getContext("2d");
 		this.img = document.createElement("img");
 		this.img.src = 'images/spr_background4.jpg';
 
 		this.img.onload = () => {
+			this.imageRatio = window.innerHeight/this.img.naturalHeight;
 			this.ratio = window.innerWidth/this.img.naturalWidth;
-			this.width = this.img.naturalWidth;
-			this.height = this.img.naturalHeight;
 			this.cvs.width = window.innerWidth;
 			this.cvs.height = window.innerHeight;
-			this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.img.naturalWidth*this.ratio, this.img.naturalHeight*this.ratio);
+			if(this.img.naturalHeight*this.ratio > window.innerHeight-40){
+				console.log("Oui");
+				this.width = this.img.naturalWidth*this.imageRatio-40;
+				this.height = this.img.naturalHeight*this.imageRatio-40;
+			}
+			else{
+				this.width = this.img.naturalWidth*this.ratio;
+				this.height = this.img.naturalHeight*this.ratio;
+			}
+			this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.width, this.height);
 		}
 
 		window.onresize = () => {
