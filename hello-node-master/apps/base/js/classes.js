@@ -5,27 +5,24 @@ class Ball{
   in_out;
   ball_color;
   image;
+  image_path;
 
-  constructor (x, y, ball_number, in_out, ball_color, image){
+  constructor (x, y, ball_number, in_out, ball_color, image_path){
     this.x = x;
     this.y = y;
     this.ball_number = ball_number;
     this.in_out = in_out;
     this.ball_color = ball_color;
-    this.image = image;
-
-    //this.image.draw();
-    //this.ctx.drawImage(image, 0, 0);
+    this.image = document.createElement("img");
+    this.path = image_path;
   }
 
  draw(){
    this.cvs = document.createElement("canvas");
    this.ctx = this.cvs.getContext("2d");
-   this.image = document.createElement("img");
-   this.image.src =this.image;
-
+   this.image.src = this.path;
    this.image.onload = () =>{
-     this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, 0, 0, this.width, this.height);
+     this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, 0, 0, 100, 100);
    }
  }
 

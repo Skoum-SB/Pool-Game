@@ -106,19 +106,19 @@ class MyView extends View {
    this.img.src = 'images/sprbackground4.png';
 
    this.img.onload = () => {
-       this.imageRatio = (window.innerHeight -  + this.cvs.getBoundingClientRect().top)/this.img.naturalHeight;
-       this.ratio = window.innerWidth/this.img.naturalWidth;
-       this.cvs.width = this.img.naturalWidth*this.ratio;
-       this.cvs.height = this.img.naturalHeight*this.ratio;
-       if(this.cvs.height >= window.innerHeight - this.cvs.getBoundingClientRect().top){
-           this.width = this.img.naturalWidth*this.imageRatio;
-           this.height = this.img.naturalHeight*this.imageRatio;
-       }
-       else{
-           this.width = this.img.naturalWidth*this.ratio;
-           this.height = this.img.naturalHeight*this.ratio;
-       }
-       this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.width, this.height);
+	   this.imageRatio = (window.innerHeight -  + this.cvs.getBoundingClientRect().top)/this.img.naturalHeight;
+	   this.ratio = window.innerWidth/this.img.naturalWidth;
+	   this.cvs.width = this.img.naturalWidth*this.ratio;
+	   this.cvs.height = this.img.naturalHeight*this.ratio;
+	   if(this.cvs.height >= window.innerHeight - this.cvs.getBoundingClientRect().top){
+	       this.width = this.img.naturalWidth*this.imageRatio;
+	       this.height = this.img.naturalHeight*this.imageRatio;
+	   }
+	   else{
+	       this.width = this.img.naturalWidth*this.ratio;
+	       this.height = this.img.naturalHeight*this.ratio;
+	   }
+	   this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.width, this.height);
    }
 
    window.onresize = () => {
@@ -132,7 +132,7 @@ class MyView extends View {
 	//ball-----------------------------------------------------------------------
 	this.myball = new Ball(100,100,1,1,10,'images/yellowball.png');
 	this.myball.draw();
-	this.stage.appendChild(this.myball.cvs);
+	this.cvs.appendChild(this.myball.cvs);
 
 	}
 
