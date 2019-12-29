@@ -25,5 +25,19 @@ class Stick{
 
   get force(){ return this.force;}
   get angle(){ return this.angle;}
-  
+
+}
+
+class Player{
+
+  cosntructor (name, score, team){
+    this.name = name;
+    this.score = score;
+    this.team = team;
+  }
+
+  get name(){ return this.name;}
+  get score(){ return this.score;}
+  get team(){ return this.team;}
+
 }
