@@ -106,26 +106,22 @@ class MyView extends View {
 		this.img.src = 'images/sprbackground4.png';
 
 		this.img.onload = () => {
-			this.imageRatio = window.innerHeight/this.img.naturalHeight;
 			this.ratio = window.innerWidth/this.img.naturalWidth;
-			this.cvs.width = window.innerWidth;
-			this.cvs.height = window.innerHeight;
-			if(this.img.naturalHeight*this.ratio > window.innerHeight-40){
-				console.log("Oui");
-				this.width = this.img.naturalWidth*this.imageRatio-40;
-				this.height = this.img.naturalHeight*this.imageRatio-40;
+			if(this.img.naturalHeight*this.ratio > window.innerHeight - this.cvs.getBoundingClientRect().top){
+				this.ratio = (window.innerHeight - this.cvs.getBoundingClientRect().top)/this.img.naturalHeight;
 			}
 			else{
-				this.width = this.img.naturalWidth*this.ratio;
-				this.height = this.img.naturalHeight*this.ratio;
+				this.ratio = window.innerWidth/this.img.naturalWidth;
 			}
+			this.cvs.width = this.img.naturalWidth*this.ratio;
+			this.cvs.height = this.img.naturalHeight*this.ratio;
+			this.width = this.img.naturalWidth*this.ratio;
+			this.height = this.img.naturalHeight*this.ratio;
 			this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.width, this.height);
 		}
+		this.cvs.innerHTML = "no value";
 
-		window.onresize = () => {
-			this.img.onload();
-		};
-
+		console.log("ratio View == ", this.ratio);
 		this.stage.appendChild(this.cvs);
 	}
 
@@ -190,6 +186,10 @@ class MyController extends Controller {
 
 	initialize(mvc) {
 		super.initialize(mvc);
+		window.onresize = () => {
+			this.mvc.view.img.onload();
+			console.log("Ratio controller == ", this.mvc.view.ratio);
+		};
 
 	}
 
