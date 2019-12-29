@@ -99,45 +99,40 @@ class MyView extends View {
 		this.table = document.createElement("table");
 		this.stage.appendChild(this.table);
 
-			// load background
-		this.cvs = document.createElement("canvas");
-		this.ctx = this.cvs.getContext("2d");
-		this.img = document.createElement("img");
-		this.img.src = 'images/sprbackground4.png';
+// load background
+   this.cvs = document.createElement("canvas");
+   this.ctx = this.cvs.getContext("2d");
+   this.img = document.createElement("img");
+   this.img.src = 'images/sprbackground4.png';
 
-		this.img.onload = () => {
-			this.imageRatio = window.innerHeight/this.img.naturalHeight;
-			this.ratio = window.innerWidth/this.img.naturalWidth;
-			this.cvs.width = window.innerWidth;
-			this.cvs.height = window.innerHeight;
-			if(this.img.naturalHeight*this.ratio > window.innerHeight-40){
-				console.log("Oui");
-				this.width = this.img.naturalWidth*this.imageRatio-40;
-				this.height = this.img.naturalHeight*this.imageRatio-40;
-			}
-			else{
-				this.width = this.img.naturalWidth*this.ratio;
-				this.height = this.img.naturalHeight*this.ratio;
-			}
-			this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.width, this.height);
-		}
+   this.img.onload = () => {
+       this.imageRatio = (window.innerHeight -  + this.cvs.getBoundingClientRect().top)/this.img.naturalHeight;
+       this.ratio = window.innerWidth/this.img.naturalWidth;
+       this.cvs.width = this.img.naturalWidth*this.ratio;
+       this.cvs.height = this.img.naturalHeight*this.ratio;
+       if(this.cvs.height >= window.innerHeight - this.cvs.getBoundingClientRect().top){
+           this.width = this.img.naturalWidth*this.imageRatio;
+           this.height = this.img.naturalHeight*this.imageRatio;
+       }
+       else{
+           this.width = this.img.naturalWidth*this.ratio;
+           this.height = this.img.naturalHeight*this.ratio;
+       }
+       this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.width, this.height);
+   }
 
-		window.onresize = () => {
-			this.img.onload();
-		};
+   window.onresize = () => {
+       this.img.onload();
+   };
 
-	this.stage.appendChild(this.cvs);
+   this.cvs.innerHTML = "no value";
 
-	//ball
-	//this.gege = new Ball(100,100,1,1,10);
+   this.stage.appendChild(this.cvs);
 
-	var canvas = document.createElement("canvas");
-	var ctex = canvas.getContext("2d");
-	var image = document.createElement("yellowball.png");
-
-	ctex.drawImage(image, 33, 71);
-
-	//this.stage.appendChild(this.gege);
+	//ball-----------------------------------------------------------------------
+	this.myball = new Ball(100,100,1,1,10,'images/yellowball.png');
+	this.myball.draw();
+	this.stage.appendChild(this.myball.cvs);
 
 	}
 
