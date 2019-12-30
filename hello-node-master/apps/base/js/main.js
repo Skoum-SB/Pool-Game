@@ -102,26 +102,15 @@ class MyView extends View {
 		super.initialize(mvc);
 
 		this.stage.style.backgroundColor = "black";
-		// create get test btn
-		this.btn = document.createElement("button");
-		this.btn.innerHTML = "get test";
-		this.stage.appendChild(this.btn);
 
-		// create io test btn
-		this.iobtn = document.createElement("button");
-		this.iobtn.innerHTML = "io test";
-		this.stage.appendChild(this.iobtn);
-
-		// io random value display
-		this.iovalue = document.createElement("div");
-		this.iovalue.innerHTML = "no value";
-		this.stage.appendChild(this.iovalue);
-
+<<<<<<< HEAD
 		// get dataset display
 		this.table = document.createElement("table");
 		this.stage.appendChild(this.table);
 
 
+=======
+>>>>>>> 6c5b01eb6591041011228d14d8ed79e76934e206
 		// load sprites
 		this.img = document.createElement("img");
 		this.img.src = 'images/sprbackground4.png';
@@ -152,11 +141,39 @@ class MyView extends View {
 			 this.mvc.model.blackball.draw(this.ratio);
 			 this.stage.appendChild(this.mvc.model.whiteball.image);
 			 this.stage.appendChild(this.mvc.model.blackball.image);
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 6c5b01eb6591041011228d14d8ed79e76934e206
 		}
 
 		this.mvc.model.blackball.innerHTML = "no value";
 		//
 		this.stage.appendChild(this.img);
+<<<<<<< HEAD
+=======
+
+		// create get test btn
+	 this.btn = document.createElement("button");
+	 this.btn.innerHTML = "get test";
+	 this.btn.style.marginTop = this.img.height;
+	 this.stage.appendChild(this.btn);
+
+	 // create io test btn
+	 this.iobtn = document.createElement("button");
+	 this.iobtn.innerHTML = "io test";
+	 this.stage.appendChild(this.iobtn);
+
+	 // io random value display
+	 this.iovalue = document.createElement("div");
+	 this.iovalue.innerHTML = "no value";
+	 this.stage.appendChild(this.iovalue);
+
+	 // get dataset display
+	 this.table = document.createElement("table");
+	 this.stage.appendChild(this.table);
+>>>>>>> 6c5b01eb6591041011228d14d8ed79e76934e206
 	}
 
 	// activate UI
