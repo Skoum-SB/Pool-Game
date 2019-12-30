@@ -1,14 +1,21 @@
+
 class Ball{
 
   constructor (x, y, color){
-    this.initx = x;
-    this.inity = y;
-    this.x;
-    this.y;
+    this.x = x;
+    this.y = y;
     this.out = false;
     this.color = color;
     this.image = document.createElement("img");
     this.image.src = "images/" + this.color + "ball.png";
+  }
+
+  draw(ratio){
+    this.image.style.position = "absolute";
+    this.image.width = this.image.naturalWidth*ratio;
+    this.image.height = this.image.naturalHeight*ratio;
+    this.image.style.marginLeft = this.x*ratio + "px";
+    this.image.style.marginTop = this.y*ratio + "px";
   }
 }
 
