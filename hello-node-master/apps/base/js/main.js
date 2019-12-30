@@ -103,14 +103,6 @@ class MyView extends View {
 
 		this.stage.style.backgroundColor = "black";
 
-<<<<<<< HEAD
-		// get dataset display
-		this.table = document.createElement("table");
-		this.stage.appendChild(this.table);
-
-
-=======
->>>>>>> 6c5b01eb6591041011228d14d8ed79e76934e206
 		// load sprites
 		this.img = document.createElement("img");
 		this.img.src = 'images/sprbackground4.png';
@@ -141,18 +133,11 @@ class MyView extends View {
 			 this.mvc.model.blackball.draw(this.ratio);
 			 this.stage.appendChild(this.mvc.model.whiteball.image);
 			 this.stage.appendChild(this.mvc.model.blackball.image);
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 6c5b01eb6591041011228d14d8ed79e76934e206
 		}
 
 		this.mvc.model.blackball.innerHTML = "no value";
 		//
 		this.stage.appendChild(this.img);
-<<<<<<< HEAD
-=======
 
 		// create get test btn
 	 this.btn = document.createElement("button");
@@ -173,7 +158,6 @@ class MyView extends View {
 	 // get dataset display
 	 this.table = document.createElement("table");
 	 this.stage.appendChild(this.table);
->>>>>>> 6c5b01eb6591041011228d14d8ed79e76934e206
 	}
 
 	// activate UI
