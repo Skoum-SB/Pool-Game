@@ -236,7 +236,26 @@ class MyController extends Controller {
 	async ioBtnWasClicked(params) {
 		trace("io btn click", params);
 		this.mvc.app.io.emit("dummy", {message: "dummy io click"}); // send socket.io packet
+		var elem = this.mvc.model.whiteball;
+		var pos = 0;
+		var id = setInterval(move,10);
+		var maxi = 505;
+		var speed= 4;
+		var slow = speed/maxi;
+
+		function move(){
+			if(pos == maxi){
+				clearInterval(id);
+			}
+			else{
+				pos++;
+				elem.moveX(speed);
+				speed-=slow;
+			}
+		}
+
 	}
+
 
 	ioDummy(data) {
 		this.mvc.view.updateIO(data.value); // io dummy data received from main app

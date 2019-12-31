@@ -17,6 +17,16 @@ class Ball{
     this.image.style.marginLeft = this.x*ratio + "px";
     this.image.style.marginTop = this.y*ratio + "px";
   }
+
+  moveX(x){
+      this.x = this.x+x;
+      this.image.style.marginLeft = (this.x)*0.9273333333333333+ x + "px";
+  }
+
+  moveY(y){
+      this.x = this.x+x;
+      this.image.style.marginLeft = (this.x)*0.9273333333333333+ y + "px";
+  }
 }
 
 class Stick{
