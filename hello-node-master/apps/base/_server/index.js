@@ -39,11 +39,17 @@ class Base extends ModuleBase {
 	_onIOConnect(socket) {
 		super._onIOConnect(socket); // do not remove super call
 		socket.on("dummy", packet => this._onDummyData(socket, packet)); // listen to "dummy" messages
+		socket.on("login", packet => this._onLogin(socket, packet));
 	}
 
 	_onDummyData(socket, packet) { // dummy message received
 		trace(socket.id, "dummy", packet); // say it
 		socket.emit("dummy", {message: "dummy indeed", value: Math.random()}); // answer dummy random message
+	}
+
+	_onLogin(socket, packet){
+		trace(socket.id, "pseudo :", packet);
+		socket.emit("login", {message: "got ur name bro"}); // answer dummy random message
 	}
 
 }
