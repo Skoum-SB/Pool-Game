@@ -193,6 +193,24 @@ class MyView extends View {
 	}
 
 	update(data) {
+		var elem = this.mvc.model.whiteball;
+		var pos = 0;
+		var id = setInterval(move,10);
+		var maxi = 505;
+		var speed= 4;
+		var slow = speed/maxi;
+		var ratio = this.ratio;
+		function move(){
+			console.log(ratio);
+			if(pos == maxi){
+				clearInterval(id);
+			}
+			else{
+				pos++;
+				elem.move(ratio, speed, 0);
+				speed-=slow;
+			}
+		}
 		//this.stage.appendChild(this.mvc.model.blackball.image);
 		/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
 		data.forEach(el => { // loop data
@@ -220,7 +238,7 @@ class MyController extends Controller {
 
 	initialize(mvc) {
 		super.initialize(mvc);
-
+		this.ratio = this.mvc.view.ratio;
 		window.onresize = () => {
 			this.mvc.view.img.onload();
 		}
@@ -236,23 +254,7 @@ class MyController extends Controller {
 	async ioBtnWasClicked(params) {
 		trace("io btn click", params);
 		this.mvc.app.io.emit("dummy", {message: "dummy io click"}); // send socket.io packet
-		var elem = this.mvc.model.whiteball;
-		var pos = 0;
-		var id = setInterval(move,10);
-		var maxi = 505;
-		var speed= 4;
-		var slow = speed/maxi;
 
-		function move(){
-			if(pos == maxi){
-				clearInterval(id);
-			}
-			else{
-				pos++;
-				elem.moveX(speed);
-				speed-=slow;
-			}
-		}
 
 	}
 

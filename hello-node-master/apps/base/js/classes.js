@@ -11,6 +11,7 @@ class Ball{
   }
 
   draw(ratio){
+    //console.log(ratio);
     this.image.style.position = "absolute";
     this.image.width = this.image.naturalWidth*ratio;
     this.image.height = this.image.naturalHeight*ratio;
@@ -18,14 +19,11 @@ class Ball{
     this.image.style.marginTop = this.y*ratio + "px";
   }
 
-  moveX(x){
+  move(ratio, x, y){
       this.x = this.x+x;
-      this.image.style.marginLeft = (this.x)*0.9273333333333333+ x + "px";
-  }
-
-  moveY(y){
-      this.x = this.x+x;
-      this.image.style.marginLeft = (this.x)*0.9273333333333333+ y + "px";
+      this.image.style.marginLeft = (this.x)*ratio+ x + "px";
+      this.y = this.y+x;
+      this.image.style.marginLeft = (this.y)*ratio+ y + "px";
   }
 }
 
