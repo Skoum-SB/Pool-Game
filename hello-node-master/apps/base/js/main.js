@@ -36,18 +36,18 @@ class Base {
 	 */
 	onIOConnect() {
 		trace("yay IO connected");
-		this.io.on("dummy", packet => this.onDummyData(packet)); // listen to "dummy" messages
-		this.io.emit("dummy", {value: "dummy data from client"}) // send test message
+		this.io.on("players", packet => this.onLogin(packet));
+		this.io.on("newplayer", packet => this.onNewPlayer(packet));
 		this.io.on("start", packet => this.onStart(packet));
 	}
 
-	/**
-	 * @method onDummyData : dummy data received from io server
-	 * @param {Object} data
-	 */
-	onDummyData(data){
-		trace("IO data", data);
-		this.mvc.controller.ioDummy(data); // send it to controller
+	onLogin(data){
+		this.mvc.controller.getPlayers(data);
+	}
+
+	onNewPlayer(data){
+		this.mvc.controller.getNewPlayer(data);
+		trace("Newcomer !!!");
 	}
 
 	onStart(data){
@@ -60,7 +60,7 @@ class MyModel extends Model {
 
 	constructor() {
 		super();
-		this.players = {};
+		this.players = [];
 	}
 
 	async initialize(mvc) {
@@ -74,12 +74,21 @@ class MyModel extends Model {
 		return result.response; // return it to controller
 	}
 
-	/*async login() {
-		trace("get name");
-		// keep data in class variable ? refresh rate ?
-		let name = await Comm.get("data"); // wait data from server
-		return name.response; // return it to controller
-	}*/
+	login(name){
+		this.players.push(name);
+	}
+
+	addOtherPlayers(otherPlayers){
+		var names = [];
+		otherPlayers.forEach(player => {
+			names.push((player.name));
+		});
+		this.players = this.players.concat(names);
+	}
+
+	addNewPlayer(newPlayer){
+		this.players.push(newPlayer.name);
+	}
 
 }
 
@@ -102,15 +111,7 @@ class MyView extends View {
 		this.iobtn = document.createElement("button");
 		this.iobtn.innerHTML = "io test";
 		this.stage.appendChild(this.iobtn);
-
-		// io random value display
-		this.iovalue = document.createElement("div");
-		this.iovalue.innerHTML = "no value";
-		this.stage.appendChild(this.iovalue);
-
-		// get dataset display
-		this.table = document.createElement("table");
-		this.stage.appendChild(this.table);
+		
 
 		var text = document.createTextNode('Your Name');
 		this.stage.appendChild(text);
@@ -125,7 +126,6 @@ class MyView extends View {
 		this.submitInput.innerHTML = "Valider";
 
 		this.stage.appendChild(this.submitInput);
-
 	}
 
 
@@ -150,6 +150,9 @@ class MyView extends View {
 
 		this.submitHandler = e => this.submitName(e);
 		this.submitInput.addEventListener("click", this.submitHandler);
+
+		this.unloadHandler = e => this.unload(e);
+		this.stage.addEventListener("unload", this.unloadHandler);
 	}
 
 	removeListeners() {
@@ -169,22 +172,29 @@ class MyView extends View {
 		this.mvc.controller.submitName(document.getElementById("name").value);
 	}
 
-	update(data) {
+	unload(event){
+		this.mvc.controller.disconnect();
+	}
+
+	update(){
 		while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
+		var data = this.mvc.model.players;
+		trace(data);
 		data.forEach(el => { // loop data
 			let line = document.createElement("tr"); // create line
-			Object.keys(el).forEach(key => { // loop object keys
-				let cell = document.createElement("td"); // create cell
-				cell.innerHTML = el[key]; // display
-				line.appendChild(cell); // add cell
-			});
+			let cell = document.createElement("td"); // create cell
+			cell.innerHTML = el; // display
+			line.appendChild(cell); // add cell
 			this.table.appendChild(line); // add line
 		});
 	}
 
-	wait(){
+	lobby(){
 		this.stage.innerHTML = "";
 		this.stage.appendChild(document.createTextNode("En attente d'un autre joueur"));
+
+		this.table = document.createElement("table");
+		this.stage.appendChild(this.table);
 	}
 
 	startGame(){
@@ -242,7 +252,7 @@ class MyController extends Controller {
 
 	async btnWasClicked(params) {
 		trace("btn click", params);
-		this.mvc.view.update(await this.mvc.model.data()); // wait async request > response from server and update view table values
+		//this.mvc.view.update(await this.mvc.model.data()); // wait async request > response from server and update view table values
 	}
 
 	async ioBtnWasClicked(params) {
@@ -252,16 +262,23 @@ class MyController extends Controller {
 
 	async submitName(params){
 		trace("submit btn click", params);
+		await this.mvc.model.login(params);
 		this.mvc.app.io.emit("login", params);
-		//this.mvc.view.update(await this.mvc.model.login());
-		this.mvc.view.wait();
+		this.mvc.view.lobby();
 	}
 
-	ioDummy(data) {
+	async disconnect(){
+		this.mvc.app.io.emit("disconnect");
 	}
 
-	ioWait(){
-		this.mvc.view.wait();
+	getPlayers(players){
+		this.mvc.model.addOtherPlayers(players);
+		this.mvc.view.update();
+	}
+
+	getNewPlayer(player){
+		this.mvc.model.addNewPlayer(player);
+		this.mvc.view.update();
 	}
 
 	ioStart(){

@@ -42,7 +42,13 @@ class Base extends ModuleBase {
 		super._onIOConnect(socket); // do not remove super call
 		socket.on("dummy", packet => this._onDummyData(socket, packet)); // listen to "dummy" messages
 		socket.on("login", packet => this._onLogin(socket, packet));
+		socket.on("disconnect", packet => this._onDisconnect(socket, packet));
 	}
+
+	/*_onIODisconnect(socket){
+		super._onIODisconnect(socket);
+		trace(socket);
+	}*/
 
 	_onDummyData(socket, packet) { // dummy message received
 		trace(socket.id, "dummy", packet); // say it
@@ -51,17 +57,33 @@ class Base extends ModuleBase {
 
 	_onLogin(socket, packet){
 		trace(socket.id, "pseudo :", packet);
+		
+		socket.emit("players", players);
+
 		players.push({id: socket.id, name: packet});
-		socket.emit("login", players);
-		trace(players.length);
-		if(players.length == 2){
+
+		trace(players.length, " players connected actually");
+
+		if(players.length > 1)
+			socket.broadcast.emit("newplayer", players[players.length - 1]);
+		/*if(players.length == 2){
 			socket.emit("start", players);
 			socket.broadcast.emit("start", players);
 		}
 		else
 			socket.emit("login", players);
+		*/
 	}
 
+	_onDisconnect(socket, packet){
+		trace(socket.id, "disconnected");
+		for(var i = 0; i < players.length; i++){
+			if(players[i].id == socket.id){
+				players.splice(i, 1);
+			}
+		}
+		trace(players.length, " players connected actually");
+	}
 }
 
 module.exports = Base; // export app class
