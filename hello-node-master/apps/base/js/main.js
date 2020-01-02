@@ -37,12 +37,12 @@ class Base {
 	onIOConnect() {
 		trace("yay IO connected");
 		this.io.on("players", packet => this.onLogin(packet));
-		this.io.on("newplayer", packet => this.onNewPlayer(packet));
 		this.io.on("start", packet => this.onStart(packet));
 	}
 
 	onLogin(data){
 		this.mvc.controller.getPlayers(data);
+		this.io.on("newplayer", packet => this.onNewPlayer(packet));
 	}
 
 	onNewPlayer(data){
@@ -96,7 +96,6 @@ class MyView extends View {
 
 	constructor() {
 		super();
-		this.table = null;
 	}
 
 	initialize(mvc) {
@@ -178,6 +177,7 @@ class MyView extends View {
 
 	update(){
 		while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
+		//document.getElementById("table").remove();
 		var data = this.mvc.model.players;
 		trace(data);
 		data.forEach(el => { // loop data
@@ -191,7 +191,7 @@ class MyView extends View {
 
 	lobby(){
 		this.stage.innerHTML = "";
-		this.stage.appendChild(document.createTextNode("En attente d'un autre joueur"));
+		this.stage.appendChild(document.createTextNode("Joueurs actuellement connectés :"));
 
 		this.table = document.createElement("table");
 		this.stage.appendChild(this.table);

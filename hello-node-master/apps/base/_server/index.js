@@ -64,8 +64,7 @@ class Base extends ModuleBase {
 
 		trace(players.length, " players connected actually");
 
-		if(players.length > 1)
-			socket.broadcast.emit("newplayer", players[players.length - 1]);
+		socket.broadcast.emit("newplayer", players[players.length - 1]);
 		/*if(players.length == 2){
 			socket.emit("start", players);
 			socket.broadcast.emit("start", players);
