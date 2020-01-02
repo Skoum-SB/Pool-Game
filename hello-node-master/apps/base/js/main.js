@@ -59,6 +59,27 @@ class MyModel extends Model {
 	async initialize(mvc) {
 		super.initialize(mvc);
 
+		this.redballs = [
+			new Ball(1056-25,433-26,"red"),
+	    new Ball(1090-25,374-26,"red"),
+	    new Ball(1126-25,393-26,"red"),
+	    new Ball(1126-25,472-26,"red"),
+	    new Ball(1162-25,335-26,"red"),
+	    new Ball(1162-25,374-26,"red"),
+	    new Ball(1162-25,452-26,"red")
+		];
+		this.yellowballs = [
+	    new Ball(1022-25,413-26,"yellow"),
+	    new Ball(1056-25,393-26,"yellow"),
+	    new Ball(1090-25,452-26,"yellow"),
+	    new Ball(1126-25,354-26,"yellow"),
+	    new Ball(1126-25,433-26,"yellow"),
+	    new Ball(1162-25,413-26,"yellow"),
+	    new Ball(1162-25,491-26,"yellow")
+    ];
+
+		this.whiteball = new Ball(413-25,413-26,"white");
+		this.blackball = new Ball(1065, 387, "black");
 	}
 
 	async data() {
@@ -80,51 +101,63 @@ class MyView extends View {
 	initialize(mvc) {
 		super.initialize(mvc);
 
+		this.stage.style.backgroundColor = "black";
+
 		// create get test btn
-		this.btn = document.createElement("button");
-		this.btn.innerHTML = "get test";
-		this.stage.appendChild(this.btn);
+	 this.btn = document.createElement("button");
+	 this.btn.innerHTML = "get test";
+	 this.stage.appendChild(this.btn);
 
-		// create io test btn
-		this.iobtn = document.createElement("button");
-		this.iobtn.innerHTML = "io test";
-		this.stage.appendChild(this.iobtn);
+	 // create io test btn
+	 this.iobtn = document.createElement("button");
+	 this.iobtn.innerHTML = "io test";
+	 this.stage.appendChild(this.iobtn);
 
-		// io random value display
-		this.iovalue = document.createElement("div");
-		this.iovalue.innerHTML = "no value";
-		this.stage.appendChild(this.iovalue);
+	 // io random value display
+	 this.iovalue = document.createElement("div");
+	 this.iovalue.innerHTML = "no value";
+	 this.stage.appendChild(this.iovalue);
 
-		// get dataset display
-		this.table = document.createElement("table");
-		this.stage.appendChild(this.table);
+	 // get dataset display
+	 this.table = document.createElement("table");
+	 this.stage.appendChild(this.table);
 
-		// load background
-		this.cvs = document.createElement("canvas");
-		this.ctx = this.cvs.getContext("2d");
+		// load sprites
 		this.img = document.createElement("img");
 		this.img.src = 'images/sprbackground4.png';
+		this.img.style.position = "absolute";
+		this.mvc.model.blackball.image.style.position = "absolute";
 
 		this.img.onload = () => {
-			this.ratio = window.innerWidth/this.img.naturalWidth;
-			if(this.img.naturalHeight*this.ratio > window.innerHeight - this.cvs.getBoundingClientRect().top){
-				this.ratio = (window.innerHeight - this.cvs.getBoundingClientRect().top)/this.img.naturalHeight;
-			}
-			else{
-				this.ratio = window.innerWidth/this.img.naturalWidth;
-			}
-			this.cvs.width = this.img.naturalWidth*this.ratio;
-			this.cvs.height = this.img.naturalHeight*this.ratio;
-			this.width = this.img.naturalWidth*this.ratio;
-			this.height = this.img.naturalHeight*this.ratio;
-			this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.width, this.height);
+		   this.ratio = window.innerWidth/this.img.naturalWidth;
+		   if(this.img.naturalHeight*this.ratio >= window.innerHeight - this.img.getBoundingClientRect().top){
+				 this.ratio = (window.innerHeight - this.img.getBoundingClientRect().top)/this.img.naturalHeight;
+		   }
+		   else{
+				 this.ratio = window.innerWidth/this.img.naturalWidth;
+		   }
+			 this.img.width = this.img.naturalWidth * this.ratio;
+			 this.img.height = this.img.naturalHeight * this.ratio;
+
+			 for(let x = 0; x < this.mvc.model.redballs.length; x++){
+				 this.mvc.model.redballs[x].draw(this.ratio);
+				 this.stage.appendChild(this.mvc.model.redballs[x].image)
+			 }
+			 for(let x = 0; x < this.mvc.model.yellowballs.length; x++){
+				 this.mvc.model.yellowballs[x].draw(this.ratio);
+				 this.stage.appendChild(this.mvc.model.yellowballs[x].image)
+			 }
+
+			 this.mvc.model.whiteball.draw(this.ratio);
+			 this.mvc.model.blackball.draw(this.ratio);
+			 this.stage.appendChild(this.mvc.model.whiteball.image);
+			 this.stage.appendChild(this.mvc.model.blackball.image);
 		}
-		this.cvs.innerHTML = "no value";
 
-		console.log("ratio View == ", this.ratio);
-		this.stage.appendChild(this.cvs);
+		this.stage.appendChild(this.img);
+
+
 	}
-
 
 	// activate UI
 	activate() {
@@ -160,7 +193,26 @@ class MyView extends View {
 	}
 
 	update(data) {
-		while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
+		var elem = this.mvc.model.whiteball;
+		var pos = 0;
+		var id = setInterval(move,10);
+		var maxi = 505;
+		var speed= 4;
+		var slow = speed/maxi;
+		var ratio = this.ratio;
+		function move(){
+			console.log(ratio);
+			if(pos == maxi){
+				clearInterval(id);
+			}
+			else{
+				pos++;
+				elem.move(ratio, speed, 0);
+				speed-=slow;
+			}
+		}
+		//this.stage.appendChild(this.mvc.model.blackball.image);
+		/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
 		data.forEach(el => { // loop data
 			let line = document.createElement("tr"); // create line
 			Object.keys(el).forEach(key => { // loop object keys
@@ -169,7 +221,7 @@ class MyView extends View {
 				line.appendChild(cell); // add cell
 			});
 			this.table.appendChild(line); // add line
-		});
+		});*/
 	}
 
 	updateIO(value) {
@@ -186,22 +238,26 @@ class MyController extends Controller {
 
 	initialize(mvc) {
 		super.initialize(mvc);
+		this.ratio = this.mvc.view.ratio;
 		window.onresize = () => {
 			this.mvc.view.img.onload();
-			console.log("Ratio controller == ", this.mvc.view.ratio);
-		};
+		}
 
 	}
 
 	async btnWasClicked(params) {
 		trace("btn click", params);
 		this.mvc.view.update(await this.mvc.model.data()); // wait async request > response from server and update view table values
+
 	}
 
 	async ioBtnWasClicked(params) {
 		trace("io btn click", params);
 		this.mvc.app.io.emit("dummy", {message: "dummy io click"}); // send socket.io packet
+
+
 	}
+
 
 	ioDummy(data) {
 		this.mvc.view.updateIO(data.value); // io dummy data received from main app
