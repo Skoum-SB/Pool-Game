@@ -1,5 +1,7 @@
 const ModuleBase = load("com/base"); // import ModuleBase class
 
+var players = [];
+
 class Base extends ModuleBase {
 
 	constructor(app, settings) {
@@ -49,7 +51,15 @@ class Base extends ModuleBase {
 
 	_onLogin(socket, packet){
 		trace(socket.id, "pseudo :", packet);
-		socket.emit("login", {message: "got ur name bro"}); // answer dummy random message
+		players.push({id: socket.id, name: packet});
+		socket.emit("login", players);
+		trace(players.length);
+		if(players.length == 2){
+			socket.emit("start", players);
+			socket.broadcast.emit("start", players);
+		}
+		else
+			socket.emit("login", players);
 	}
 
 }

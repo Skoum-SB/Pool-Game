@@ -38,7 +38,7 @@ class Base {
 		trace("yay IO connected");
 		this.io.on("dummy", packet => this.onDummyData(packet)); // listen to "dummy" messages
 		this.io.emit("dummy", {value: "dummy data from client"}) // send test message
-		this.io.on("login", packet => this.onLoginData(packet));
+		this.io.on("start", packet => this.onStart(packet));
 	}
 
 	/**
@@ -50,9 +50,9 @@ class Base {
 		this.mvc.controller.ioDummy(data); // send it to controller
 	}
 
-	onLoginData(data){
-		trace("Logged in", data);
-		this.mvc.controller.ioWait(); // send it to controller
+	onStart(data){
+		trace("Starting the game", data);
+		this.mvc.controller.ioStart(); // send it to controller
 	}
 }
 
@@ -124,48 +124,7 @@ class MyView extends View {
 		this.submitInput = document.createElement("button");
 		this.submitInput.innerHTML = "Valider";
 
-
 		this.stage.appendChild(this.submitInput);
-
-		//load background
-		/*this.cvs = document.createElement("canvas");
-		this.ctx = this.cvs.getContext("2d");
-		this.img = document.createElement("img");
-		this.img.src = 'images/sprbackground4.png';
-
-		this.img.onload = () => {
-			this.imageRatio = window.innerHeight/this.img.naturalHeight;
-			this.ratio = window.innerWidth/this.img.naturalWidth;
-			this.cvs.width = window.innerWidth;
-			this.cvs.height = window.innerHeight;
-			if(this.img.naturalHeight*this.ratio > window.innerHeight-40){
-				console.log("Oui");
-				this.width = this.img.naturalWidth*this.imageRatio-40;
-				this.height = this.img.naturalHeight*this.imageRatio-40;
-			}
-			else{
-				this.width = this.img.naturalWidth*this.ratio;
-				this.height = this.img.naturalHeight*this.ratio;
-			}
-			this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.width, this.height);
-		}
-
-		window.onresize = () => {
-			this.img.onload();
-		};
-
-	this.stage.appendChild(this.cvs);
-
-	//ball
-	//this.gege = new Ball(100,100,1,1,10);
-
-	var canvas = document.createElement("canvas");
-	var ctex = canvas.getContext("2d");
-	var image = document.createElement("yellowball.png");
-
-	//ctex.drawImage(image, 33, 71);
-
-	//this.stage.appendChild(this.gege);*/
 
 	}
 
@@ -227,6 +186,47 @@ class MyView extends View {
 		this.stage.innerHTML = "";
 		this.stage.appendChild(document.createTextNode("En attente d'un autre joueur"));
 	}
+
+	startGame(){
+		this.stage.innerHTML = "";
+		this.cvs = document.createElement("canvas");
+		this.ctx = this.cvs.getContext("2d");
+		this.img = document.createElement("img");
+		this.img.src = 'images/sprbackground4.png';
+
+		this.img.onload = () => {
+			this.imageRatio = window.innerHeight/this.img.naturalHeight;
+			this.ratio = window.innerWidth/this.img.naturalWidth;
+			this.cvs.width = window.innerWidth;
+			this.cvs.height = window.innerHeight;
+			if(this.img.naturalHeight*this.ratio > window.innerHeight-40){
+				console.log("Oui");
+				this.width = this.img.naturalWidth*this.imageRatio-40;
+				this.height = this.img.naturalHeight*this.imageRatio-40;
+			}
+			else{
+				this.width = this.img.naturalWidth*this.ratio;
+				this.height = this.img.naturalHeight*this.ratio;
+			}
+			this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.width, this.height);
+		}
+
+		window.onresize = () => {
+			this.img.onload();
+		};
+
+		this.stage.appendChild(this.cvs);
+
+		//ball
+		//this.gege = new Ball(100,100,1,1,10);
+
+		var canvas = document.createElement("canvas");
+		var ctex = canvas.getContext("2d");
+		var image = document.createElement("yellowball.png");
+
+		//ctex.drawImage(image, 33, 71);
+		//this.stage.appendChild(this.gege);
+	}
 }
 
 class MyController extends Controller {
@@ -254,6 +254,7 @@ class MyController extends Controller {
 		trace("submit btn click", params);
 		this.mvc.app.io.emit("login", params);
 		//this.mvc.view.update(await this.mvc.model.login());
+		this.mvc.view.wait();
 	}
 
 	ioDummy(data) {
@@ -261,6 +262,10 @@ class MyController extends Controller {
 
 	ioWait(){
 		this.mvc.view.wait();
+	}
+
+	ioStart(){
+		this.mvc.view.startGame();
 	}
 
 }
