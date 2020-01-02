@@ -80,6 +80,8 @@ class MyModel extends Model {
 
 		this.whiteball = new Ball(413-25,413-26,"white");
 		this.blackball = new Ball(1065, 387, "black");
+
+		this.stick = new Stick(this.whiteball.x-950,this.whiteball.y+10);
 	}
 
 	async data() {
@@ -150,13 +152,13 @@ class MyView extends View {
 
 			 this.mvc.model.whiteball.draw(this.ratio);
 			 this.mvc.model.blackball.draw(this.ratio);
+			 this.mvc.model.stick.draw(this.ratio);
 			 this.stage.appendChild(this.mvc.model.whiteball.image);
 			 this.stage.appendChild(this.mvc.model.blackball.image);
+			 this.stage.appendChild(this.mvc.model.stick.image);
+
 		}
-
 		this.stage.appendChild(this.img);
-
-
 	}
 
 	// activate UI
@@ -192,25 +194,39 @@ class MyView extends View {
 		this.mvc.controller.ioBtnWasClicked("io parameters"); // dispatch
 	}
 
-	update(data) {
-		var elem = this.mvc.model.whiteball;
-		var pos = 0;
-		var id = setInterval(move,10);
-		var maxi = 505;
-		var speed= 4;
-		var slow = speed/maxi;
-		var ratio = this.ratio;
-		function move(){
-			console.log(ratio);
-			if(pos == maxi){
-				clearInterval(id);
-			}
-			else{
-				pos++;
-				elem.move(ratio, speed, 0);
-				speed-=slow;
-			}
-		}
+	update(data){
+
+	}
+
+	updateBallPosition(force,angle) {
+	  var elem = this.mvc.model.whiteball;
+	  var id = setInterval(move,10);
+	  var maxi = 555;
+	  var speed= 5;
+	  var limit= 5;
+	  var slow = speed/maxi;
+	  var ratio = this.ratio;
+	  function move(){
+	    if(limit <= -0){
+	      clearInterval(id);
+	    }
+	    else{
+	      //Top and Bottom
+	      if(elem.y+speed < 50 || elem.y+speed > 722){speed=-speed;}
+	      //Left and Right
+	      if(elem.x+speed < 50 || elem.x+speed > 1400){speed=-speed;}
+
+	      if(speed>0){speed-=slow;}
+	      if(speed<0){speed+=slow;}
+
+	      elem.move(ratio,speed,0);
+	      limit-=slow;
+	    }
+	  }
+	}
+
+	//	this.reset_Stick();
+
 		//this.stage.appendChild(this.mvc.model.blackball.image);
 		/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
 		data.forEach(el => { // loop data
@@ -222,7 +238,6 @@ class MyView extends View {
 			});
 			this.table.appendChild(line); // add line
 		});*/
-	}
 
 	updateIO(value) {
 		this.iovalue.innerHTML = value.toString(); // update io display
@@ -238,26 +253,22 @@ class MyController extends Controller {
 
 	initialize(mvc) {
 		super.initialize(mvc);
-		this.ratio = this.mvc.view.ratio;
+	  this.ratio = this.mvc.view.ratio;
 		window.onresize = () => {
 			this.mvc.view.img.onload();
 		}
-
 	}
 
 	async btnWasClicked(params) {
 		trace("btn click", params);
 		this.mvc.view.update(await this.mvc.model.data()); // wait async request > response from server and update view table values
-
+		this.mvc.view.updateBallPosition(1,1);
 	}
 
 	async ioBtnWasClicked(params) {
 		trace("io btn click", params);
 		this.mvc.app.io.emit("dummy", {message: "dummy io click"}); // send socket.io packet
-
-
 	}
-
 
 	ioDummy(data) {
 		this.mvc.view.updateIO(data.value); // io dummy data received from main app
