@@ -1,22 +1,35 @@
+
 class Ball{
 
-  constructor (x, y, ball_number, in_out, ball_color){
+  constructor (x, y, color){
     this.x = x;
     this.y = y;
-    this.ball_number = ball_number;
-    this.in_out = in_out;
-    this.ball_color = ball_color;
+    this.out = false;
+    this.color = color;
+    this.image = document.createElement("img");
+    this.image.src = "images/" + this.color + "ball.png";
   }
 
-  get positionX(){ return this.x;}
-  get positionY(){ return this.y;}
-  get ball_number(){ return this.ball_number;}
-  get in_out(){ return this.in_out;}
-  get ball_color(){ return this.ball_color;}
+  draw(ratio){
+    //console.log(ratio);
+    this.image.style.position = "absolute";
+    this.image.width = this.image.naturalWidth*ratio;
+    this.image.height = this.image.naturalHeight*ratio;
+    this.image.style.marginLeft = this.x*ratio + "px";
+    this.image.style.marginTop = this.y*ratio + "px";
+  }
 
+  move(ratio, x, y){
+      this.x = this.x+x;
+      this.image.style.marginLeft = (this.x)*ratio+ x + "px";
+      this.y = this.y+x;
+      this.image.style.marginLeft = (this.y)*ratio+ y + "px";
+  }
 }
 
 class Stick{
+  force;
+  angle;
 
   constructor (force, angle){
     this.force = force;
@@ -25,5 +38,22 @@ class Stick{
 
   get force(){ return this.force;}
   get angle(){ return this.angle;}
+
+}
+
+class Player{
+  name;
+  score;
+  team;
+
+  cosntructor (name, score, team){
+    this.name = name;
+    this.score = score;
+    this.team = team;
+  }
+
+  get name(){ return this.name;}
+  get score(){ return this.score;}
+  get team(){ return this.team;}
 
 }
