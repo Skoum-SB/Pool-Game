@@ -43,11 +43,17 @@ class Base {
 	onLogin(data){
 		this.mvc.controller.getPlayers(data);
 		this.io.on("newplayer", packet => this.onNewPlayer(packet));
+		this.io.on("playerDisconnected", packet => this.onDisconnectedPlayer(packet));
 	}
 
 	onNewPlayer(data){
 		this.mvc.controller.getNewPlayer(data);
 		trace("Newcomer !!!");
+	}
+
+	onDisconnectedPlayer(data){
+		this.mvc.controller.getDCPlayer(data);
+		trace("DC", data);
 	}
 
 	onStart(data){
@@ -88,6 +94,15 @@ class MyModel extends Model {
 
 	addNewPlayer(newPlayer){
 		this.players.push(newPlayer.name);
+	}
+
+	removePlayer(playerName){
+		trace(playerName);
+		for(var i = 0; i < this.players.length; i++){
+			if(this.players[i] == playerName){
+				this.players.splice(i, 1);
+			}
+		}
 	}
 
 }
@@ -177,21 +192,37 @@ class MyView extends View {
 
 	update(){
 		while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
-		//document.getElementById("table").remove();
 		var data = this.mvc.model.players;
 		trace(data);
-		data.forEach(el => { // loop data
+
+		document.getElementById("ownName").innerHTML = "Vous : " + data[0];
+
+		for(var i = 1 ; i < data.length ; i++){
 			let line = document.createElement("tr"); // create line
 			let cell = document.createElement("td"); // create cell
-			cell.innerHTML = el; // display
+			cell.innerHTML = data[i]; // display
 			line.appendChild(cell); // add cell
 			this.table.appendChild(line); // add line
-		});
+		}
 	}
 
 	lobby(){
 		this.stage.innerHTML = "";
 		this.stage.appendChild(document.createTextNode("Joueurs actuellement connectés :"));
+		this.stage.appendChild(document.createElement("br"));
+		this.stage.appendChild(document.createElement("br"));
+
+		var ownName = document.createElement("b");
+		ownName.id = "ownName";
+		this.stage.appendChild(ownName);
+
+		this.stage.appendChild(document.createElement("br"));
+		this.stage.appendChild(document.createElement("br"));
+
+		this.stage.appendChild(document.createTextNode("Autres joueurs :"));
+
+		this.stage.appendChild(document.createElement("br"));
+		this.stage.appendChild(document.createElement("br"));
 
 		this.table = document.createElement("table");
 		this.stage.appendChild(this.table);
@@ -278,6 +309,11 @@ class MyController extends Controller {
 
 	getNewPlayer(player){
 		this.mvc.model.addNewPlayer(player);
+		this.mvc.view.update();
+	}
+
+	getDCPlayer(playerName){
+		this.mvc.model.removePlayer(playerName);
 		this.mvc.view.update();
 	}
 

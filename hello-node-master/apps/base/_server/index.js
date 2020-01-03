@@ -42,7 +42,6 @@ class Base extends ModuleBase {
 		super._onIOConnect(socket); // do not remove super call
 		socket.on("dummy", packet => this._onDummyData(socket, packet)); // listen to "dummy" messages
 		socket.on("login", packet => this._onLogin(socket, packet));
-		socket.on("disconnect", packet => this._onDisconnect(socket, packet));
 	}
 
 	/*_onIODisconnect(socket){
@@ -65,23 +64,20 @@ class Base extends ModuleBase {
 		trace(players.length, " players connected actually");
 
 		socket.broadcast.emit("newplayer", players[players.length - 1]);
-		/*if(players.length == 2){
-			socket.emit("start", players);
-			socket.broadcast.emit("start", players);
-		}
-		else
-			socket.emit("login", players);
-		*/
+
+		socket.on("disconnect", packet => this._onDisconnect(socket, packet));
 	}
 
 	_onDisconnect(socket, packet){
 		trace(socket.id, "disconnected");
 		for(var i = 0; i < players.length; i++){
 			if(players[i].id == socket.id){
-				players.splice(i, 1);
+				var playerDisconnected = players.splice(i, 1);
 			}
 		}
 		trace(players.length, " players connected actually");
+
+		socket.broadcast.emit("playerDisconnected", playerDisconnected[0].name);
 	}
 }
 
