@@ -161,7 +161,6 @@ class MyView extends View {
 		this.stage.appendChild(this.img);
 		this.stage.appendChild(this.mvc.model.whiteball.cvs);
 
-
 	}
 
 	// activate UI

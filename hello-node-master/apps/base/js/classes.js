@@ -7,7 +7,7 @@ class Ball{
     this.out = false;
     this.color = color;
     this.frame = 0;
-    this.maxFrame = 2;
+    this.maxFrame = 60;
     this.cvs = document.createElement("canvas");
     this.ctx = this.cvs.getContext("2d");
     this.image = document.createElement("img");
@@ -30,17 +30,17 @@ class Ball{
 
   move(ratio, x, y){
     //setInterval(this.move, 10);
-      if(this.frame < this.maxFrame){
-      requestAnimationFrame(() => {this.move(x, y)});
-      console.log("Oui");
-      this.x = this.x+x;
-      this.draw(ratio);
+      //if(this.frame < this.maxFrame){
+        requestAnimationFrame(() => {this.move(ratio, x, y)});
+        console.log("Oui");
+        this.x = this.x+x;
+        this.draw(ratio);
         //this.ctx.clearRect(0,0,this.ctx.width,this.ctx.height);
         /*this.x = this.x+x/1000000;
         this.y = this.y+y/1000000;
         this.draw(ratio);*/
         this.frame++;
-      }
+      //}
     }
 }
 
