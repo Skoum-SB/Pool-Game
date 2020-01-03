@@ -15,12 +15,17 @@ class Ball{
   }
 
   draw(ratio){
-    this.image.addEventListener("load", () => {
-      this.cvs.width = window.innerWidth;
-      this.cvs.height = window.innerHeight;
-      this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.x*ratio, this.y*ratio, this.image.naturalWidth*ratio, this.image.naturalHeight*ratio);
-    });
-    this.image.src = "images/" + this.color + "ball.png";
+    if(!this.out){
+      this.image.addEventListener("load", () => {
+        this.cvs.width = window.innerWidth;
+        this.cvs.height = window.innerHeight;
+        this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.x*ratio, this.y*ratio, this.image.naturalWidth*ratio, this.image.naturalHeight*ratio);
+      });
+      this.image.src = "images/" + this.color + "ball.png";
+    }
+    else{
+      this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
+    }
   }
 
   move(ratio, x, y, slow){

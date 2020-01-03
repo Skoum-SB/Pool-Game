@@ -202,6 +202,8 @@ class MyView extends View {
 		var speedy = 20;
 		var slow = (speedx+speedy)/distance;
 		window.requestAnimationFrame(() => {this.mvc.model.whiteball.move(this.ratio, speedx, speedy, slow)});
+		this.mvc.model.whiteball.out = true;
+
 
 		//this.stage.appendChild(this.mvc.model.blackball.image);
 		/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
