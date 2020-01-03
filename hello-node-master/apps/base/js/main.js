@@ -59,7 +59,7 @@ class MyModel extends Model {
 	async initialize(mvc) {
 		super.initialize(mvc);
 
-		this.redballs = [
+		/*this.redballs = [
 			new Ball(1056-25,433-26,"red"),
 	    new Ball(1090-25,374-26,"red"),
 	    new Ball(1126-25,393-26,"red"),
@@ -76,10 +76,10 @@ class MyModel extends Model {
 	    new Ball(1126-25,433-26,"yellow"),
 	    new Ball(1162-25,413-26,"yellow"),
 	    new Ball(1162-25,491-26,"yellow")
-    ];
+    ];*/
 
 		this.whiteball = new Ball(413-25,413-26,"white");
-		this.blackball = new Ball(1065, 387, "black");
+		//this.blackball = new Ball(1065, 387, "black");
 	}
 
 	async data() {
@@ -123,12 +123,16 @@ class MyView extends View {
 	 this.stage.appendChild(this.table);
 
 		// load sprites
+		this.cvs = document.createElement("canvas");
+		this.ctx = this.cvs.getContext("2d");
 		this.img = document.createElement("img");
 		this.img.src = 'images/sprbackground4.png';
+
 		this.img.style.position = "absolute";
-		this.mvc.model.blackball.image.style.position = "absolute";
+		//this.mvc.model.blackball.image.style.position = "absolute";
 
 		this.img.onload = () => {
+
 		   this.ratio = window.innerWidth/this.img.naturalWidth;
 		   if(this.img.naturalHeight*this.ratio >= window.innerHeight - this.img.getBoundingClientRect().top){
 				 this.ratio = (window.innerHeight - this.img.getBoundingClientRect().top)/this.img.naturalHeight;
@@ -139,7 +143,7 @@ class MyView extends View {
 			 this.img.width = this.img.naturalWidth * this.ratio;
 			 this.img.height = this.img.naturalHeight * this.ratio;
 
-			 for(let x = 0; x < this.mvc.model.redballs.length; x++){
+			 /*for(let x = 0; x < this.mvc.model.redballs.length; x++){
 				 this.mvc.model.redballs[x].draw(this.ratio);
 				 this.stage.appendChild(this.mvc.model.redballs[x].image)
 			 }
@@ -149,12 +153,13 @@ class MyView extends View {
 			 }
 
 			 this.mvc.model.whiteball.draw(this.ratio);
-			 this.mvc.model.blackball.draw(this.ratio);
-			 this.stage.appendChild(this.mvc.model.whiteball.image);
-			 this.stage.appendChild(this.mvc.model.blackball.image);
+			 this.mvc.model.blackball.draw(this.ratio);*/
+			 //this.stage.appendChild(this.mvc.model.whiteball.image);
+			 this.mvc.model.whiteball.draw(this.ratio);
 		}
 
 		this.stage.appendChild(this.img);
+		this.stage.appendChild(this.mvc.model.whiteball.cvs);
 
 
 	}
@@ -193,24 +198,7 @@ class MyView extends View {
 	}
 
 	update(data) {
-		var elem = this.mvc.model.whiteball;
-		var pos = 0;
-		var id = setInterval(move,10);
-		var maxi = 505;
-		var speed= 4;
-		var slow = speed/maxi;
-		var ratio = this.ratio;
-		function move(){
-			console.log(ratio);
-			if(pos == maxi){
-				clearInterval(id);
-			}
-			else{
-				pos++;
-				elem.move(ratio, speed, 0);
-				speed-=slow;
-			}
-		}
+		this.mvc.model.whiteball.move(this.ratio, 1, 0);
 		//this.stage.appendChild(this.mvc.model.blackball.image);
 		/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
 		data.forEach(el => { // loop data

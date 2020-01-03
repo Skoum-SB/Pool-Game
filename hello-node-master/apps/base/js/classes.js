@@ -6,25 +6,42 @@ class Ball{
     this.y = y;
     this.out = false;
     this.color = color;
+    this.frame = 0;
+    this.maxFrame = 2;
+    this.cvs = document.createElement("canvas");
+    this.ctx = this.cvs.getContext("2d");
     this.image = document.createElement("img");
-    this.image.src = "images/" + this.color + "ball.png";
+
+    //console.log(this.image.naturalWidth);
+
+    this.cvs.style.position = "absolute";
+    //console.log(this.image.naturalWidth);
   }
 
   draw(ratio){
-    //console.log(ratio);
-    this.image.style.position = "absolute";
-    this.image.width = this.image.naturalWidth*ratio;
-    this.image.height = this.image.naturalHeight*ratio;
-    this.image.style.marginLeft = this.x*ratio + "px";
-    this.image.style.marginTop = this.y*ratio + "px";
+    this.image.addEventListener("load", () => {
+      this.cvs.width = window.innerWidth;
+      this.cvs.height = window.innerHeight;
+      this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.x*ratio, this.y*ratio, this.image.naturalWidth*ratio, this.image.naturalHeight*ratio);
+    });
+    this.image.src = "images/" + this.color + "ball.png";
+
   }
 
   move(ratio, x, y){
+    //setInterval(this.move, 10);
+      if(this.frame < this.maxFrame){
+      requestAnimationFrame(() => {this.move(x, y)});
+      console.log("Oui");
       this.x = this.x+x;
-      this.image.style.marginLeft = (this.x)*ratio+ x + "px";
-      this.y = this.y+x;
-      this.image.style.marginLeft = (this.y)*ratio+ y + "px";
-  }
+      this.draw(ratio);
+        //this.ctx.clearRect(0,0,this.ctx.width,this.ctx.height);
+        /*this.x = this.x+x/1000000;
+        this.y = this.y+y/1000000;
+        this.draw(ratio);*/
+        this.frame++;
+      }
+    }
 }
 
 class Stick{
