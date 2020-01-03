@@ -23,21 +23,27 @@ class Ball{
     this.image.src = "images/" + this.color + "ball.png";
   }
 
-  move(ratio){
-  this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
-  this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.x*ratio, this.y*ratio, this.image.naturalWidth*ratio, this.image.naturalHeight*ratio);
-    if(this.limit >= 0){
-      this.limit-=1;
-
-      /*Left and Right*/ if(this.x+this.vx < 50 || this.x+this.vx > 1400){ this.vx = -this.vx;}
-      /*Top and Bottom*/ if(this.y+this.vy < 50 || this.y+this.vy > 722){ this.vy = -this.vy;}
-      this.x += this.vx;
-      this.y += this.vy;
-      requestAnimationFrame(() => {this.move(ratio)});
+  move(ratio, x, y, slow){
+    let slowx = (x>y) ? slow : slow*(x/y);
+    let slowy = (x<y) ? slow : slow*(y/x);
+    this.moveit = () => {
+      if((Math.abs(y)-slowy > 0)){
+        this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
+        /*Left and Right*/ if(this.x < 55 || this.x > 1395){ x = -x;}
+        /*Top and Bottom*/ if(this.y < 55 || this.y > 717){ y = -y;}
+        //console.log(y);
+        this.x += x;
+        this.y += y;
+        x += (x > 0) ? -slowx : slowx;
+        y += (y > 0) ? -slowy : slowy;
+        this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.x*ratio, this.y*ratio, this.image.naturalWidth*ratio, this.image.naturalHeight*ratio);
+        requestAnimationFrame(this.moveit);
+      }
+      else{
+        cancelAnimationFrame(this.moveit);
+      }
     }
-    else{
-      cancelAnimationFrame(() => {this.move(ratio)});
-    }
+    this.moveit();
   }
 
 }

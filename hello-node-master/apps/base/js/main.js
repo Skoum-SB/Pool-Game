@@ -197,7 +197,11 @@ class MyView extends View {
 	}
 
 	update(data) {
-		this.mvc.model.whiteball.move(this.ratio);
+		var distance = 350;
+		var speedx = 2;
+		var speedy = 20;
+		var slow = (speedx+speedy)/distance;
+		window.requestAnimationFrame(() => {this.mvc.model.whiteball.move(this.ratio, speedx, speedy, slow)});
 
 		//this.stage.appendChild(this.mvc.model.blackball.image);
 		/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
@@ -236,6 +240,7 @@ class MyController extends Controller {
 	async btnWasClicked(params) {
 		trace("btn click", params);
 		this.mvc.view.update(await this.mvc.model.data()); // wait async request > response from server and update view table values
+
 
 	}
 
