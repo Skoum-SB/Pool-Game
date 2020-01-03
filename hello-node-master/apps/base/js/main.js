@@ -35,7 +35,6 @@ class Base {
 	 * @method onIOConnect : socket is connected
 	 */
 	onIOConnect() {
-		trace("yay IO connected");
 		this.io.on("players", packet => this.onLogin(packet));
 		this.io.on("start", packet => this.onStart(packet));
 	}
@@ -73,12 +72,12 @@ class MyModel extends Model {
 		super.initialize(mvc);
 	}
 
-	async data() {
+	/*async data() {
 		trace("get data");
 		// keep data in class variable ? refresh rate ?
 		let result = await Comm.get("data"); // wait data from server
 		return result.response; // return it to controller
-	}
+	}*/
 
 	login(name){
 		this.players.push(name);
@@ -116,7 +115,7 @@ class MyView extends View {
 	initialize(mvc) {
 		super.initialize(mvc);
 
-		// create get test btn
+		/*// create get test btn
 		this.btn = document.createElement("button");
 		this.btn.innerHTML = "get test";
 		this.stage.appendChild(this.btn);
@@ -124,7 +123,7 @@ class MyView extends View {
 		// create io test btn
 		this.iobtn = document.createElement("button");
 		this.iobtn.innerHTML = "io test";
-		this.stage.appendChild(this.iobtn);
+		this.stage.appendChild(this.iobtn);*/
 		
 
 		var text = document.createTextNode('Your Name');
@@ -156,11 +155,11 @@ class MyView extends View {
 	}
 
 	addListeners() {
-		this.getBtnHandler = e => this.btnClick(e);
+		/*this.getBtnHandler = e => this.btnClick(e);
 		this.btn.addEventListener("click", this.getBtnHandler);
 
 		this.ioBtnHandler = e => this.ioBtnClick(e);
-		this.iobtn.addEventListener("click", this.ioBtnHandler);
+		this.iobtn.addEventListener("click", this.ioBtnHandler);*/
 
 		this.submitHandler = e => this.submitName(e);
 		this.submitInput.addEventListener("click", this.submitHandler);
@@ -170,17 +169,17 @@ class MyView extends View {
 	}
 
 	removeListeners() {
-		this.btn.removeEventListener("click", this.getBtnHandler);
-		this.iobtn.removeEventListener("click", this.ioBtnHandler);
+		/*this.btn.removeEventListener("click", this.getBtnHandler);
+		this.iobtn.removeEventListener("click", this.ioBtnHandler);*/
 	}
 
-	btnClick(event) {
+	/*btnClick(event) {
 		this.mvc.controller.btnWasClicked("more parameters"); // dispatch
 	}
 
 	ioBtnClick(event) {
 		this.mvc.controller.ioBtnWasClicked("io parameters"); // dispatch
-	}
+	}*/
 
 	submitName(event){
 		this.mvc.controller.submitName(document.getElementById("name").value);
@@ -202,6 +201,15 @@ class MyView extends View {
 			let cell = document.createElement("td"); // create cell
 			cell.innerHTML = data[i]; // display
 			line.appendChild(cell); // add cell
+
+			cell = document.createElement("td"); //second cell
+			let btn = document.createElement("button");
+			btn.innerHTML = "Défier";
+			btn.id = i;
+			btn.onclick = ;
+			cell.appendChild(btn);
+			line.appendChild(cell);
+
 			this.table.appendChild(line); // add line
 		}
 	}
@@ -281,7 +289,7 @@ class MyController extends Controller {
 
 	}
 
-	async btnWasClicked(params) {
+	/*async btnWasClicked(params) {
 		trace("btn click", params);
 		//this.mvc.view.update(await this.mvc.model.data()); // wait async request > response from server and update view table values
 	}
@@ -289,7 +297,7 @@ class MyController extends Controller {
 	async ioBtnWasClicked(params) {
 		trace("io btn click", params);
 		this.mvc.app.io.emit("dummy", {message: "dummy io click"}); // send socket.io packet
-	}
+	}*/
 
 	async submitName(params){
 		trace("submit btn click", params);

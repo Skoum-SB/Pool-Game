@@ -44,11 +44,6 @@ class Base extends ModuleBase {
 		socket.on("login", packet => this._onLogin(socket, packet));
 	}
 
-	/*_onIODisconnect(socket){
-		super._onIODisconnect(socket);
-		trace(socket);
-	}*/
-
 	_onDummyData(socket, packet) { // dummy message received
 		trace(socket.id, "dummy", packet); // say it
 		socket.emit("dummy", {message: "dummy indeed", value: Math.random()}); // answer dummy random message
