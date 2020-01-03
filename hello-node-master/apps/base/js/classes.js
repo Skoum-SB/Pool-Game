@@ -1,21 +1,17 @@
 
 class Ball{
-
   constructor (x, y, color){
     this.x = x;
     this.y = y;
     this.out = false;
     this.color = color;
-    this.frame = 0;
-    this.maxFrame = 60;
     this.cvs = document.createElement("canvas");
     this.ctx = this.cvs.getContext("2d");
     this.image = document.createElement("img");
-
-    //console.log(this.image.naturalWidth);
-
     this.cvs.style.position = "absolute";
-    //console.log(this.image.naturalWidth);
+    this.vx = 10;
+    this.vy = 3;
+    this.limit=300;
   }
 
   draw(ratio){
@@ -25,24 +21,28 @@ class Ball{
       this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.x*ratio, this.y*ratio, this.image.naturalWidth*ratio, this.image.naturalHeight*ratio);
     });
     this.image.src = "images/" + this.color + "ball.png";
-
   }
 
-  move(ratio, x, y){
-    //setInterval(this.move, 10);
-      //if(this.frame < this.maxFrame){
-        requestAnimationFrame(() => {this.move(ratio, x, y)});
-        console.log("Oui");
-        this.x = this.x+x;
-        this.draw(ratio);
-        //this.ctx.clearRect(0,0,this.ctx.width,this.ctx.height);
-        /*this.x = this.x+x/1000000;
-        this.y = this.y+y/1000000;
-        this.draw(ratio);*/
-        this.frame++;
-      //}
+  move(ratio){
+  this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
+  this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.x*ratio, this.y*ratio, this.image.naturalWidth*ratio, this.image.naturalHeight*ratio);
+    if(this.limit >= 0){
+      this.limit-=1;
+
+      /*Left and Right*/ if(this.x+this.vx < 50 || this.x+this.vx > 1400){ this.vx = -this.vx;}
+      /*Top and Bottom*/ if(this.y+this.vy < 50 || this.y+this.vy > 722){ this.vy = -this.vy;}
+      this.x += this.vx;
+      this.y += this.vy;
+      requestAnimationFrame(() => {this.move(ratio)});
     }
+    else{
+      cancelAnimationFrame(() => {this.move(ratio)});
+    }
+  }
+
 }
+
+
 
 class Stick{
   force;

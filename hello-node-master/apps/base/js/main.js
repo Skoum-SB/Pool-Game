@@ -197,7 +197,8 @@ class MyView extends View {
 	}
 
 	update(data) {
-		this.mvc.model.whiteball.move(this.ratio, 1, 0);
+		this.mvc.model.whiteball.move(this.ratio);
+
 		//this.stage.appendChild(this.mvc.model.blackball.image);
 		/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
 		data.forEach(el => { // loop data
