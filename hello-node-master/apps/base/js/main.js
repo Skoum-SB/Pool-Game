@@ -206,7 +206,7 @@ class MyView extends View {
 			let btn = document.createElement("button");
 			btn.innerHTML = "Défier";
 			btn.id = i;
-			//btn.onclick = ;
+			btn.onclick = () => {this.mvc.controller.challenge(btn.id)};
 			cell.appendChild(btn);
 			line.appendChild(cell);
 
@@ -216,7 +216,7 @@ class MyView extends View {
 
 	lobby(){
 		this.stage.innerHTML = "";
-		this.stage.appendChild(document.createTextNode("Joueurs actuellement connectés :"));
+		this.stage.appendChild(document.createTextNode("Joueurs actuellement disponibles :"));
 		this.stage.appendChild(document.createElement("br"));
 		this.stage.appendChild(document.createElement("br"));
 
@@ -234,6 +234,11 @@ class MyView extends View {
 
 		this.table = document.createElement("table");
 		this.stage.appendChild(this.table);
+	}
+
+	waitAnswer(){
+		this.stage.innerHTML = "";
+		this.stage.appendChild(document.createTextNode("En attente de la réponse de votre adversaire"));
 	}
 
 	startGame(){
@@ -327,6 +332,12 @@ class MyController extends Controller {
 
 	ioStart(){
 		this.mvc.view.startGame();
+	}
+
+	challenge(opponent){
+		trace(opponent);
+		this.mvc.app.io.emit("challenge", this.mvc.model.players[opponent]);
+		this.mvc.view.waitAnswer();
 	}
 
 }
