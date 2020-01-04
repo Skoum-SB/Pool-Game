@@ -36,13 +36,14 @@ class Base {
 	 */
 	onIOConnect() {
 		this.io.on("players", packet => this.onLogin(packet));
-		this.io.on("start", packet => this.onStart(packet));
 	}
 
 	onLogin(data){
 		this.mvc.controller.getPlayers(data);
 		this.io.on("newplayer", packet => this.onNewPlayer(packet));
 		this.io.on("playerDisconnected", packet => this.onDisconnectedPlayer(packet));
+		this.io.on("start", packet => this.onStart(packet));
+		this.io.on("playersInGame", packet => this.onPlayersInGame(packet));
 	}
 
 	onNewPlayer(data){
@@ -58,6 +59,11 @@ class Base {
 	onStart(data){
 		trace("Starting the game", data);
 		this.mvc.controller.ioStart(); // send it to controller
+		this.io.removeAllListeners();
+	}
+
+	onPlayersInGame(players){
+		this.mvc.controller.playersInGame(players);
 	}
 }
 
@@ -327,6 +333,12 @@ class MyController extends Controller {
 
 	getDCPlayer(playerName){
 		this.mvc.model.removePlayer(playerName);
+		this.mvc.view.update();
+	}
+
+	playersInGame(players){
+		this.mvc.model.removePlayer(players[0]);
+		this.mvc.model.removePlayer(players[1]);
 		this.mvc.view.update();
 	}
 

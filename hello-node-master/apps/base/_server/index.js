@@ -5,6 +5,7 @@ class Base extends ModuleBase {
 	constructor(app, settings) {
 		super(app, new Map([["name", "baseapp"], ["io", true]]));
 		this.players = [];
+		this.gameRooms = [];
 	}
 
 	/**
@@ -77,21 +78,49 @@ class Base extends ModuleBase {
 
 	_onChallenge(socket, packet){
 		trace(socket.id, packet);
+		
+		var playerName;
 		var opponentId;
-		var gameId = 1;
+
+		var gameId = 0;
+
+		trace(this.gameRooms.length , "LONGUEUR");
+		for(var i=0 ; i<this.gameRooms.length ; gameId = ++i){
+			trace("ITERATION", i);
+			if(this.gameRooms[i] == false){
+				break;
+			}
+		}
+		this.gameRooms[gameId] = true;
+		trace(this.gameRooms.length, "ID GAME = ", gameId);
 
 		this.players.forEach(el => {
 			if(el.name == packet)
-				opponentId = el.id;
+				opponentId = el.id;//Id Player 2
+			if(el.id == socket.id)
+				playerName = el.name;//Name Player 1
 		});
 		trace(opponentId);
 
-		socket.join("game-" + gameId);
+		socket.join("game-" + (gameId + 1));
 
-		this._io.sockets[opponentId].join("game-" + gameId);
-		this._io.to("game-" + gameId).emit("start", packet);
+		this._io.sockets[opponentId].join("game-" + (gameId + 1));
+		this._io.to("game-" + (gameId + 1)).emit("start", packet);
 
 		trace(this._io);
+
+		var gamePlayers = [playerName, packet];
+		trace(gamePlayers);
+		trace(this.gameRooms);
+
+		socket.broadcast.emit("playersInGame", gamePlayers);
+
+		for(var i = 0; i < this.players.length; i++){
+			if(this.players[i].name == gamePlayers[0] || this.players[i].name == gamePlayers[1]){
+				this.players.splice(i, 1);
+				i--;
+			}
+		}
 	}
 }
 
