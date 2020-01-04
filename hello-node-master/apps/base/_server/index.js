@@ -66,14 +66,20 @@ class Base extends ModuleBase {
 
 	_onDisconnect(socket, packet){
 		trace(socket.id, "disconnected");
+
+		//In lobby
+		var inLobby = false;
 		for(var i = 0; i < this.players.length; i++){
 			if(this.players[i].id == socket.id){
 				var playerDisconnected = this.players.splice(i, 1);
+				inLobby = true;
 			}
 		}
-		trace(this.players.length, " players connected actually");
-
-		socket.broadcast.emit("playerDisconnected", playerDisconnected[0].name);
+		
+		if(inLobby){
+			trace(this.players.length, " players in the lobby actually");
+			socket.broadcast.emit("playerDisconnected", playerDisconnected[0].name);
+		}
 	}
 
 	_onChallenge(socket, packet){
@@ -82,17 +88,17 @@ class Base extends ModuleBase {
 		var playerName;
 		var opponentId;
 
-		var gameId = 0;
+		var roomId = 0;
 
 		trace(this.gameRooms.length , "LONGUEUR");
-		for(var i=0 ; i<this.gameRooms.length ; gameId = ++i){
+		for(var i=0 ; i<this.gameRooms.length ; roomId = ++i){
 			trace("ITERATION", i);
 			if(this.gameRooms[i] == false){
 				break;
 			}
 		}
-		this.gameRooms[gameId] = true;
-		trace(this.gameRooms.length, "ID GAME = ", gameId);
+		this.gameRooms[roomId] = true;
+		trace(this.gameRooms.length, "ID GAME = ", roomId);
 
 		this.players.forEach(el => {
 			if(el.name == packet)
@@ -102,10 +108,10 @@ class Base extends ModuleBase {
 		});
 		trace(opponentId);
 
-		socket.join("game-" + (gameId + 1));
+		socket.join("room-" + (roomId + 1));
 
-		this._io.sockets[opponentId].join("game-" + (gameId + 1));
-		this._io.to("game-" + (gameId + 1)).emit("start", packet);
+		this._io.sockets[opponentId].join("room-" + (roomId + 1));
+		this._io.to("room-" + (roomId + 1)).emit("start", roomId + 1);
 
 		trace(this._io);
 

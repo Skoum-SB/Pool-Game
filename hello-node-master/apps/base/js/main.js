@@ -56,9 +56,9 @@ class Base {
 		trace("DC", data);
 	}
 
-	onStart(data){
-		trace("Starting the game", data);
-		this.mvc.controller.ioStart(); // send it to controller
+	onStart(room){
+		trace("Starting the game", room);
+		this.mvc.controller.Start(room); // send it to controller
 		this.io.removeAllListeners();
 	}
 
@@ -132,7 +132,7 @@ class MyView extends View {
 		this.stage.appendChild(this.iobtn);*/
 		
 
-		var text = document.createTextNode('Your Name');
+		var text = document.createTextNode('Votre Pseudo :');
 		this.stage.appendChild(text);
 		this.stage.appendChild(document.createElement("br"));
 
@@ -247,8 +247,9 @@ class MyView extends View {
 		this.stage.appendChild(document.createTextNode("En attente de la réponse de votre adversaire"));
 	}
 
-	startGame(){
+	startGame(room){
 		this.stage.innerHTML = "";
+		this.stage.appendChild(document.createTextNode("Vous êtes dans la Room N°" + room));
 		this.cvs = document.createElement("canvas");
 		this.ctx = this.cvs.getContext("2d");
 		this.img = document.createElement("img");
@@ -342,8 +343,8 @@ class MyController extends Controller {
 		this.mvc.view.update();
 	}
 
-	ioStart(){
-		this.mvc.view.startGame();
+	Start(room){
+		this.mvc.view.startGame(room);
 	}
 
 	challenge(opponent){
