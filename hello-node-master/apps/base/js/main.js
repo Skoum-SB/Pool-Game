@@ -206,7 +206,7 @@ class MyView extends View {
 			let btn = document.createElement("button");
 			btn.innerHTML = "Défier";
 			btn.id = i;
-			btn.onclick = ;
+			//btn.onclick = ;
 			cell.appendChild(btn);
 			line.appendChild(cell);
 
