@@ -1,4 +1,8 @@
+/*class GameArea{
+  constructeur(){
 
+  }
+}*/
 class Ball{
   constructor (x, y, color){
     this.x = x;
@@ -32,7 +36,7 @@ class Ball{
     let slowx = (x>y) ? slow : slow*(x/y);
     let slowy = (x<y) ? slow : slow*(y/x);
     this.moveit = () => {
-      if((Math.abs(y)-slowy > 0)){
+      if((Math.abs(y)-slowy > 0) || (Math.abs(x)-slowx > 0)){
         this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
         /*Left and Right*/ if(this.x < 55 || this.x > 1395){ x = -x;}
         /*Top and Bottom*/ if(this.y < 55 || this.y > 717){ y = -y;}
@@ -85,3 +89,5 @@ class Player{
   get team(){ return this.team;}
 
 }
+
+var truc = 1;

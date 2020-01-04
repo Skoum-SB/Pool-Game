@@ -197,6 +197,7 @@ class MyView extends View {
 	}
 
 	update(data) {
+		console.log(truc);
 		var distance = 350;
 		var speedx = 2;
 		var speedy = 20;
