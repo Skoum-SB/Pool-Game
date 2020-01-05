@@ -1,5 +1,5 @@
 class Ball{
-  constructor (x, y, color){
+  constructor (area, x, y, color){
     this.x = x;
     this.y = y;
     this.out = false;
@@ -8,11 +8,12 @@ class Ball{
     this.image.onload;
     this.vitessex;
     this.vitessey;
+    this.area = area;
   }
 
   draw(){
     if(!this.out){
-      area.draw(this.image, this.x, this.y, 1);
+      this.area.draw(this.image, this.x, this.y);
       this.image.src = "images/" + this.color + "ball.png";
     }
   }
