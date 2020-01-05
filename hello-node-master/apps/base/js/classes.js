@@ -6,6 +6,8 @@ class Ball{
     this.color = color;
     this.image = document.createElement("img");
     this.image.onload;
+    this.vitessex;
+    this.vitessey;
   }
 
   draw(){

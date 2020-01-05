@@ -195,11 +195,7 @@ class MyView extends View {
 	}
 
 	update(data) {
-		var distance = 350;
-		var speedx = 2;
-		var speedy = 13;
-		var slow = (speedx+speedy)/distance;
-		window.requestAnimationFrame(() => {this.mvc.model.balls[15].move(speedx, speedy, slow)});
+
 		/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
 		data.forEach(el => { // loop data
 			let line = document.createElement("tr"); // create line
@@ -227,7 +223,21 @@ class MyController extends Controller {
 	initialize(mvc) {
 		super.initialize(mvc);
 
+		area.cvs.onclick = () => {
+			var distance = 350;
+			var speedx = 2;
+			var speedy = 13;
+			var slow = (speedx+speedy)/distance;
+			var power = 20;
+			var angle = Math.atan2(4,1);
+			this.mvc.model.balls[15].vitessex = 100*Math.cos(angle)*power;
+			this.mvc.model.balls[15].vitessey = 100*Math.sin(angle)*power;
+			console.log(this.mvc.model.balls[15].vitessex*0.01);
+			window.requestAnimationFrame(() => {this.mvc.model.balls[15].move(this.mvc.model.balls[15].vitessex*0.01, this.mvc.model.balls[15].vitessey*0.01, slow)});
+			console.log("Tamer ", window.event.pageX, " && ", window.event.clientX);
+		}
 	}
+
 
 	async btnWasClicked(params) {
 		trace("btn click", params);
