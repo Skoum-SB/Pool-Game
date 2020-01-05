@@ -72,6 +72,7 @@ class MyModel extends Model {
 	constructor() {
 		super();
 		this.players = [];
+		this.room = 0;
 	}
 
 	async initialize(mvc) {
@@ -108,6 +109,10 @@ class MyModel extends Model {
 				this.players.splice(i, 1);
 			}
 		}
+	}
+
+	changeRoom(room){
+		this.room = room;
 	}
 
 }
@@ -247,9 +252,9 @@ class MyView extends View {
 		this.stage.appendChild(document.createTextNode("En attente de la réponse de votre adversaire"));
 	}
 
-	startGame(room){
+	startGame(){
 		this.stage.innerHTML = "";
-		this.stage.appendChild(document.createTextNode("Vous êtes dans la Room N°" + room));
+		this.stage.appendChild(document.createTextNode("Vous êtes dans la Room N°" + this.mvc.model.room));
 		this.cvs = document.createElement("canvas");
 		this.ctx = this.cvs.getContext("2d");
 		this.img = document.createElement("img");
@@ -318,7 +323,7 @@ class MyController extends Controller {
 		this.mvc.view.lobby();
 	}
 
-	async disconnect(){
+	disconnect(){
 		this.mvc.app.io.emit("disconnect");
 	}
 
@@ -344,7 +349,8 @@ class MyController extends Controller {
 	}
 
 	Start(room){
-		this.mvc.view.startGame(room);
+		this.mvc.model.changeRoom(room);
+		this.mvc.view.startGame();
 	}
 
 	challenge(opponent){

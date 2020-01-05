@@ -4,7 +4,8 @@ class Base extends ModuleBase {
 
 	constructor(app, settings) {
 		super(app, new Map([["name", "baseapp"], ["io", true]]));
-		this.players = [];
+		this.lobbyPlayers = [];
+		this.gamePlayers = [];
 		this.gameRooms = [];
 	}
 
@@ -52,13 +53,13 @@ class Base extends ModuleBase {
 	_onLogin(socket, packet){
 		trace(socket.id, "pseudo :", packet);
 		
-		socket.emit("players", this.players);
+		socket.emit("players", this.lobbyPlayers);
 
-		this.players.push({id: socket.id, name: packet});
+		this.lobbyPlayers.push({id: socket.id, name: packet});
 
-		trace(this.players.length, " players connected actually");
+		trace(this.lobbyPlayers.length, " players connected actually");
 
-		socket.broadcast.emit("newplayer", this.players[this.players.length - 1]);
+		socket.broadcast.emit("newplayer", this.lobbyPlayers[this.lobbyPlayers.length - 1]);
 
 		socket.on("disconnect", packet => this._onDisconnect(socket, packet));
 		socket.on("challenge", packet => this._onChallenge(socket, packet));
@@ -69,28 +70,27 @@ class Base extends ModuleBase {
 
 		//In lobby
 		var inLobby = false;
-		for(var i = 0; i < this.players.length; i++){
-			if(this.players[i].id == socket.id){
-				var playerDisconnected = this.players.splice(i, 1);
+		for(var i = 0; i < this.lobbyPlayers.length; i++){
+			if(this.lobbyPlayers[i].id == socket.id){
+				var playerDisconnected = this.lobbyPlayers.splice(i, 1);
 				inLobby = true;
 			}
 		}
 		
 		if(inLobby){
-			trace(this.players.length, " players in the lobby actually");
+			trace(this.lobbyPlayers.length, " players in the lobby actually");
 			socket.broadcast.emit("playerDisconnected", playerDisconnected[0].name);
 		}
 	}
 
-	_onChallenge(socket, packet){
-		trace(socket.id, packet);
+	_onChallenge(socket, packet){//packet = Name Player 2
+		trace(socket.id, packet);//socket.id = Id Player 1
 		
-		var playerName;
-		var opponentId;
+		var playerName;//Name Player 1
+		var opponentId;//Id Player 2
 
 		var roomId = 0;
 
-		trace(this.gameRooms.length , "LONGUEUR");
 		for(var i=0 ; i<this.gameRooms.length ; roomId = ++i){
 			trace("ITERATION", i);
 			if(this.gameRooms[i] == false){
@@ -100,7 +100,7 @@ class Base extends ModuleBase {
 		this.gameRooms[roomId] = true;
 		trace(this.gameRooms.length, "ID GAME = ", roomId);
 
-		this.players.forEach(el => {
+		this.lobbyPlayers.forEach(el => {
 			if(el.name == packet)
 				opponentId = el.id;//Id Player 2
 			if(el.id == socket.id)
@@ -115,15 +115,18 @@ class Base extends ModuleBase {
 
 		trace(this._io);
 
-		var gamePlayers = [playerName, packet];
+		var gamePlayers = [playerName, packet];//Name of the 2 players
 		trace(gamePlayers);
 		trace(this.gameRooms);
 
 		socket.broadcast.emit("playersInGame", gamePlayers);
 
-		for(var i = 0; i < this.players.length; i++){
-			if(this.players[i].name == gamePlayers[0] || this.players[i].name == gamePlayers[1]){
-				this.players.splice(i, 1);
+		this.gamePlayers[roomId] = {id1: socket.id, name1: playerName, id2: opponentId, name2: packet};
+		trace(roomId, this.gamePlayers[roomId]);
+
+		for(var i = 0; i < this.lobbyPlayers.length; i++){
+			if(this.lobbyPlayers[i].name == gamePlayers[0] || this.lobbyPlayers[i].name == gamePlayers[1]){
+				this.lobbyPlayers.splice(i, 1);
 				i--;
 			}
 		}
