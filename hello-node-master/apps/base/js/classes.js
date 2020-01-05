@@ -51,6 +51,7 @@ class Ball{
 
           for(var i=0; i<allBalls.length; i++){
             this.collideWith(allBalls[i],ratio, allBalls);
+
           }
 
           this.x += this.vx;
@@ -68,12 +69,19 @@ class Ball{
     }
 
     collideWith(second_ball, ratio, allBalls){
+
       var dx = second_ball.x - this.x	;
       var dy = second_ball.y -	this.y	;
       var distance = Math.sqrt(dx * dx + dy * dy);
 
-      if((this.x!=second_ball.x) && (distance < (this.radius + second_ball.radius)) ){
+      if((this.x!=second_ball.x && this.y!=second_ball.y) && (distance < (this.radius + second_ball.radius)) ){
+        //this.vx = -this.vx;
+        //this.vx = -this.vx;
+        if(second_ball.ismoving==0 && this.ismoving==1){
+          second_ball.move(ratio, 1, 0, 0, allBalls);
+        }
 
+        trace("I??????????????????");
         var angle = Math.atan2(dy,dx);
         var sin = Math.sin(angle);
         var cos = Math.cos(angle);
@@ -85,10 +93,10 @@ class Ball{
         var vx2 = second_ball.vx*cos+second_ball.vy*sin;
         var vy2 = second_ball.vy*cos-second_ball.vx*sin;
 
+
         //resolve 1D velocity, use temp variables
         var vx1final = ((this.mass-second_ball.mass)*vx1+2*second_ball.mass*vx2)/(this.mass+second_ball.mass);
         var vx2final = ((second_ball.mass-this.mass)*vx2+2*this.mass*vx1)/(this.mass+second_ball.mass);
-
         // update velocity
         vx1 = vx1final;
         vx2 = vx2final;
@@ -98,15 +106,8 @@ class Ball{
         second_ball.vx = vx2*cos-vy2*sin;
         second_ball.vy = vy2*cos+vx2*sin;
 
-        //this.vx *= 0.98;
-
-        //this.vy *= 0.98;
-
-
-        if(second_ball.ismoving==1 && this.ismoving==1){
-          second_ball.move(ratio, 1, 0, 0, allBalls);
-        }
-
+    
+        return true;
       }
 
     }

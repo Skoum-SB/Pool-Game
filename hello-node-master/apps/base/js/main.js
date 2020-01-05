@@ -151,7 +151,7 @@ class MyView extends View {
 			 }
 			 for(let x = 0; x < this.mvc.model.yellowballs.length; x++){
 				 this.mvc.model.yellowballs[x].draw(this.ratio);
-				 //this.stage.appendChild(this.mvc.model.yellowballs[x].cvs)
+				 this.stage.appendChild(this.mvc.model.yellowballs[x].cvs)
 			 }
 
 			 this.mvc.model.whiteball.draw(this.ratio);
@@ -214,9 +214,6 @@ class MyView extends View {
 
 		//-------------------
 			var power = 100;
-
-
-
 
 		var allBalls = [];
 		for(let i=0; i<7; i++){
