@@ -11,7 +11,7 @@ class Ball{
     this.vy = 0;
     this.area = area;
     this.radius = 19;
-    this.mass=2;
+    this.mass=1;
   }
 
   draw(){
@@ -21,30 +21,13 @@ class Ball{
     }
   }
 
-  collideWith(second_ball, allBalls){
-      let dx = second_ball.x - this.x;
-      let dy = second_ball.y - this.y;
-      let distance = Math.sqrt(dx * dx + dy * dy);
-      if(distance  == 0){
-        console.log(distance)
-      }
-
-      if(this != second_ball && distance < this.radius){
-        //faire les caculs
-        if(!second_ball.ismoving){
-          console.log("Aiiiiie");
-             //second_ball.move(allBalls);
-        }
-      }
-  }
-
   move(allBalls){
     this.ismoving = true;
     this.moveit = () => {
       //if((Math.abs(y)-slowy > 0) || (Math.abs(x)-slowx > 0)){
         /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx;}
         /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ this.vy = -this.vy;}
-        for(var i=0; i<allBalls.length; i++){
+        for(let i=0; i<allBalls.length; i++){
             this.collideWith(allBalls[i],allBalls);
           }
         this.x += this.vx;
@@ -62,33 +45,31 @@ class Ball{
 
   collideWith(second_ball, allBalls){
 
-    var dx = second_ball.x - this.x	;
-    var dy = second_ball.y -	this.y	;
-    var distance = Math.sqrt(dx * dx + dy * dy);
+    let dx = second_ball.x - this.x	;
+    let dy = second_ball.y -	this.y	;
+    let distance = Math.sqrt(dx * dx + dy * dy);
 
-    if(this!=second_ball && (distance < 19) ){
+    if(this!=second_ball && (distance < this.radius*2) ){
       //this.vx = -this.vx;
       //this.vx = -this.vx;
       if(second_ball.ismoving==0 && this.ismoving==1){
         second_ball.move(allBalls);
       }
-
-      trace("I??????????????????");
-      var angle = Math.atan2(dy,dx);
-      var sin = Math.sin(angle);
-      var cos = Math.cos(angle);
-      var x1=0; var y1=0;
+      let angle = Math.atan2(dy,dx);
+      let sin = Math.sin(angle);
+      let cos = Math.cos(angle);
+      let x1=0; let y1=0;
 
       //Rotate velocity
-      var vx1 = this.vx*cos+this.vy*sin;
-      var vy1 = this.vy*cos-this.vx*sin;
-      var vx2 = second_ball.vx*cos+second_ball.vy*sin;
-      var vy2 = second_ball.vy*cos-second_ball.vx*sin;
+      let vx1 = this.vx*cos+this.vy*sin;
+      let vy1 = this.vy*cos-this.vx*sin;
+      let vx2 = second_ball.vx*cos+second_ball.vy*sin;
+      let vy2 = second_ball.vy*cos-second_ball.vx*sin;
 
 
-      //resolve 1D velocity, use temp variables
-      var vx1final = ((this.mass-second_ball.mass)*vx1+2*second_ball.mass*vx2)/(this.mass+second_ball.mass);
-      var vx2final = ((second_ball.mass-this.mass)*vx2+2*this.mass*vx1)/(this.mass+second_ball.mass);
+      //resolve 1D velocity, use temp letiables
+      let vx1final = ((this.mass-second_ball.mass)*vx1+2*second_ball.mass*vx2)/(this.mass+second_ball.mass);
+      let vx2final = ((second_ball.mass-this.mass)*vx2+2*this.mass*vx1)/(this.mass+second_ball.mass);
       // update velocity
       vx1 = vx1final;
       vx2 = vx2final;
