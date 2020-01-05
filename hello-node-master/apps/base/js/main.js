@@ -59,7 +59,7 @@ class MyModel extends Model {
 	async initialize(mvc) {
 		super.initialize(mvc);
 
-		/*this.redballs = [
+		this.redballs = [
 			new Ball(1056-25,433-26,"red"),
 	    new Ball(1090-25,374-26,"red"),
 	    new Ball(1126-25,393-26,"red"),
@@ -76,10 +76,12 @@ class MyModel extends Model {
 	    new Ball(1126-25,433-26,"yellow"),
 	    new Ball(1162-25,413-26,"yellow"),
 	    new Ball(1162-25,491-26,"yellow")
-    ];*/
+    ];
 
 		this.whiteball = new Ball(413-25,413-26,"white");
-		//this.blackball = new Ball(1065, 387, "black");
+		this.stick = new Stick(this.whiteball.x,this.whiteball.y);
+		this.blackball = new Ball(1065, 387, "black");
+
 	}
 
 	async data() {
@@ -143,23 +145,30 @@ class MyView extends View {
 			 this.img.width = this.img.naturalWidth * this.ratio;
 			 this.img.height = this.img.naturalHeight * this.ratio;
 
-			 /*for(let x = 0; x < this.mvc.model.redballs.length; x++){
+			 for(let x = 0; x < this.mvc.model.redballs.length; x++){
 				 this.mvc.model.redballs[x].draw(this.ratio);
-				 this.stage.appendChild(this.mvc.model.redballs[x].image)
+				 //this.stage.appendChild(this.mvc.model.redballs[x].cvs)
 			 }
 			 for(let x = 0; x < this.mvc.model.yellowballs.length; x++){
 				 this.mvc.model.yellowballs[x].draw(this.ratio);
-				 this.stage.appendChild(this.mvc.model.yellowballs[x].image)
+				 //this.stage.appendChild(this.mvc.model.yellowballs[x].cvs)
 			 }
 
 			 this.mvc.model.whiteball.draw(this.ratio);
-			 this.mvc.model.blackball.draw(this.ratio);*/
+
 			 //this.stage.appendChild(this.mvc.model.whiteball.image);
 			 this.mvc.model.whiteball.draw(this.ratio);
+			 this.mvc.model.blackball.draw(this.ratio);
+			 this.mvc.model.stick.draw(this.ratio);
+
 		}
 
 		this.stage.appendChild(this.img);
 		this.stage.appendChild(this.mvc.model.whiteball.cvs);
+		this.stage.appendChild(this.mvc.model.blackball.cvs);
+
+		//this.stage.appendChild(this.mvc.model.stick.cvs);
+
 
 	}
 
@@ -181,6 +190,7 @@ class MyView extends View {
 
 		this.ioBtnHandler = e => this.ioBtnClick(e);
 		this.iobtn.addEventListener("click", this.ioBtnHandler);
+
 	}
 
 	removeListeners() {
@@ -197,10 +207,40 @@ class MyView extends View {
 	}
 
 	update(data) {
-		this.mvc.model.whiteball.move(this.ratio);
+		var distance = 350;
+		var speedx = 10;
+		var speedy = 0;
+		var slow = (speedx+speedy)/distance;
+
+		//-------------------
+			var power = 100;
+
+
+
+
+		var allBalls = [];
+		for(let i=0; i<7; i++){
+			allBalls.push(this.mvc.model.yellowballs[i]);
+			//allBalls.push(this.mvc.model.redballs[i]);
+		}
+
+		allBalls.push(this.mvc.model.whiteball);
+		allBalls.push(this.mvc.model.blackball);
+
+		this.mvc.model.whiteball.vx=7;
+		this.mvc.model.whiteball.vy=7;
+
+
+		//this.mvc.model.blackball.vx=0;
+		//this.mvc.model.blackball.vy=0;
+
+		window.requestAnimationFrame(() => {this.mvc.model.whiteball.move(this.ratio, speedx, speedy, slow, allBalls)});
+		//window.requestAnimationFrame(() => {this.mvc.model.blackball.move(this.ratio, speedx, speedy, slow, allBalls)});
+
+		//this.mvc.model.whiteball.out = false;
 
 		//this.stage.appendChild(this.mvc.model.blackball.image);
-		/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
+			/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
 		data.forEach(el => { // loop data
 			let line = document.createElement("tr"); // create line
 			Object.keys(el).forEach(key => { // loop object keys
