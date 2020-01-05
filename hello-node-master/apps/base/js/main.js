@@ -108,7 +108,11 @@ class MyModel extends Model {
 		this.display = () => {
 		 this.area.clear();
 		 this.area.draw(this.image);
+<<<<<<< HEAD
 		 for (let i = 0; i < this.balls.length; i++) {
+=======
+		 for (var i = 0; i < this.balls.length; i++) {
+>>>>>>> 1bdb9dadc6e0521a632973efd30d786affb34181
          this.balls[i].draw();
      }
 		 requestAnimationFrame(this.display);
@@ -225,8 +229,13 @@ class MyController extends Controller {
 		super.initialize(mvc);
 
 		this.mvc.model.area.cvs.onclick = () => {
+<<<<<<< HEAD
 			let power = 10;
 			let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
+=======
+			var power = 5;
+			var angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
+>>>>>>> 1bdb9dadc6e0521a632973efd30d786affb34181
 			this.mvc.model.whiteball.vx = Math.cos(angle)*power;
 			this.mvc.model.whiteball.vy = Math.sin(angle)*power;
 			console.log(window.event.pageY*this.mvc.model.area.scaley);
