@@ -58,28 +58,62 @@ class MyModel extends Model {
 
 	async initialize(mvc) {
 		super.initialize(mvc);
+		area.initialize();
+		this.image = document.createElement("img");
+    this.image.onload;
+    this.image.src = 'images/sprbackground4.png';
 
-		/*this.redballs = [
-			new Ball(1056-25,433-26,"red"),
-	    new Ball(1090-25,374-26,"red"),
-	    new Ball(1126-25,393-26,"red"),
-	    new Ball(1126-25,472-26,"red"),
-	    new Ball(1162-25,335-26,"red"),
-	    new Ball(1162-25,374-26,"red"),
-	    new Ball(1162-25,452-26,"red")
-		];
-		this.yellowballs = [
-	    new Ball(1022-25,413-26,"yellow"),
-	    new Ball(1056-25,393-26,"yellow"),
-	    new Ball(1090-25,452-26,"yellow"),
-	    new Ball(1126-25,354-26,"yellow"),
-	    new Ball(1126-25,433-26,"yellow"),
-	    new Ball(1162-25,413-26,"yellow"),
-	    new Ball(1162-25,491-26,"yellow")
-    ];*/
+		this.redBalls = [
+      new Ball(516,203,"red"),
+      new Ball(533,174,"red"),
+      new Ball(550,184,"red"),
+      new Ball(550,222,"red"),
+      new Ball(567,156,"red"),
+      new Ball(567,175,"red"),
+      new Ball(567,213,"red")
+    ];
 
-		this.whiteball = new Ball(413-25,413-26,"white");
-		//this.blackball = new Ball(1065, 387, "black");
+    this.yellowBalls = [
+      new Ball(499,193,"yellow"),
+      new Ball(516,183,"yellow"),
+      new Ball(533,212,"yellow"),
+      new Ball(550,165,"yellow"),
+      new Ball(550,203,"yellow"),
+      new Ball(567,194,"yellow"),
+      new Ball(567,232,"yellow")
+    ];
+
+    this.whiteBall = new Ball(193,193, "white");
+    this.blackBall = new Ball(533,193, "black");
+
+    this.balls = [
+      this.yellowBalls[0],
+      this.yellowBalls[1],
+      this.redBalls[0],
+      this.redBalls[1],
+      this.blackBall,
+      this.yellowBalls[2],
+      this.yellowBalls[3],
+      this.redBalls[2],
+      this.yellowBalls[4],
+      this.redBalls[3],
+      this.redBalls[4],
+      this.redBalls[5],
+      this.yellowBalls[5],
+      this.redBalls[6],
+      this.yellowBalls[6],
+      this.whiteBall
+    ];
+		this.display = () => {
+		 area.clear();
+		 area.draw(this.image);
+		 for (var i = 0; i < this.balls.length; i++) {
+         this.balls[i].draw();
+     }
+		 requestAnimationFrame(this.display);
+ 	 }
+	 this.display();
+
 	}
 
 	async data() {
@@ -102,7 +136,6 @@ class MyView extends View {
 		super.initialize(mvc);
 
 		this.stage.style.backgroundColor = "black";
-
 		// create get test btn
 	 this.btn = document.createElement("button");
 	 this.btn.innerHTML = "get test";
@@ -121,45 +154,10 @@ class MyView extends View {
 	 // get dataset display
 	 this.table = document.createElement("table");
 	 this.stage.appendChild(this.table);
-
 		// load sprites
-		this.cvs = document.createElement("canvas");
-		this.ctx = this.cvs.getContext("2d");
-		this.img = document.createElement("img");
-		this.img.src = 'images/sprbackground4.png';
 
-		this.img.style.position = "absolute";
-		//this.mvc.model.blackball.image.style.position = "absolute";
+		this.stage.appendChild(area.cvs)
 
-		this.img.onload = () => {
-
-		   this.ratio = window.innerWidth/this.img.naturalWidth;
-		   if(this.img.naturalHeight*this.ratio >= window.innerHeight - this.img.getBoundingClientRect().top){
-				 this.ratio = (window.innerHeight - this.img.getBoundingClientRect().top)/this.img.naturalHeight;
-		   }
-		   else{
-				 this.ratio = window.innerWidth/this.img.naturalWidth;
-		   }
-			 this.img.width = this.img.naturalWidth * this.ratio;
-			 this.img.height = this.img.naturalHeight * this.ratio;
-
-			 /*for(let x = 0; x < this.mvc.model.redballs.length; x++){
-				 this.mvc.model.redballs[x].draw(this.ratio);
-				 this.stage.appendChild(this.mvc.model.redballs[x].image)
-			 }
-			 for(let x = 0; x < this.mvc.model.yellowballs.length; x++){
-				 this.mvc.model.yellowballs[x].draw(this.ratio);
-				 this.stage.appendChild(this.mvc.model.yellowballs[x].image)
-			 }
-
-			 this.mvc.model.whiteball.draw(this.ratio);
-			 this.mvc.model.blackball.draw(this.ratio);*/
-			 //this.stage.appendChild(this.mvc.model.whiteball.image);
-			 this.mvc.model.whiteball.draw(this.ratio);
-		}
-
-		this.stage.appendChild(this.img);
-		this.stage.appendChild(this.mvc.model.whiteball.cvs);
 
 	}
 
@@ -197,16 +195,11 @@ class MyView extends View {
 	}
 
 	update(data) {
-		console.log(truc);
 		var distance = 350;
 		var speedx = 2;
-		var speedy = 20;
+		var speedy = 13;
 		var slow = (speedx+speedy)/distance;
-		window.requestAnimationFrame(() => {this.mvc.model.whiteball.move(this.ratio, speedx, speedy, slow)});
-		this.mvc.model.whiteball.out = true;
-
-
-		//this.stage.appendChild(this.mvc.model.blackball.image);
+		window.requestAnimationFrame(() => {this.mvc.model.balls[15].move(speedx, speedy, slow)});
 		/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
 		data.forEach(el => { // loop data
 			let line = document.createElement("tr"); // create line
@@ -233,10 +226,6 @@ class MyController extends Controller {
 
 	initialize(mvc) {
 		super.initialize(mvc);
-		this.ratio = this.mvc.view.ratio;
-		window.onresize = () => {
-			this.mvc.view.img.onload();
-		}
 
 	}
 

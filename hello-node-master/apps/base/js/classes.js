@@ -1,51 +1,31 @@
-/*class GameArea{
-  constructeur(){
-
-  }
-}*/
 class Ball{
   constructor (x, y, color){
     this.x = x;
     this.y = y;
     this.out = false;
     this.color = color;
-    this.cvs = document.createElement("canvas");
-    this.ctx = this.cvs.getContext("2d");
     this.image = document.createElement("img");
-    this.cvs.style.position = "absolute";
-    this.vx = 10;
-    this.vy = 3;
-    this.limit=300;
+    this.image.onload;
   }
 
-  draw(ratio){
+  draw(){
     if(!this.out){
-      this.image.addEventListener("load", () => {
-        this.cvs.width = window.innerWidth;
-        this.cvs.height = window.innerHeight;
-        this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.x*ratio, this.y*ratio, this.image.naturalWidth*ratio, this.image.naturalHeight*ratio);
-      });
+      area.draw(this.image, this.x, this.y, 1);
       this.image.src = "images/" + this.color + "ball.png";
     }
-    else{
-      this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
-    }
   }
 
-  move(ratio, x, y, slow){
+  move(x, y, slow){
     let slowx = (x>y) ? slow : slow*(x/y);
     let slowy = (x<y) ? slow : slow*(y/x);
     this.moveit = () => {
       if((Math.abs(y)-slowy > 0) || (Math.abs(x)-slowx > 0)){
-        this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
-        /*Left and Right*/ if(this.x < 55 || this.x > 1395){ x = -x;}
-        /*Top and Bottom*/ if(this.y < 55 || this.y > 717){ y = -y;}
-        //console.log(y);
+        /*Left and Right*/ if(this.x < 26 || this.x > 700){ x = -x;}
+        /*Top and Bottom*/ if(this.y < 26 || this.y > 360){ y = -y;}
         this.x += x;
         this.y += y;
         x += (x > 0) ? -slowx : slowx;
         y += (y > 0) ? -slowy : slowy;
-        this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.x*ratio, this.y*ratio, this.image.naturalWidth*ratio, this.image.naturalHeight*ratio);
         requestAnimationFrame(this.moveit);
       }
       else{
