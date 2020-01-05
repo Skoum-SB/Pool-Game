@@ -5,7 +5,7 @@ class Base extends ModuleBase {
 	constructor(app, settings) {
 		super(app, new Map([["name", "baseapp"], ["io", true]]));
 		this.lobbyPlayers = [];
-		this.gamePlayers = [];
+		this.gamePlayers = [[{id: null, name : null},{id: null, name : null}]];
 		this.gameRooms = [];
 	}
 
@@ -89,7 +89,7 @@ class Base extends ModuleBase {
 					socket.to("room-" + i).emit("playerLeft", this.lobbyPlayers);
 					this.lobbyPlayers.push({id: this.gamePlayers[i][1].id, name: this.gamePlayers[i][1].name});
 					this.gameRooms[i] = false;
-					this.gamePlayers[i] = null;
+					this.gamePlayers[i] = [{id: null, name : null},{id: null, name : null}];
 
 				}
 				else if(socket.id == this.gamePlayers[i][1].id){
@@ -98,7 +98,7 @@ class Base extends ModuleBase {
 					socket.to("room-" + i).emit("playerLeft", this.lobbyPlayers);
 					this.lobbyPlayers.push({id: this.gamePlayers[i][0].id, name: this.gamePlayers[i][0].name});
 					this.gameRooms[i] = false;
-					this.gamePlayers[i] = null;
+					this.gamePlayers[i] = [{id: null, name : null},{id: null, name : null}];
 
 				}
 			}
@@ -117,12 +117,18 @@ class Base extends ModuleBase {
 
 		for(var i=0 ; i<this.gameRooms.length ; roomId = ++i){
 			trace("ITERATION", i);
-			if(this.gameRooms[i] == false){
+			if(this.gamePlayers[i][0].id == null){
 				break;
 			}
 		}
 		this.gameRooms[roomId] = true;
 		trace(this.gameRooms.length, "ID GAME = ", roomId);
+
+		//Prepare next room (If necessary)
+		if(roomId == (this.gamePlayers.length - 1)){
+			trace("INCREASED SIZE");
+			this.gamePlayers.push([{id: null, name : null},{id: null, name : null}]);
+		}
 
 		this.lobbyPlayers.forEach(el => {
 			if(el.name == packet)
@@ -137,7 +143,7 @@ class Base extends ModuleBase {
 		this._io.sockets[opponentId].join("room-" + (roomId));
 		this._io.to("room-" + (roomId)).emit("start", roomId);
 
-		trace(this._io);
+		//trace(this._io);
 
 		var gamePlayers = [playerName, packet];//Name of the 2 players
 		trace(gamePlayers);
