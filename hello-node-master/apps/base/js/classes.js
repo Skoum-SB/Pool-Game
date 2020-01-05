@@ -66,7 +66,7 @@ class Ball{
     var dy = second_ball.y -	this.y	;
     var distance = Math.sqrt(dx * dx + dy * dy);
 
-    if(this!=second_ball && (distance < this.radius) ){
+    if(this!=second_ball && (distance < 19) ){
       //this.vx = -this.vx;
       //this.vx = -this.vx;
       if(second_ball.ismoving==0 && this.ismoving==1){

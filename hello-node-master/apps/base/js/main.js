@@ -229,18 +229,10 @@ class MyController extends Controller {
 		this.mvc.model.area.cvs.onclick = () => {
 			var power = 10;
 			var angle = Math.atan2(window.event.clientY- this.mvc.model.whiteball.y, window.event.clientX - this.mvc.model.whiteball.x);
-<<<<<<< HEAD
 			this.mvc.model.balls[15].vx = Math.cos(angle)*power;
 			this.mvc.model.balls[15].vy = Math.sin(angle)*power;
 			console.log(10*Math.cos(angle)*power);
 			window.requestAnimationFrame(() => {this.mvc.model.balls[15].move(this.mvc.model.balls)});
-=======
-			console.log(100*Math.cos(angle)*power);
-			this.mvc.model.balls[15].vx = 7;
-			this.mvc.model.balls[15].vy = 7;
-			console.log(this.mvc.model.balls[15].vitessex*0.01);
-			console.log("Tamer ", window.event.pageX, " && ", window.event.clientX);
->>>>>>> 6e4a12c417fb687bc5832c03e0fe06a9f411a23c
 			/*function calcAngleDegrees(x, y) {
   			return Math.atan2(y, x) * 180 / Math.PI;
 			}
