@@ -233,14 +233,10 @@ class MyController extends Controller {
 			var slow = (speedx+speedy)/distance;
 			var power = 10;
 			var angle = Math.atan2(window.event.clientY- this.mvc.model.whiteball.y, window.event.clientX - this.mvc.model.whiteball.x);
+			console.log(100*Math.cos(angle)*power);
 			this.mvc.model.balls[15].vx = 7;
 			this.mvc.model.balls[15].vy = 7;
 			console.log(this.mvc.model.balls[15].vitessex*0.01);
-<<<<<<< HEAD
-			window.requestAnimationFrame(() => {this.mvc.model.balls[15].move(this.mvc.model.balls)});
-=======
-			window.requestAnimationFrame(() => {this.mvc.model.balls[15].move(this.mvc.model.balls[15].vitessex*0.01, this.mvc.model.balls[15].vitessey*0.01, slow, this.mvc.model.balls)});
->>>>>>> dd1f4155bd5c85bbbe6bed8add27c320f3b70885
 			console.log("Tamer ", window.event.pageX, " && ", window.event.clientX);
 			/*function calcAngleDegrees(x, y) {
   			return Math.atan2(y, x) * 180 / Math.PI;
