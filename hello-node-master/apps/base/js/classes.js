@@ -21,41 +21,38 @@ class Ball{
     }
   }
 
-  collideWith(second_ball, allBalls){
-      let dx = second_ball.x - this.x;
-      let dy = second_ball.y - this.y;
-      let distance = Math.sqrt(dx * dx + dy * dy);
-      if(distance  == 0){
-        console.log(distance)
-      }
-
-      if(this != second_ball && distance < this.radius){
-        //faire les caculs
-        if(!second_ball.ismoving){
-          console.log("Aiiiiie");
-             //second_ball.move(allBalls);
-        }
-      }
-  }
-
   move(allBalls){
+    var delta= 1/100;
     this.ismoving = true;
     this.moveit = () => {
-      //if((Math.abs(y)-slowy > 0) || (Math.abs(x)-slowx > 0)){
-        /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx;}
-        /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ this.vy = -this.vy;}
+      if((Math.abs(this.vy) > 0.2) || (Math.abs(this.vx) > 0.2)){
+        //this.vx *= delta;
+        //this.vy *= delta;
+      //  trace("thiiiiiis",delta,this.vx);
         for(var i=0; i<allBalls.length; i++){
             this.collideWith(allBalls[i],allBalls);
-          }
+        }
+        /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx;}
+        /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ this.vy = -this.vy;}
+
+        if(this.vx>0){this.vx -=0.02;}
+        if(this.vy>0){this.vy -=0.02;}
+
+        if(this.vx<0){this.vx +=0.02;}
+        if(this.vy<0){this.vy +=0.02;}
+
+
+        //this.vx *= 0.98;
+        //this.vy *= 0.98;
+
         this.x += this.vx;
         this.y += this.vy;
         requestAnimationFrame(this.moveit);
-      /*}
+      }
       else{
         cancelAnimationFrame(this.moveit);
         this.ismoving = false;
       }
-    }*/
     }
     this.moveit();
   }
@@ -66,14 +63,26 @@ class Ball{
     var dy = second_ball.y -	this.y	;
     var distance = Math.sqrt(dx * dx + dy * dy);
 
-    if(this!=second_ball && (distance < this.radius) ){
+    if(this!=second_ball && (distance < this.radius*2) ){
+      
+        if(second_ball.vx>0){second_ball.vx -=0.03;}
+        if(second_ball.vy>0){second_ball.vy -=0.03;}
+
+        if(second_ball.vx<0){second_ball.vx +=0.03;}
+        if(second_ball.vy<0){second_ball.vy +=0.03;}
+
+        if(this.vx>0){this.vx -=0.01;}
+        if(this.vy>0){this.vy -=0.01;}
+
+        if(this.vx<0){this.vx +=0.01;}
+        if(this.vy<0){this.vy +=0.01;}
+
       //this.vx = -this.vx;
       //this.vx = -this.vx;
       if(second_ball.ismoving==0 && this.ismoving==1){
         second_ball.move(allBalls);
       }
 
-      trace("I??????????????????");
       var angle = Math.atan2(dy,dx);
       var sin = Math.sin(angle);
       var cos = Math.cos(angle);
