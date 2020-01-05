@@ -373,7 +373,6 @@ class MyController extends Controller {
 	playerLeftGame(players){
 		this.mvc.view.lobby();
 		this.getPlayers(players);
-		this.mvc.model.login(players);
 	}
 
 }
