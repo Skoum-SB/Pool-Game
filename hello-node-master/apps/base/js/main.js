@@ -58,12 +58,22 @@ class Base {
 
 	onStart(room){
 		trace("Starting the game", room);
-		this.mvc.controller.Start(room); // send it to controller
+		this.mvc.controller.start(room); // send it to controller
 		this.io.removeAllListeners();
+		this.io.on("playerLeft", packet => this.onplayerLeft(packet));
 	}
 
 	onPlayersInGame(players){
 		this.mvc.controller.playersInGame(players);
+	}
+
+	onplayerLeft(players){
+		trace("Disconnected player");
+		this.mvc.controller.playerLeftGame(players);
+		this.io.on("newplayer", packet => this.onNewPlayer(packet));
+		this.io.on("playerDisconnected", packet => this.onDisconnectedPlayer(packet));
+		this.io.on("start", packet => this.onStart(packet));
+		this.io.on("playersInGame", packet => this.onPlayersInGame(packet));
 	}
 }
 
@@ -71,6 +81,7 @@ class MyModel extends Model {
 
 	constructor() {
 		super();
+		this.name = "";
 		this.players = [];
 		this.room = 0;
 	}
@@ -87,7 +98,7 @@ class MyModel extends Model {
 	}*/
 
 	login(name){
-		this.players.push(name);
+		this.name = name;
 	}
 
 	addOtherPlayers(otherPlayers){
@@ -95,7 +106,7 @@ class MyModel extends Model {
 		otherPlayers.forEach(player => {
 			names.push((player.name));
 		});
-		this.players = this.players.concat(names);
+		this.players = names;
 	}
 
 	addNewPlayer(newPlayer){
@@ -205,9 +216,9 @@ class MyView extends View {
 		var data = this.mvc.model.players;
 		trace(data);
 
-		document.getElementById("ownName").innerHTML = "Vous : " + data[0];
+		document.getElementById("ownName").innerHTML = "Vous : " + this.mvc.model.name;
 
-		for(var i = 1 ; i < data.length ; i++){
+		for(var i = 0 ; i < data.length ; i++){
 			let line = document.createElement("tr"); // create line
 			let cell = document.createElement("td"); // create cell
 			cell.innerHTML = data[i]; // display
@@ -254,7 +265,7 @@ class MyView extends View {
 
 	startGame(){
 		this.stage.innerHTML = "";
-		this.stage.appendChild(document.createTextNode("Vous êtes dans la Room N°" + this.mvc.model.room));
+		this.stage.appendChild(document.createTextNode("Vous êtes dans la Room N°" + (this.mvc.model.room + 1)));
 		this.cvs = document.createElement("canvas");
 		this.ctx = this.cvs.getContext("2d");
 		this.img = document.createElement("img");
@@ -316,10 +327,10 @@ class MyController extends Controller {
 		this.mvc.app.io.emit("dummy", {message: "dummy io click"}); // send socket.io packet
 	}*/
 
-	async submitName(params){
-		trace("submit btn click", params);
-		await this.mvc.model.login(params);
-		this.mvc.app.io.emit("login", params);
+	submitName(name){
+		trace("submit btn click", name);
+		this.mvc.model.login(name);
+		this.mvc.app.io.emit("login", name);
 		this.mvc.view.lobby();
 	}
 
@@ -348,7 +359,7 @@ class MyController extends Controller {
 		this.mvc.view.update();
 	}
 
-	Start(room){
+	start(room){
 		this.mvc.model.changeRoom(room);
 		this.mvc.view.startGame();
 	}
@@ -357,6 +368,12 @@ class MyController extends Controller {
 		trace(opponent);
 		this.mvc.app.io.emit("challenge", this.mvc.model.players[opponent]);
 		this.mvc.view.waitAnswer();
+	}
+
+	playerLeftGame(players){
+		this.mvc.view.lobby();
+		this.getPlayers(players);
+		this.mvc.model.login(players);
 	}
 
 }

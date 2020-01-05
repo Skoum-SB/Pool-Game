@@ -68,7 +68,6 @@ class Base extends ModuleBase {
 	_onDisconnect(socket, packet){
 		trace(socket.id, "disconnected");
 
-		//In lobby
 		var inLobby = false;
 		for(var i = 0; i < this.lobbyPlayers.length; i++){
 			if(this.lobbyPlayers[i].id == socket.id){
@@ -77,9 +76,34 @@ class Base extends ModuleBase {
 			}
 		}
 		
-		if(inLobby){
+		if(inLobby){//In lobby
 			trace(this.lobbyPlayers.length, " players in the lobby actually");
 			socket.broadcast.emit("playerDisconnected", playerDisconnected[0].name);
+		}
+
+		else{//In game
+			for(var i=0 ; i<this.gamePlayers.length ; i++){
+				if(socket.id == this.gamePlayers[i][0].id){
+					trace("DISCONNECT P1", "room-" + i);
+					this._io.emit("newplayer", this.gamePlayers[i][1]);
+					socket.to("room-" + i).emit("playerLeft", this.lobbyPlayers);
+					this.lobbyPlayers.push({id: this.gamePlayers[i][1].id, name: this.gamePlayers[i][1].name});
+					this.gameRooms[i] = false;
+					this.gamePlayers[i] = null;
+
+				}
+				else if(socket.id == this.gamePlayers[i][1].id){
+					trace("DISCONNECT P2", "room-" + i);
+					this._io.emit("newplayer", this.gamePlayers[i][0]);
+					socket.to("room-" + i).emit("playerLeft", this.lobbyPlayers);
+					this.lobbyPlayers.push({id: this.gamePlayers[i][0].id, name: this.gamePlayers[i][0].name});
+					this.gameRooms[i] = false;
+					this.gamePlayers[i] = null;
+
+				}
+			}
+
+
 		}
 	}
 
@@ -108,10 +132,10 @@ class Base extends ModuleBase {
 		});
 		trace(opponentId);
 
-		socket.join("room-" + (roomId + 1));
+		socket.join("room-" + (roomId));
 
-		this._io.sockets[opponentId].join("room-" + (roomId + 1));
-		this._io.to("room-" + (roomId + 1)).emit("start", roomId + 1);
+		this._io.sockets[opponentId].join("room-" + (roomId));
+		this._io.to("room-" + (roomId)).emit("start", roomId);
 
 		trace(this._io);
 
@@ -121,7 +145,7 @@ class Base extends ModuleBase {
 
 		socket.broadcast.emit("playersInGame", gamePlayers);
 
-		this.gamePlayers[roomId] = {id1: socket.id, name1: playerName, id2: opponentId, name2: packet};
+		this.gamePlayers[roomId] = [{id: socket.id, name: playerName}, {id: opponentId, name: packet}];
 		trace(roomId, this.gamePlayers[roomId]);
 
 		for(var i = 0; i < this.lobbyPlayers.length; i++){
