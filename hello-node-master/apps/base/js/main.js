@@ -108,9 +108,11 @@ class MyModel extends Model {
 		this.display = () => {
 		 this.area.clear();
 		 this.area.draw(this.image);
-		 for (var i = 0; i < this.balls.length; i++) {
+		 /*for (var i = 0; i < this.balls.length; i++) {
          this.balls[i].draw();
-     }
+     }*/
+		 this.whiteball.draw();
+		 this.blackball.draw();
 		 requestAnimationFrame(this.display);
  	 }
 	 this.display();
@@ -225,16 +227,16 @@ class MyController extends Controller {
 		super.initialize(mvc);
 
 		this.mvc.model.area.cvs.onclick = () => {
-			var distance = 350;
+			var distance = 1000;
 			var speedx = 2;
 			var speedy = 13;
 			var slow = (speedx+speedy)/distance;
-			var power = 20;
+			var power = 10;
 			var angle = Math.atan2(window.event.clientY- this.mvc.model.whiteball.y, window.event.clientX - this.mvc.model.whiteball.x);
-			this.mvc.model.balls[15].vitessex = 100*Math.cos(angle)*power;
-			this.mvc.model.balls[15].vitessey = 100*Math.sin(angle)*power;
+			this.mvc.model.balls[15].vx = 7;
+			this.mvc.model.balls[15].vy = 7;
 			console.log(this.mvc.model.balls[15].vitessex*0.01);
-			window.requestAnimationFrame(() => {this.mvc.model.balls[15].move(this.mvc.model.balls[15].vitessex*0.01, this.mvc.model.balls[15].vitessey*0.01, slow)});
+			window.requestAnimationFrame(() => {this.mvc.model.balls[15].move(this.mvc.model.balls)});
 			console.log("Tamer ", window.event.pageX, " && ", window.event.clientX);
 			/*function calcAngleDegrees(x, y) {
   			return Math.atan2(y, x) * 180 / Math.PI;
