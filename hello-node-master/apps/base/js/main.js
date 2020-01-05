@@ -108,11 +108,9 @@ class MyModel extends Model {
 		this.display = () => {
 		 this.area.clear();
 		 this.area.draw(this.image);
-		 /*for (var i = 0; i < this.balls.length; i++) {
+		 for (var i = 0; i < this.balls.length; i++) {
          this.balls[i].draw();
-     }*/
-		 this.whiteball.draw();
-		 this.blackball.draw();
+     }
 		 requestAnimationFrame(this.display);
  	 }
 	 this.display();
@@ -227,17 +225,12 @@ class MyController extends Controller {
 		super.initialize(mvc);
 
 		this.mvc.model.area.cvs.onclick = () => {
-			var power = 10;
-			var angle = Math.atan2(window.event.clientY- this.mvc.model.whiteball.y, window.event.clientX - this.mvc.model.whiteball.x);
-			this.mvc.model.balls[15].vx = Math.cos(angle)*power;
-			this.mvc.model.balls[15].vy = Math.sin(angle)*power;
-			console.log(10*Math.cos(angle)*power);
-			window.requestAnimationFrame(() => {this.mvc.model.balls[15].move(this.mvc.model.balls)});
-			/*function calcAngleDegrees(x, y) {
-  			return Math.atan2(y, x) * 180 / Math.PI;
-			}
-			console.log(calcAngleDegrees(window.event.clientX - this.mvc.model.whiteball.x, window.event.clientY- this.mvc.model.whiteball.y));*/
-			/*console.log("click(",window.event.pageX, ",", window.event.pageY,"), ", "ball(", this.mvc.model.whiteball.x, ",", this.mvc.model.whiteball.y, ")");*/
+			var power = 5;
+			var angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
+			this.mvc.model.whiteball.vx = Math.cos(angle)*power;
+			this.mvc.model.whiteball.vy = Math.sin(angle)*power;
+			console.log(window.event.pageY*this.mvc.model.area.scaley);
+			this.mvc.model.whiteball.move(this.mvc.model.balls);
 		}
 	}
 

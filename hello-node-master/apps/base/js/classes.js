@@ -21,23 +21,6 @@ class Ball{
     }
   }
 
-  collideWith(second_ball, allBalls){
-      let dx = second_ball.x - this.x;
-      let dy = second_ball.y - this.y;
-      let distance = Math.sqrt(dx * dx + dy * dy);
-      if(distance  == 0){
-        console.log(distance)
-      }
-
-      if(this != second_ball && distance < this.radius){
-        //faire les caculs
-        if(!second_ball.ismoving){
-          console.log("Aiiiiie");
-             //second_ball.move(allBalls);
-        }
-      }
-  }
-
   move(allBalls){
     this.ismoving = true;
     this.moveit = () => {
@@ -66,7 +49,7 @@ class Ball{
     var dy = second_ball.y -	this.y	;
     var distance = Math.sqrt(dx * dx + dy * dy);
 
-    if(this!=second_ball && (distance < 19) ){
+    if(this!=second_ball && (distance < this.radius*2) ){
       //this.vx = -this.vx;
       //this.vx = -this.vx;
       if(second_ball.ismoving==0 && this.ismoving==1){
