@@ -58,55 +58,56 @@ class MyModel extends Model {
 
 	async initialize(mvc) {
 		super.initialize(mvc);
-		area.initialize();
+		this.area = new Area();
 		this.image = document.createElement("img");
     this.image.onload;
     this.image.src = 'images/sprbackground4.png';
 
-		this.redBalls = [
-      new Ball(516,203,"red"),
-      new Ball(533,174,"red"),
-      new Ball(550,184,"red"),
-      new Ball(550,222,"red"),
-      new Ball(567,156,"red"),
-      new Ball(567,175,"red"),
-      new Ball(567,213,"red")
+		this.redballs = [
+      new Ball(this.area, 516,203,"red"),
+      new Ball(this.area, 533,174,"red"),
+      new Ball(this.area, 550,184,"red"),
+      new Ball(this.area, 550,222,"red"),
+      new Ball(this.area, 567,156,"red"),
+      new Ball(this.area, 567,175,"red"),
+      new Ball(this.area, 567,213,"red")
     ];
 
-    this.yellowBalls = [
-      new Ball(499,193,"yellow"),
-      new Ball(516,183,"yellow"),
-      new Ball(533,212,"yellow"),
-      new Ball(550,165,"yellow"),
-      new Ball(550,203,"yellow"),
-      new Ball(567,194,"yellow"),
-      new Ball(567,232,"yellow")
+    this.yellowballs = [
+      new Ball(this.area, 499,193,"yellow"),
+      new Ball(this.area, 516,183,"yellow"),
+      new Ball(this.area, 533,212,"yellow"),
+      new Ball(this.area, 550,165,"yellow"),
+      new Ball(this.area, 550,203,"yellow"),
+      new Ball(this.area, 567,194,"yellow"),
+      new Ball(this.area, 567,232,"yellow")
     ];
 
-    this.whiteBall = new Ball(193,193, "white");
-    this.blackBall = new Ball(533,193, "black");
+    this.whiteball = new Ball(this.area, 193,193, "white");
+    this.blackball = new Ball(this.area, 533,193, "black");
 
     this.balls = [
-      this.yellowBalls[0],
-      this.yellowBalls[1],
-      this.redBalls[0],
-      this.redBalls[1],
-      this.blackBall,
-      this.yellowBalls[2],
-      this.yellowBalls[3],
-      this.redBalls[2],
-      this.yellowBalls[4],
-      this.redBalls[3],
-      this.redBalls[4],
-      this.redBalls[5],
-      this.yellowBalls[5],
-      this.redBalls[6],
-      this.yellowBalls[6],
-      this.whiteBall
+      this.yellowballs[0],
+			this.yellowballs[1],
+			this.yellowballs[2],
+			this.yellowballs[3],
+			this.yellowballs[4],
+			this.yellowballs[5],
+			this.yellowballs[6],
+      this.redballs[0],
+      this.redballs[1],
+			this.redballs[2],
+			this.redballs[3],
+			this.redballs[4],
+			this.redballs[5],
+			this.redballs[6],
+      this.blackball,
+      this.whiteball
     ];
+
 		this.display = () => {
-		 area.clear();
-		 area.draw(this.image);
+		 this.area.clear();
+		 this.area.draw(this.image);
 		 for (var i = 0; i < this.balls.length; i++) {
          this.balls[i].draw();
      }
@@ -156,7 +157,7 @@ class MyView extends View {
 	 this.stage.appendChild(this.table);
 		// load sprites
 
-		this.stage.appendChild(area.cvs)
+		this.stage.appendChild(this.mvc.model.area.cvs)
 
 
 	}
@@ -223,7 +224,7 @@ class MyController extends Controller {
 	initialize(mvc) {
 		super.initialize(mvc);
 
-		area.cvs.onclick = () => {
+		this.mvc.model.area.cvs.onclick = () => {
 			var distance = 350;
 			var speedx = 2;
 			var speedy = 13;
