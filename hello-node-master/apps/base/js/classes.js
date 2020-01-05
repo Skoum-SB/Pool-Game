@@ -15,7 +15,6 @@ class Ball{
     this.ctx = this.cvs.getContext("2d");
     this.image = document.createElement("img");
     this.cvs.style.position = "absolute";
-    this.limit=210;
     this.radius=19;
     this.ismoving=0;
     this.vx=0;
@@ -43,21 +42,26 @@ class Ball{
       var slowy = (x<y) ? slow : slow*(Math.abs(y)/Math.abs(x));
 
       this.moveit = () => {
-        if((Math.abs(y)-slowy > 0.02) || (Math.abs(x)-slowy > 0.02)){
+        if((this.vx > -3.2) || (this.vy > -3.2)){
+
+          trace("TTTTTTTTTTTTTTTT",this.vx);
 //            if(this.number>0){trace("HEEEEEEEEEEEEEERE",this.y,this.number);}
           this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
           /*Left and Right*/ if(this.x < 55 || this.x > 1395){ this.vx = -this.vx;}
           /*Top and Bottom*/ if(this.y < 55 || this.y > 717){ this.vy = -this.vy;}
 
+
           for(var i=0; i<allBalls.length; i++){
             this.collideWith(allBalls[i],ratio, allBalls);
-
           }
 
           this.x += this.vx;
           this.y += this.vy;
 
           this.ctx.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, this.x*ratio, this.y*ratio, this.image.naturalWidth*ratio, this.image.naturalHeight*ratio);
+
+          //if(this.vx>0){  this.vx-=0.01;}
+          //if(this.vy<0){  this.vx+=0.01;}
           requestAnimationFrame(this.moveit);
         }
         else{
@@ -75,6 +79,7 @@ class Ball{
       var distance = Math.sqrt(dx * dx + dy * dy);
 
       if((this.x!=second_ball.x && this.y!=second_ball.y) && (distance < (this.radius + second_ball.radius)) ){
+
         //this.vx = -this.vx;
         //this.vx = -this.vx;
         if(second_ball.ismoving==0 && this.ismoving==1){
@@ -106,7 +111,9 @@ class Ball{
         second_ball.vx = vx2*cos-vy2*sin;
         second_ball.vy = vy2*cos+vx2*sin;
 
-    
+
+
+
         return true;
       }
 
