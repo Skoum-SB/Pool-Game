@@ -64,27 +64,27 @@ class MyModel extends Model {
     this.image.src = 'images/sprbackground4.png';
 
 		this.redballs = [
-      new Ball(this.area, 516,203,"red"),
-      new Ball(this.area, 533,174,"red"),
-      new Ball(this.area, 550,184,"red"),
-      new Ball(this.area, 550,222,"red"),
-      new Ball(this.area, 567,156,"red"),
-      new Ball(this.area, 567,175,"red"),
-      new Ball(this.area, 567,213,"red")
+	    new Ball(this.area, 1056,433,"red"),
+	    new Ball(this.area, 1090,374,"red"),
+	    new Ball(this.area, 1126,393,"red"),
+	    new Ball(this.area, 1126,472,"red"),
+	    new Ball(this.area, 1162,335,"red"),
+	    new Ball(this.area, 1162,374,"red"),
+	    new Ball(this.area, 1162,452,"red")
     ];
 
     this.yellowballs = [
-      new Ball(this.area, 499,193,"yellow"),
-      new Ball(this.area, 516,183,"yellow"),
-      new Ball(this.area, 533,212,"yellow"),
-      new Ball(this.area, 550,165,"yellow"),
-      new Ball(this.area, 550,203,"yellow"),
-      new Ball(this.area, 567,194,"yellow"),
-      new Ball(this.area, 567,232,"yellow")
+	    new Ball(this.area, 1022,413,"yellow"),
+	    new Ball(this.area, 1056,393,"yellow"),
+	    new Ball(this.area, 1090,452,"yellow"),
+	    new Ball(this.area, 1126,354,"yellow"),
+	    new Ball(this.area, 1126,433,"yellow"),
+	    new Ball(this.area, 1162,413,"yellow"),
+	    new Ball(this.area, 1162,491,"yellow")
     ];
 
-    this.whiteball = new Ball(this.area, 193,193, "white");
-    this.blackball = new Ball(this.area, 533,193, "black");
+    this.whiteball = new Ball(this.area, 413,413,"white");
+    this.blackball = new Ball(this.area, 1090,413,"black");
 
     this.balls = [
       this.yellowballs[0],
@@ -140,21 +140,21 @@ class MyView extends View {
 		// create get test btn
 	 this.btn = document.createElement("button");
 	 this.btn.innerHTML = "get test";
-	 this.stage.appendChild(this.btn);
+	 //this.stage.appendChild(this.btn);
 
 	 // create io test btn
 	 this.iobtn = document.createElement("button");
 	 this.iobtn.innerHTML = "io test";
-	 this.stage.appendChild(this.iobtn);
+	 //this.stage.appendChild(this.iobtn);
 
 	 // io random value display
 	 this.iovalue = document.createElement("div");
 	 this.iovalue.innerHTML = "no value";
-	 this.stage.appendChild(this.iovalue);
+	 //this.stage.appendChild(this.iovalue);
 
 	 // get dataset display
 	 this.table = document.createElement("table");
-	 this.stage.appendChild(this.table);
+	 //this.stage.appendChild(this.table);
 		// load sprites
 
 		this.stage.appendChild(this.mvc.model.area.cvs)
@@ -230,12 +230,17 @@ class MyController extends Controller {
 			var speedy = 13;
 			var slow = (speedx+speedy)/distance;
 			var power = 20;
-			var angle = Math.atan2(4,1);
+			var angle = Math.atan2(window.event.clientY- this.mvc.model.whiteball.y, window.event.clientX - this.mvc.model.whiteball.x);
 			this.mvc.model.balls[15].vitessex = 100*Math.cos(angle)*power;
 			this.mvc.model.balls[15].vitessey = 100*Math.sin(angle)*power;
 			console.log(this.mvc.model.balls[15].vitessex*0.01);
 			window.requestAnimationFrame(() => {this.mvc.model.balls[15].move(this.mvc.model.balls[15].vitessex*0.01, this.mvc.model.balls[15].vitessey*0.01, slow)});
 			console.log("Tamer ", window.event.pageX, " && ", window.event.clientX);
+			/*function calcAngleDegrees(x, y) {
+  			return Math.atan2(y, x) * 180 / Math.PI;
+			}
+			console.log(calcAngleDegrees(window.event.clientX - this.mvc.model.whiteball.x, window.event.clientY- this.mvc.model.whiteball.y));*/
+			/*console.log("click(",window.event.pageX, ",", window.event.pageY,"), ", "ball(", this.mvc.model.whiteball.x, ",", this.mvc.model.whiteball.y, ")");*/
 		}
 	}
 

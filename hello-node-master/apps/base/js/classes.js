@@ -13,7 +13,7 @@ class Ball{
 
   draw(){
     if(!this.out){
-      this.area.draw(this.image, this.x, this.y);
+      this.area.draw(this.image, this.x-25, this.y-25);
       this.image.src = "images/" + this.color + "ball.png";
     }
   }
@@ -23,8 +23,8 @@ class Ball{
     let slowy = (x<y) ? slow : slow*(y/x);
     this.moveit = () => {
       if((Math.abs(y)-slowy > 0) || (Math.abs(x)-slowx > 0)){
-        /*Left and Right*/ if(this.x < 26 || this.x > 700){ x = -x;}
-        /*Top and Bottom*/ if(this.y < 26 || this.y > 360){ y = -y;}
+        /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ x = -x;}
+        /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ y = -y;}
         this.x += x;
         this.y += y;
         x += (x > 0) ? -slowx : slowx;

@@ -31,7 +31,7 @@ class Area{
 
     this.ctx.save();
     this.ctx.scale(this.scalex, this.scaley);
-    this.ctx.translate(x, y);
+    //this.ctx.translate(x, y);
     this.ctx.drawImage(image, 0, 0, image.width, image.height, x, y, image.width, image.height);
     this.ctx.restore();
   }
