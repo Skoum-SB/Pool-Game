@@ -31,8 +31,6 @@ class Ball{
         this.vx += (this.vx * 0.0115);
         this.vy += (this.vy * 0.0115);
 
-
-
       if((Math.abs(this.vy) < 1) && (Math.abs(this.vx)<1)){
         this.ismoving = false;
         this.vx = 0;
@@ -44,8 +42,6 @@ class Ball{
   }
 
   collideWith(second_ball,holes){
-
-
     if(second_ball.ismoving==false && this.ismoving==false){
       return;
     }
@@ -70,10 +66,6 @@ class Ball{
     }
 
     if(this!=second_ball && (distance < this.radius*2) ){
-
-      //this.vx = -this.vx;
-      //this.vx = -this.vx;
-
       let angle = Math.atan2(dy,dx);
       let sin = Math.sin(angle);
       let cos = Math.cos(angle);
@@ -86,7 +78,6 @@ class Ball{
       let vy1 = this.vy*cos-this.vx*sin;
       let vx2 = second_ball.vx*cos+second_ball.vy*sin;
       let vy2 = second_ball.vy*cos-second_ball.vx*sin;
-
 
       //resolve 1D velocity, use temp letiables
       let vx1final = ((this.mass-second_ball.mass)*vx1+2*second_ball.mass*vx2)/(this.mass+second_ball.mass);
@@ -114,7 +105,6 @@ class Ball{
       this.x = this.x + x1final;
       this.y = this.y + y1final;
 
-
       this.vx = vx1*cos-vy1*sin;
       this.vy = vy1*cos+vx1*sin;
       second_ball.vx = vx2*cos-vy2*sin;
@@ -122,7 +112,6 @@ class Ball{
 
       this.ismoving = true;
       second_ball.ismoving = true;
-
 
       return true;
     }
@@ -160,9 +149,17 @@ class Ball{
 }
 
 class Stick{
-  constructor (force, angle){
-    this.force = force;
-    this.angle = angle;
+  constructor (area, x, y){
+    this.area = area;
+    this.x = x;
+    this.y = y;
+    this.image = document.createElement("img");
+    this.image.onload;
+  }
+
+  draw(){
+      this.area.draw(this.image, this.x-975, this.y-10);
+      this.image.src = "images/stick.png";
   }
 
 }

@@ -102,6 +102,8 @@ class MyModel extends Model {
 
     this.whiteball = new Ball(this.area, 413,413,"white");
     this.blackball = new Ball(this.area, 1090,413,"black");
+		this.stick = new Stick(this.area, this.whiteball.x,this.whiteball.y);
+
 
     this.balls = [
       this.yellowballs[0],
@@ -122,8 +124,6 @@ class MyModel extends Model {
 			this.blackball
     ];
 
-
-
 		this.display = () => {
 		 this.area.clear();
 		 this.area.draw(this.image);
@@ -135,6 +135,12 @@ class MyModel extends Model {
 				 }
      }
 
+	/*	 if(!this.whiteball.out && !this.whiteball.ismoving){
+			 this.mvc.model.stick.x=this.mvc.model.whiteball.x;
+			 this.mvc.model.stick.y=this.mvc.model.whiteball.y;
+
+		 }*/
+		 	this.stick.draw();
 
 		 requestAnimationFrame(this.display);
  	 }
@@ -258,6 +264,11 @@ class MyController extends Controller {
 				let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
 				this.mvc.model.whiteball.vx = Math.cos(angle)*power;
 				this.mvc.model.whiteball.vy = Math.sin(angle)*power;
+				 	//this.mvc.model.stick.x+=10;
+					this.mvc.model.stick.area.ctx.rotate(90);
+				// this.mvc.model.stick.image.style.transform="rotate("+ 90 +"deg)";
+				// this.mvc.model.stick.image.setAttribute("style", "transform: rotate(" + 90 + "deg)");
+
 				this.mvc.model.whiteball.ismoving = true;
 			}
 			else{
@@ -270,6 +281,11 @@ class MyController extends Controller {
 				}
 			}
 		}
+
+	/*	this.mvc.model.area.cvs.onmousemove = () => {
+			trace("herreee",window.event.pageY);
+		}*/
+
 
 	}
 
