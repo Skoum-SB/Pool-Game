@@ -21,7 +21,7 @@ class Ball{
     }
   }
 
-  move(allBalls,holes){
+  move(allBalls){
     if(this.ismoving){
 
         /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx; this.vx *= 0.95;}
@@ -45,9 +45,11 @@ class Ball{
 
   collideWith(second_ball,holes){
 
+
     if(second_ball.ismoving==false && this.ismoving==false){
       return;
     }
+
     let tx = (this.x + (this.x*0.01));
     let ty = (this.y + (this.y*0.01));
     let fx = (second_ball.x + (second_ball.x*0.01));
@@ -56,17 +58,19 @@ class Ball{
     let dy = fy - ty;
     let distance = Math.sqrt(dx * dx + dy * dy);
 
-    for(var ii=0; ii< 5; ii++){
-      var distance_ = Math.sqrt((this.x-holes[ii].x)*(this.x-holes[ii].x) + (this.y-holes[ii].y)*(this.y-holes[ii].y));
-      //if( distance_ < (this.radius+holes[ii].radius) && Math.abs(this.vx)<15  && Math.abs(this.vy)<15 ){
-      if( distance_ < (this.radius+holes[ii].radius)){
+    for(var i=0; i<holes.length; i++){
+      var distance_ = Math.sqrt((this.x-holes[i].x)*(this.x-holes[i].x) + (this.y-holes[i].y)*(this.y-holes[i].y));
+      if( distance_ < (this.radius+holes[i].radius)){
         this.ismoving=0;
         this.out=true;
+        this.x=0; this.y=0;
+
         return true;
       }
     }
-    
+
     if(this!=second_ball && (distance < this.radius*2) ){
+
       //this.vx = -this.vx;
       //this.vx = -this.vx;
 
@@ -104,18 +108,18 @@ class Ball{
        let y2final = y2*cos+x2*sin;
 
        // finally compute the new absolute positions
-        second_ball.x = this.x + x2final;
-        second_ball.y = this.y + y2final;
+      second_ball.x = this.x + x2final;
+      second_ball.y = this.y + y2final;
 
-        this.x = this.x + x1final;
-        this.y = this.y + y1final;
+      this.x = this.x + x1final;
+      this.y = this.y + y1final;
 
 
       this.vx = vx1*cos-vy1*sin;
       this.vy = vy1*cos+vx1*sin;
       second_ball.vx = vx2*cos-vy2*sin;
       second_ball.vy = vy2*cos+vx2*sin;
-      //console.log(second_ball.vy, second_ball.vx);
+
       this.ismoving = true;
       second_ball.ismoving = true;
 
@@ -123,11 +127,37 @@ class Ball{
       return true;
     }
 
+    return false;
   }
 
+    whiteCollideWith(x,y,second_ball,holes){
+
+      /*Left and Right*/ if(x < 55+25 || x > 1395+25){ return true;}
+      /*Top and Bottom*/ if(y < 55+25 || y > 717+25){ return true;}
+
+      let tx = (x + (x*0.01));
+      let ty = (y + (y*0.01));
+      let fx = (second_ball.x + (second_ball.x*0.01));
+      let fy = (second_ball.y + (second_ball.y*0.01));
+      let dx = fx - tx;
+      let dy = fy - ty;
+      let distance = Math.sqrt(dx * dx + dy * dy);
+
+      for(let i=0; i<holes.length; i++){
+        let distance_ = Math.sqrt((x-holes[i].x)*(x-holes[i].x) + (y-holes[i].y)*(y-holes[i].y));
+        if( distance_ < (this.radius+holes[i].radius)){
+          return true;
+        }
+      }
+
+      if(this!=second_ball && (distance < this.radius*2) ){
+        return true;
+      }
+
+      return false;
+    }
+
 }
-
-
 
 class Stick{
   constructor (force, angle){

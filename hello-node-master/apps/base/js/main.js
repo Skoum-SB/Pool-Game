@@ -64,20 +64,20 @@ class MyModel extends Model {
     this.image.src = 'images/sprbackground4.png';
 
 		this.holes = [
-			 new Ball(this.area, 750,32,"red"),
-			 new Ball(this.area, 750,794,"red"),
+			 new Ball(this.area, 750,50,"red"),
+			 new Ball(this.area, 750,776,"red"),
 			 new Ball(this.area, 62,62,"red"),
 			 new Ball(this.area, 1435,62,"red"),
 			 new Ball(this.area, 62,762,"red"),
 			 new Ball(this.area, 1435,762,"red")
 		];
 
-		this.holes[0].radius = 46+6;
-		this.holes[1].radius = 46+6;
-		this.holes[2].radius = 46;
-		this.holes[3].radius = 46;
-		this.holes[4].radius = 46;
-		this.holes[5].radius = 46;
+		this.holes[0].radius = 15;
+		this.holes[1].radius = 15;
+		this.holes[2].radius = 25;
+		this.holes[3].radius = 25;
+		this.holes[4].radius = 25;
+		this.holes[5].radius = 25;
 
 
 		this.redballs = [
@@ -123,12 +123,13 @@ class MyModel extends Model {
     ];
 
 
+
 		this.display = () => {
 		 this.area.clear();
 		 this.area.draw(this.image);
 		 for (let i = 0; i < this.balls.length; i++) {
          this.balls[i].draw();
-				 this.balls[i].move(this.balls,this.holes);
+				 this.balls[i].move(this.balls);
 				 for(let j = i+1; j<this.balls.length; j++){
 					 this.balls[i].collideWith(this.balls[j],this.holes);
 				 }
@@ -257,24 +258,32 @@ class MyController extends Controller {
 				let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
 				this.mvc.model.whiteball.vx = Math.cos(angle)*power;
 				this.mvc.model.whiteball.vy = Math.sin(angle)*power;
-				//console.log(window.event.pageY*this.mvc.model.area.scaley);
-				//console.log(this.mvc.model.whiteball.vy);
 				this.mvc.model.whiteball.ismoving = true;
-				//this.mvc.model.whiteball.move(this.mvc.model.balls);
-
 			}
 			else{
-				this.mvc.model.whiteball.x = window.event.pageX - this.mvc.model.area.scalex;
-				this.mvc.model.whiteball.y = window.event.pageY - this.mvc.model.area.scaley;
-				trace("aaaaaaaaaaaaaaamouse",window.event.pageX - this.mvc.model.area.scalex ,window.event.pageY - this.mvc.model.area.scaley);
-				trace("rrrrrrrrrrrrrrrrr",this.mvc.model.whiteball.x,this.mvc.model.whiteball.y);
-				this.mvc.model.whiteball.out=false;
+				var x = window.event.pageX / this.mvc.model.area.scalex;
+				var y = window.event.pageY / this.mvc.model.area.scaley;
+				if(this.mvc.controller.checkBall(x,y,this.mvc.model.whiteball,this.mvc.model.balls,this.mvc.model.holes)==true){
+					this.mvc.model.whiteball.x = x;
+					this.mvc.model.whiteball.y =y;
+					this.mvc.model.whiteball.out=false;
+				}
 			}
 		}
 
-
 	}
 
+	 checkBall(x,y,whiteball,balls,holes){
+		for(var i=0; i<balls.length; i++){
+			if(whiteball.whiteCollideWith(x,y,balls[i],holes)==true){
+				trace("nope again");
+				whiteball.x =0;
+				whiteball.y =0;
+				return false
+			}
+		}
+		return true;
+	}
 
 	async btnWasClicked(params) {
 		trace("btn click", params);
