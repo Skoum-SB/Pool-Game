@@ -87,7 +87,7 @@ class MyModel extends Model {
     this.blackball = new Ball(this.area, 1090,413,"black");
 
     this.balls = [
-      this.yellowballs[0],
+      /*this.yellowballs[0],
 			this.yellowballs[1],
 			this.yellowballs[2],
 			this.yellowballs[3],
@@ -100,7 +100,7 @@ class MyModel extends Model {
 			this.redballs[3],
 			this.redballs[4],
 			this.redballs[5],
-			this.redballs[6],
+			this.redballs[6],*/
       this.blackball,
       this.whiteball
     ];
@@ -110,6 +110,10 @@ class MyModel extends Model {
 		 this.area.draw(this.image);
 		 for (let i = 0; i < this.balls.length; i++) {
          this.balls[i].draw();
+				 this.balls[i].move(this.balls);
+				 if(i<this.balls.length-1){
+					 this.balls[i].collideWith(this.balls[i+1]);
+				 }
      }
 		 requestAnimationFrame(this.display);
  	 }
@@ -225,12 +229,14 @@ class MyController extends Controller {
 		super.initialize(mvc);
 
 		this.mvc.model.area.cvs.onclick = () => {
-			let power = 10;
+			let power = 25;
 			let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
 			this.mvc.model.whiteball.vx = Math.cos(angle)*power;
 			this.mvc.model.whiteball.vy = Math.sin(angle)*power;
-			console.log(window.event.pageY*this.mvc.model.area.scaley);
-			this.mvc.model.whiteball.move(this.mvc.model.balls);
+			//console.log(window.event.pageY*this.mvc.model.area.scaley);
+			//console.log(this.mvc.model.whiteball.vy);
+			this.mvc.model.whiteball.ismoving = true;
+			//this.mvc.model.whiteball.move(this.mvc.model.balls);
 		}
 	}
 

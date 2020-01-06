@@ -22,38 +22,44 @@ class Ball{
   }
 
   move(allBalls){
-    this.ismoving = true;
-    this.moveit = () => {
-      //if((Math.abs(y)-slowy > 0) || (Math.abs(x)-slowx > 0)){
-        /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx;}
-        /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ this.vy = -this.vy;}
-        for(let i=0; i<allBalls.length; i++){
+
+    if(this.ismoving){
+        /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx; this.vx *= 0.95;}
+        /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ this.vy = -this.vy; this.vx *= 0.95;}
+        /*for(let i=0; i<allBalls.length; i++){
             this.collideWith(allBalls[i],allBalls);
-          }
+          }*/
         this.x += this.vx;
         this.y += this.vy;
-        requestAnimationFrame(this.moveit);
+        this.vx += 0.01;
+        this.vy += 0.01;
+        //console.log(this.vy);
+
+        //requestAnimationFrame(this.moveit);
       /*}
-      else{
-        cancelAnimationFrame(this.moveit);
+      else{*/
+      if((Math.abs(this.vy) < 1) && (Math.abs(this.vx)<1)){
+        //cancelAnimationFrame(this.moveit);
         this.ismoving = false;
+        this.vx = 0;
+        this.vy = 0;
       }
-    }*/
     }
-    this.moveit();
+    this.vx *= 0.98;
+    this.vy *= 0.98;
   }
 
-  collideWith(second_ball, allBalls){
+  collideWith(second_ball){
 
-    let dx = second_ball.x - this.x	;
-    let dy = second_ball.y -	this.y	;
+    let dx = second_ball.x - this.x ;
+    let dy = second_ball.y -  this.y  ;
     let distance = Math.sqrt(dx * dx + dy * dy);
 
     if(this!=second_ball && (distance < this.radius*2) ){
       //this.vx = -this.vx;
       //this.vx = -this.vx;
-      if(second_ball.ismoving==0 && this.ismoving==1){
-        second_ball.move(allBalls);
+      if(second_ball.ismoving==false && this.ismoving==false){
+        return;
       }
       let angle = Math.atan2(dy,dx);
       let sin = Math.sin(angle);
@@ -78,6 +84,10 @@ class Ball{
       this.vy = vy1*cos+vx1*sin;
       second_ball.vx = vx2*cos-vy2*sin;
       second_ball.vy = vy2*cos+vx2*sin;
+      this.x += this.vx;
+      this.y += this.vy;
+      second_ball.x += second_ball.vx;
+      second_ball.y += second_ball.vy;
 
 
       return true;
