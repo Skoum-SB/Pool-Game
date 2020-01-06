@@ -21,43 +21,51 @@ class Ball{
     }
   }
 
-  move(allBalls){
-
+  move(allBalls,holes){
     if(this.ismoving){
-      //console.log(this.color);
+
         /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx; this.vx *= 0.95;}
         /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ this.vy = -this.vy; this.vx *= 0.95;}
-        /*for(let i=0; i<allBalls.length; i++){
-            this.collideWith(allBalls[i],allBalls);
-          }*/
         this.x += this.vx;
         this.y += this.vy;
-        this.vx += 0.01;
-        this.vy += 0.01;
-        //console.log(this.vy);
+        this.vx += (this.vx * 0.0115);
+        this.vy += (this.vy * 0.0115);
 
-        //requestAnimationFrame(this.moveit);
-      /*}
-      else{*/
+
+
       if((Math.abs(this.vy) < 1) && (Math.abs(this.vx)<1)){
-        //cancelAnimationFrame(this.moveit);
         this.ismoving = false;
         this.vx = 0;
         this.vy = 0;
       }
     }
-    this.vx *= 0.98;
-    this.vy *= 0.98;
+    this.vx *= 0.979;
+    this.vy *= 0.979;
   }
 
-  collideWith(second_ball){
+  collideWith(second_ball,holes){
 
     if(second_ball.ismoving==false && this.ismoving==false){
       return;
     }
-    let dx = second_ball.x - this.x ;
-    let dy = second_ball.y -  this.y  ;
+    let tx = (this.x + (this.x*0.01));
+    let ty = (this.y + (this.y*0.01));
+    let fx = (second_ball.x + (second_ball.x*0.01));
+    let fy = (second_ball.y + (second_ball.y*0.01));
+    let dx = fx - tx;
+    let dy = fy - ty;
     let distance = Math.sqrt(dx * dx + dy * dy);
+
+    for(var ii=0; ii< 5; ii++){
+      var distance_ = Math.sqrt((this.x-holes[ii].x)*(this.x-holes[ii].x) + (this.y-holes[ii].y)*(this.y-holes[ii].y));
+      //if( distance_ < (this.radius+holes[ii].radius) && Math.abs(this.vx)<15  && Math.abs(this.vy)<15 ){
+      if( distance_ < (this.radius+holes[ii].radius)){
+        this.ismoving=0;
+        this.out=true;
+        return true;
+      }
+    }
+    
     if(this!=second_ball && (distance < this.radius*2) ){
       //this.vx = -this.vx;
       //this.vx = -this.vx;

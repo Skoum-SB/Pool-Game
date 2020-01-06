@@ -63,6 +63,23 @@ class MyModel extends Model {
     this.image.onload;
     this.image.src = 'images/sprbackground4.png';
 
+		this.holes = [
+			 new Ball(this.area, 750,32,"red"),
+			 new Ball(this.area, 750,794,"red"),
+			 new Ball(this.area, 62,62,"red"),
+			 new Ball(this.area, 1435,62,"red"),
+			 new Ball(this.area, 62,762,"red"),
+			 new Ball(this.area, 1435,762,"red")
+		];
+
+		this.holes[0].radius = 46+6;
+		this.holes[1].radius = 46+6;
+		this.holes[2].radius = 46;
+		this.holes[3].radius = 46;
+		this.holes[4].radius = 46;
+		this.holes[5].radius = 46;
+
+
 		this.redballs = [
 	    new Ball(this.area, 1056,433,"red"),
 	    new Ball(this.area, 1090,374,"red"),
@@ -105,16 +122,19 @@ class MyModel extends Model {
 			this.blackball
     ];
 
+
 		this.display = () => {
 		 this.area.clear();
 		 this.area.draw(this.image);
 		 for (let i = 0; i < this.balls.length; i++) {
          this.balls[i].draw();
-				 this.balls[i].move(this.balls);
+				 this.balls[i].move(this.balls,this.holes);
 				 for(let j = i+1; j<this.balls.length; j++){
-					 this.balls[i].collideWith(this.balls[j]);
+					 this.balls[i].collideWith(this.balls[j],this.holes);
 				 }
      }
+
+
 		 requestAnimationFrame(this.display);
  	 }
 	 this.display();
@@ -138,6 +158,8 @@ class MyView extends View {
 	}
 
 	initialize(mvc) {
+
+
 		super.initialize(mvc);
 
 		this.stage.style.backgroundColor = "black";
@@ -229,32 +251,40 @@ class MyController extends Controller {
 		super.initialize(mvc);
 
 		this.mvc.model.area.cvs.onclick = () => {
-			let power = 30;
-			let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
-			this.mvc.model.whiteball.vx = Math.cos(angle)*power;
-			this.mvc.model.whiteball.vy = Math.sin(angle)*power;
-			//console.log(window.event.pageY*this.mvc.model.area.scaley);
-			//console.log(this.mvc.model.whiteball.vy);
-			this.mvc.model.whiteball.ismoving = true;
-			//this.mvc.model.whiteball.move(this.mvc.model.balls);
+
+			if(!this.mvc.model.whiteball.out){
+				let power =20;
+				let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
+				this.mvc.model.whiteball.vx = Math.cos(angle)*power;
+				this.mvc.model.whiteball.vy = Math.sin(angle)*power;
+				//console.log(window.event.pageY*this.mvc.model.area.scaley);
+				//console.log(this.mvc.model.whiteball.vy);
+				this.mvc.model.whiteball.ismoving = true;
+				//this.mvc.model.whiteball.move(this.mvc.model.balls);
+
+			}
+			else{
+				this.mvc.model.whiteball.x = window.event.pageX - this.mvc.model.area.scalex;
+				this.mvc.model.whiteball.y = window.event.pageY - this.mvc.model.area.scaley;
+				trace("aaaaaaaaaaaaaaamouse",window.event.pageX - this.mvc.model.area.scalex ,window.event.pageY - this.mvc.model.area.scaley);
+				trace("rrrrrrrrrrrrrrrrr",this.mvc.model.whiteball.x,this.mvc.model.whiteball.y);
+				this.mvc.model.whiteball.out=false;
+			}
 		}
+
+
 	}
 
 
 	async btnWasClicked(params) {
 		trace("btn click", params);
 		this.mvc.view.update(await this.mvc.model.data()); // wait async request > response from server and update view table values
-
-
 	}
 
 	async ioBtnWasClicked(params) {
 		trace("io btn click", params);
 		this.mvc.app.io.emit("dummy", {message: "dummy io click"}); // send socket.io packet
-
-
 	}
-
 
 	ioDummy(data) {
 		this.mvc.view.updateIO(data.value); // io dummy data received from main app
