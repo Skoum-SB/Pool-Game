@@ -41,7 +41,7 @@ class Base extends ModuleBase {
 	 */
 	_onIOConnect(socket) {
 		super._onIOConnect(socket); // do not remove super call
-		socket.on("dummy", packet => this._onDummyData(socket, packet)); // listen to "dummy" messages
+		//socket.on("dummy", packet => this._onDummyData(socket, packet)); // listen to "dummy" messages
 		socket.on("login", packet => this._onLogin(socket, packet));
 	}
 

@@ -81,13 +81,62 @@ class MyModel extends Model {
 
 	constructor() {
 		super();
-		this.name = "";
-		this.players = [];
-		this.room = 0;
 	}
 
 	async initialize(mvc) {
 		super.initialize(mvc);
+
+		this.name = "";
+		this.players = [];
+		this.room = 0;
+
+		this.area = new Area();
+		this.image = document.createElement("img");
+		this.image.src = 'images/sprbackground4.png';
+
+		this.redballs = [
+		new Ball(this.area, 1056,433,"red"),
+		new Ball(this.area, 1090,374,"red"),
+		new Ball(this.area, 1126,393,"red"),
+		new Ball(this.area, 1126,472,"red"),
+		new Ball(this.area, 1162,335,"red"),
+		new Ball(this.area, 1162,374,"red"),
+		new Ball(this.area, 1162,452,"red")
+		];
+
+		this.yellowballs = [
+		new Ball(this.area, 1022,413,"yellow"),
+		new Ball(this.area, 1056,393,"yellow"),
+		new Ball(this.area, 1090,452,"yellow"),
+		new Ball(this.area, 1126,354,"yellow"),
+		new Ball(this.area, 1126,433,"yellow"),
+		new Ball(this.area, 1162,413,"yellow"),
+		new Ball(this.area, 1162,491,"yellow")
+		];
+
+		this.whiteball = new Ball(this.area, 413,413,"white");
+		this.blackball = new Ball(this.area, 1090,413,"black");
+
+		this.balls = [
+			this.yellowballs[0],
+			this.yellowballs[1],
+			this.yellowballs[2],
+			this.yellowballs[3],
+			this.yellowballs[4],
+			this.yellowballs[5],
+			this.yellowballs[6],
+			this.redballs[0],
+			this.redballs[1],
+			this.redballs[2],
+			this.redballs[3],
+			this.redballs[4],
+			this.redballs[5],
+			this.redballs[6],
+			this.blackball,
+			this.whiteball
+		];
+
+
 	}
 
 	/*async data() {
@@ -146,7 +195,6 @@ class MyView extends View {
 		this.iobtn = document.createElement("button");
 		this.iobtn.innerHTML = "io test";
 		this.stage.appendChild(this.iobtn);*/
-		
 
 		var text = document.createTextNode('Votre Pseudo :');
 		this.stage.appendChild(text);
@@ -161,6 +209,8 @@ class MyView extends View {
 		this.submitInput.innerHTML = "Valider";
 
 		this.stage.appendChild(this.submitInput);
+
+		this.stage.appendChild(this.mvc.model.area.cvs);
 	}
 
 
@@ -177,12 +227,6 @@ class MyView extends View {
 	}
 
 	addListeners() {
-		/*this.getBtnHandler = e => this.btnClick(e);
-		this.btn.addEventListener("click", this.getBtnHandler);
-
-		this.ioBtnHandler = e => this.ioBtnClick(e);
-		this.iobtn.addEventListener("click", this.ioBtnHandler);*/
-
 		this.submitHandler = e => this.submitName(e);
 		this.submitInput.addEventListener("click", this.submitHandler);
 
@@ -194,14 +238,6 @@ class MyView extends View {
 		/*this.btn.removeEventListener("click", this.getBtnHandler);
 		this.iobtn.removeEventListener("click", this.ioBtnHandler);*/
 	}
-
-	/*btnClick(event) {
-		this.mvc.controller.btnWasClicked("more parameters"); // dispatch
-	}
-
-	ioBtnClick(event) {
-		this.mvc.controller.ioBtnWasClicked("io parameters"); // dispatch
-	}*/
 
 	submitName(event){
 		this.mvc.controller.submitName(document.getElementById("name").value);
@@ -221,7 +257,7 @@ class MyView extends View {
 		for(var i = 0 ; i < data.length ; i++){
 			let line = document.createElement("tr"); // create line
 			let cell = document.createElement("td"); // create cell
-			cell.innerHTML = data[i]; // display
+			cell.innerHTML = data[i];
 			line.appendChild(cell); // add cell
 
 			cell = document.createElement("td"); //second cell
@@ -258,13 +294,13 @@ class MyView extends View {
 		this.stage.appendChild(this.table);
 	}
 
-	waitAnswer(){
+	/*waitAnswer(){
 		this.stage.innerHTML = "";
 		this.stage.appendChild(document.createTextNode("En attente de la réponse de votre adversaire"));
-	}
+	}*/
 
 	startGame(){
-		this.stage.innerHTML = "";
+		/*this.stage.innerHTML = "";
 		this.stage.appendChild(document.createTextNode("Vous êtes dans la Room N°" + (this.mvc.model.room + 1)));
 		this.cvs = document.createElement("canvas");
 		this.ctx = this.cvs.getContext("2d");
@@ -294,15 +330,22 @@ class MyView extends View {
 
 		this.stage.appendChild(this.cvs);
 
-		//ball
-		//this.gege = new Ball(100,100,1,1,10);
-
 		var canvas = document.createElement("canvas");
 		var ctex = canvas.getContext("2d");
 		var image = document.createElement("yellowball.png");
-
-		//ctex.drawImage(image, 33, 71);
-		//this.stage.appendChild(this.gege);
+		*/
+		this.stage.style.backgroundColor = "black";
+		this.stage.innerHTML = "";
+		this.display = () => {
+			this.mvc.model.image.onload;
+			trace("yep");
+			this.mvc.model.area.clear();
+			this.mvc.model.area.draw(this.mvc.model.image);
+			for(let i = 0; i < this.mvc.model.balls.length; i++)
+				this.mvc.model.balls[i].draw();
+			requestAnimationFrame(this.display);
+		}
+		this.display();
 	}
 }
 
@@ -362,17 +405,17 @@ class MyController extends Controller {
 	start(room){
 		this.mvc.model.changeRoom(room);
 		this.mvc.view.startGame();
+		//this.mvc.view.display();
 	}
 
 	challenge(opponent){
 		trace(opponent);
 		this.mvc.app.io.emit("challenge", this.mvc.model.players[opponent]);
-		this.mvc.view.waitAnswer();
+		//this.mvc.view.waitAnswer();
 	}
 
 	playerLeftGame(players){
 		this.mvc.view.lobby();
 		this.getPlayers(players);
 	}
-
 }
