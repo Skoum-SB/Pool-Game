@@ -229,14 +229,11 @@ class MyController extends Controller {
 		super.initialize(mvc);
 
 		this.mvc.model.area.cvs.onclick = () => {
-			let power = 25;
+			let power = 20;
 			let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
 			this.mvc.model.whiteball.vx = Math.cos(angle)*power;
 			this.mvc.model.whiteball.vy = Math.sin(angle)*power;
-			//console.log(window.event.pageY*this.mvc.model.area.scaley);
-			//console.log(this.mvc.model.whiteball.vy);
 			this.mvc.model.whiteball.ismoving = true;
-			//this.mvc.model.whiteball.move(this.mvc.model.balls);
 		}
 	}
 

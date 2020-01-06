@@ -22,32 +22,21 @@ class Ball{
   }
 
   move(allBalls){
-
     if(this.ismoving){
-      //console.log(this.color);
         /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx; this.vx *= 0.95;}
         /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ this.vy = -this.vy; this.vx *= 0.95;}
-        /*for(let i=0; i<allBalls.length; i++){
-            this.collideWith(allBalls[i],allBalls);
-          }*/
         this.x += this.vx;
         this.y += this.vy;
-        this.vx += 0.01;
-        this.vy += 0.01;
-        //console.log(this.vy);
-
-        //requestAnimationFrame(this.moveit);
-      /*}
-      else{*/
+        this.vx += (this.vx * 0.01);
+        this.vy += (this.vy * 0.01);
       if((Math.abs(this.vy) < 1) && (Math.abs(this.vx)<1)){
-        //cancelAnimationFrame(this.moveit);
         this.ismoving = false;
         this.vx = 0;
         this.vy = 0;
       }
     }
-    this.vx *= 0.98;
-    this.vy *= 0.98;
+    this.vx *= 0.979;
+    this.vy *= 0.979;
   }
 
   collideWith(second_ball){
@@ -55,8 +44,12 @@ class Ball{
     if(second_ball.ismoving==false && this.ismoving==false){
       return;
     }
-    let dx = second_ball.x - this.x ;
-    let dy = second_ball.y -  this.y  ;
+    let tx = (this.x + (this.x*0.01));
+    let ty = (this.y + (this.y*0.01));
+    let fx = (second_ball.x + (second_ball.x*0.01));
+    let fy = (second_ball.y + (second_ball.y*0.01));
+    let dx = fx - tx;
+    let dy = fy - ty;
     let distance = Math.sqrt(dx * dx + dy * dy);
     if(this!=second_ball && (distance < this.radius*2) ){
       //this.vx = -this.vx;
@@ -66,6 +59,8 @@ class Ball{
       let sin = Math.sin(angle);
       let cos = Math.cos(angle);
       let x1=0; let y1=0;
+      let x2 = dx*cos+dy*sin;
+      let y2 = dy*cos-dx*sin;
 
       //Rotate velocity
       let vx1 = this.vx*cos+this.vy*sin;
@@ -80,6 +75,26 @@ class Ball{
       // update velocity
       vx1 = vx1final;
       vx2 = vx2final;
+
+      // fix the glitch by moving ball part equal to the overlap
+       let absV = Math.abs(vx1)+Math.abs(vx2);
+       let overlap =38-Math.abs(x1-x2);
+       x1 += vx1/absV*overlap;
+       x2 += vx2/absV*overlap;
+
+       // rotate the relative positions back
+       let x1final = x1*cos-y1*sin;
+       let y1final = y1*cos+x1*sin;
+       let x2final = x2*cos-y2*sin;
+       let y2final = y2*cos+x2*sin;
+
+       // finally compute the new absolute positions
+        second_ball.x = this.x + x2final;
+        second_ball.y = this.y + y2final;
+
+        this.x = this.x + x1final;
+        this.y = this.y + y1final;
+
 
       this.vx = vx1*cos-vy1*sin;
       this.vy = vy1*cos+vx1*sin;
