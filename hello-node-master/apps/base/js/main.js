@@ -336,7 +336,9 @@ class MyView extends View {
 		*/
 		this.stage.style.backgroundColor = "black";
 		this.stage.innerHTML = "";
+
 		this.stage.appendChild(this.mvc.model.area.cvs);
+		this.mvc.model.area.cvs.onclick = () => {this.mvc.controller.playerClick(window.event.pageX, window.event.pageY)};
 
 		this.display = () => {
 			this.mvc.model.image.onload;
@@ -419,5 +421,14 @@ class MyController extends Controller {
 	playerLeftGame(players){
 		this.mvc.view.lobby();
 		this.getPlayers(players);
+	}
+
+	playerClick(clickX, clickY){
+		let power = 10;
+		let angle = Math.atan2(clickY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), clickX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
+		this.mvc.model.whiteball.vx = Math.cos(angle)*power;
+		this.mvc.model.whiteball.vy = Math.sin(angle)*power;
+		console.log(window.event.pageY*this.mvc.model.area.scaley);
+		this.mvc.model.whiteball.move(this.mvc.model.balls);
 	}
 }
