@@ -22,7 +22,7 @@ class Ball{
   }
 
   move(allBalls){
-    var delta= 1/100;
+  //  var delta= 1/100;
     this.ismoving = true;
     this.moveit = () => {
       if((Math.abs(this.vy) > 0.2) || (Math.abs(this.vx) > 0.2)){
@@ -35,12 +35,12 @@ class Ball{
         /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx;}
         /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ this.vy = -this.vy;}
 
-        /*
-        if(this.vx>0){this.vx -=0.02;}
-        if(this.vy>0){this.vy -=0.02;}
 
-        if(this.vx<0){this.vx +=0.02;}
-        if(this.vy<0){this.vy +=0.02;} */
+        if(this.vx>0){this.vx -=0.03;}
+        if(this.vy>0){this.vy -=0.03;}
+
+        if(this.vx<0){this.vx +=0.03;}
+        if(this.vy<0){this.vy +=0.03;}
 
 
         //this.vx *= 0.98;
@@ -49,8 +49,14 @@ class Ball{
         this.x += this.vx;
         this.y += this.vy;
         requestAnimationFrame(this.moveit);
+
       }
       else{
+        //if(this.x == allBalls[14].x){trace("STOP it!",allBalls[14].x);}
+        trace("je marrete");
+        this.vx=0;
+        this.vy=0;
+
         cancelAnimationFrame(this.moveit);
         this.ismoving = false;
       }
@@ -64,19 +70,22 @@ class Ball{
     var dy = second_ball.y -	this.y	;
     var distance = Math.sqrt(dx * dx + dy * dy);
 
-    if(this!=second_ball && (distance < this.radius*2) ){
+    if(this!=second_ball && (distance <= this.radius*2) ){
+      second_ball.vx=-this.vx;
+      second_ball.vy=-this.vy;
 
-      /*  if(second_ball.vx>0){second_ball.vx -=0.03;}
-        if(second_ball.vy>0){second_ball.vy -=0.03;}
+      /*Energy loos*/
+      if(second_ball.vx>0){second_ball.vx +=0.00;}
+      if(second_ball.vy>0){second_ball.vy +=0.00;}
 
-        if(second_ball.vx<0){second_ball.vx +=0.03;}
-        if(second_ball.vy<0){second_ball.vy +=0.03;}
+      if(second_ball.vx<0){second_ball.vx -=0.00;}
+      if(second_ball.vy<0){second_ball.vy -=0.00;}
 
-        if(this.vx>0){this.vx -=0.01;}
-        if(this.vy>0){this.vy -=0.01;}
+      if(this.vx>0){this.vx -=0.04;}
+      if(this.vy>0){this.vy -=0.04;}
 
-        if(this.vx<0){this.vx +=0.01;}
-        if(this.vy<0){this.vy +=0.01;}*/
+      if(this.vx<0){this.vx +=0.04;}
+      if(this.vy<0){this.vy +=0.04;}
 
       //this.vx = -this.vx;
       //this.vx = -this.vx;
@@ -104,9 +113,9 @@ class Ball{
       vx1 = vx1final;
       vx2 = vx2final;
 
-      // fix the glitch by moving ball part equal to the overlap
+     // fix the glitch by moving ball part equal to the overlap
       let absV = Math.abs(vx1)+Math.abs(vx2);
-      let overlap = (this.radius+second_ball.radius)-Math.abs(x1-x2);
+      let overlap =38-Math.abs(x1-x2);
       x1 += vx1/absV*overlap;
       x2 += vx2/absV*overlap;
 
@@ -124,13 +133,14 @@ class Ball{
        this.y = this.y + y1final;
 
        //rotate vel back
-      this.vx = vx1*cos-vy1*sin;
-      this.vy = vy1*cos+vx1*sin;
-      second_ball.vx = vx2*cos-vy2*sin;
-      second_ball.vy = vy2*cos+vx2*sin;
+      this.vx = (vx1*cos-vy1*sin)*0.95;
+      this.vy = (vy1*cos+vx1*sin)*0.95;
+      second_ball.vx = (vx2*cos-vy2*sin)*0.95;
+      second_ball.vy = (vy2*cos+vx2*sin)*0.95;
+      //trace("viteseeeeee",this.vx,this.vy);
 
 
-      return true;
+      //return true;
     }
 
   }
