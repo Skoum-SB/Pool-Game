@@ -56,9 +56,9 @@ class Base {
 		trace("DC", data);
 	}
 
-	onStart(room){
-		trace("Starting the game", room);
-		this.mvc.controller.start(room); // send it to controller
+	onStart(gameData){
+		trace("Starting the game");
+		this.mvc.controller.start(gameData); // send it to controller
 		this.io.removeAllListeners();
 		this.io.on("playerLeft", packet => this.onplayerLeft(packet));
 	}
@@ -88,13 +88,21 @@ class MyModel extends Model {
 
 		this.name = "";
 		this.players = [];
-		this.room = 0;
 
 		this.area = new Area();
 		this.image = document.createElement("img");
 		this.image.src = 'images/sprbackground4.png';
 
-		this.redballs = [
+		this.balls = (function () {var array = []; for(var i=0 ; i < 16 ; i++){array.push(new Ball);} return array;})();
+		
+		this.balls.forEach(ball => {
+			ball.image = document.createElement("img");
+			ball.area = this.area;
+		});
+
+		trace(this.balls);
+
+		/*var redballs = [
 		new Ball(this.area, 1056,433,"red"),
 		new Ball(this.area, 1090,374,"red"),
 		new Ball(this.area, 1126,393,"red"),
@@ -104,7 +112,7 @@ class MyModel extends Model {
 		new Ball(this.area, 1162,452,"red")
 		];
 
-		this.yellowballs = [
+		var yellowballs = [
 		new Ball(this.area, 1022,413,"yellow"),
 		new Ball(this.area, 1056,393,"yellow"),
 		new Ball(this.area, 1090,452,"yellow"),
@@ -114,29 +122,15 @@ class MyModel extends Model {
 		new Ball(this.area, 1162,491,"yellow")
 		];
 
-		this.whiteball = new Ball(this.area, 413,413,"white");
-		this.blackball = new Ball(this.area, 1090,413,"black");
+		var whiteball = new Ball(this.area, 413,413,"white");
+		var blackball = new Ball(this.area, 1090,413,"black");
 
-		this.balls = [
-			this.yellowballs[0],
-			this.yellowballs[1],
-			this.yellowballs[2],
-			this.yellowballs[3],
-			this.yellowballs[4],
-			this.yellowballs[5],
-			this.yellowballs[6],
-			this.redballs[0],
-			this.redballs[1],
-			this.redballs[2],
-			this.redballs[3],
-			this.redballs[4],
-			this.redballs[5],
-			this.redballs[6],
-			this.blackball,
-			this.whiteball
-		];
+		this.balls = yellowballs.concat(redballs);
+		this.balls.push(blackball);
+		this.balls.push(whiteball);
 
 
+		trace(this.balls);*/
 	}
 
 	/*async data() {
@@ -170,11 +164,6 @@ class MyModel extends Model {
 			}
 		}
 	}
-
-	changeRoom(room){
-		this.room = room;
-	}
-
 }
 
 class MyView extends View {
@@ -295,46 +284,7 @@ class MyView extends View {
 		this.stage.appendChild(this.table);
 	}
 
-	/*waitAnswer(){
-		this.stage.innerHTML = "";
-		this.stage.appendChild(document.createTextNode("En attente de la réponse de votre adversaire"));
-	}*/
-
 	startGame(){
-		/*this.stage.innerHTML = "";
-		this.stage.appendChild(document.createTextNode("Vous êtes dans la Room N°" + (this.mvc.model.room + 1)));
-		this.cvs = document.createElement("canvas");
-		this.ctx = this.cvs.getContext("2d");
-		this.img = document.createElement("img");
-		this.img.src = 'images/sprbackground4.png';
-
-		this.img.onload = () => {
-			this.imageRatio = window.innerHeight/this.img.naturalHeight;
-			this.ratio = window.innerWidth/this.img.naturalWidth;
-			this.cvs.width = window.innerWidth;
-			this.cvs.height = window.innerHeight;
-			if(this.img.naturalHeight*this.ratio > window.innerHeight-40){
-				console.log("Oui");
-				this.width = this.img.naturalWidth*this.imageRatio-40;
-				this.height = this.img.naturalHeight*this.imageRatio-40;
-			}
-			else{
-				this.width = this.img.naturalWidth*this.ratio;
-				this.height = this.img.naturalHeight*this.ratio;
-			}
-			this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.width, this.height);
-		}
-
-		window.onresize = () => {
-			this.img.onload();
-		};
-
-		this.stage.appendChild(this.cvs);
-
-		var canvas = document.createElement("canvas");
-		var ctex = canvas.getContext("2d");
-		var image = document.createElement("yellowball.png");
-		*/
 		this.stage.style.backgroundColor = "black";
 		this.stage.innerHTML = "";
 
@@ -342,12 +292,15 @@ class MyView extends View {
 		this.mvc.model.area.cvs.onclick = () => {this.mvc.controller.playerClick(window.event.pageX, window.event.pageY)};
 
 		this.display = () => {
-			this.mvc.model.image.onload;
-			trace("yep");
 			this.mvc.model.area.clear();
 			this.mvc.model.area.draw(this.mvc.model.image);
-			for(let i = 0; i < this.mvc.model.balls.length; i++)
+			for (let i = 0; i < this.mvc.model.balls.length; i++) {
 				this.mvc.model.balls[i].draw();
+				this.mvc.model.balls[i].move(this.mvc.model.balls);
+				for(let j = i+1; j<this.mvc.model.balls.length; j++){
+					this.mvc.model.balls[i].collideWith(this.mvc.model.balls[j]);
+				}
+			}
 			requestAnimationFrame(this.display);
 		}
 		this.display();
@@ -407,16 +360,18 @@ class MyController extends Controller {
 		this.mvc.view.update();
 	}
 
-	start(room){
-		this.mvc.model.changeRoom(room);
+	start(gameData){
+		trace(gameData);
+		//Object.assign(this.mvc.model.balls, gameData);
+		for(var i=0 ; i<gameData.length ; i++)
+			Object.assign(this.mvc.model.balls[i], gameData[i]);
+		trace(this.mvc.model.balls);
 		this.mvc.view.startGame();
-		//this.mvc.view.display();
 	}
 
 	challenge(opponent){
 		trace(opponent);
 		this.mvc.app.io.emit("challenge", this.mvc.model.players[opponent]);
-		//this.mvc.view.waitAnswer();
 	}
 
 	playerLeftGame(players){
@@ -425,11 +380,11 @@ class MyController extends Controller {
 	}
 
 	playerClick(clickX, clickY){
-		let power = 10;
-		let angle = Math.atan2(clickY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), clickX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
-		this.mvc.model.whiteball.vx = Math.cos(angle)*power;
-		this.mvc.model.whiteball.vy = Math.sin(angle)*power;
-		console.log(window.event.pageY*this.mvc.model.area.scaley);
-		this.mvc.model.whiteball.move(this.mvc.model.balls);
+		trace("click", clickX, clickY);
+		let power = 20;
+		let angle = Math.atan2(clickY - (this.mvc.model.balls[15].y*this.mvc.model.area.scaley), clickX - (this.mvc.model.balls[15].x*this.mvc.model.area.scalex));
+		this.mvc.model.balls[15].vx = Math.cos(angle)*power;
+		this.mvc.model.balls[15].vy = Math.sin(angle)*power;
+		this.mvc.model.balls[15].ismoving = true;
 	}
 }

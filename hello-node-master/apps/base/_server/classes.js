@@ -4,13 +4,14 @@ class Ball{
     this.y = y;
     this.out = false;
     this.color = color;
+    this.image = document.createElement("img");
+    this.image.onload;
     this.ismoving = false;
     this.vx = 0;
     this.vy = 0;
+    this.area = area;
     this.radius = 19;
     this.mass=1;
-    this.image = document.createElement("img");
-    this.area = area;
   }
 
   draw(){
