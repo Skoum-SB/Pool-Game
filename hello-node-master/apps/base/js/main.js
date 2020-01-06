@@ -62,7 +62,10 @@ class MyModel extends Model {
 		this.image = document.createElement("img");
     this.image.onload;
     this.image.src = 'images/sprbackground4.png';
-
+		this.player = new Player();
+		this.player.name = "Tamer";
+		this.player.team = 1;
+		this.turn = 1;
 		this.redballs = [
 	    new Ball(this.area, 1056,433,"red"),
 	    new Ball(this.area, 1090,374,"red"),
@@ -104,20 +107,6 @@ class MyModel extends Model {
 			this.whiteball,
 			this.blackball
     ];
-
-		this.display = () => {
-		 this.area.clear();
-		 this.area.draw(this.image);
-		 for (let i = 0; i < this.balls.length; i++) {
-         this.balls[i].draw();
-				 this.balls[i].move(this.balls);
-				 for(let j = i+1; j<this.balls.length; j++){
-					 this.balls[i].collideWith(this.balls[j]);
-				 }
-     }
-		 requestAnimationFrame(this.display);
- 	 }
-	 this.display();
 
 	}
 
@@ -161,6 +150,20 @@ class MyView extends View {
 	 //this.stage.appendChild(this.table);
 		// load sprites
 
+		this.display = () => {
+		 this.mvc.model.area.clear();
+		 this.mvc.model.area.draw(this.mvc.model.image);
+		 for (let i = 0; i < this.mvc.model.balls.length; i++) {
+         this.mvc.model.balls[i].draw();
+				 this.mvc.model.balls[i].move(this.mvc.model.balls);
+				 for(let j = i+1; j<this.mvc.model.balls.length; j++){
+					 this.mvc.model.balls[i].collideWith(this.mvc.model.balls[j]);
+				 }
+     }
+		 requestAnimationFrame(this.display);
+ 	 }
+	 this.display();
+
 		this.stage.appendChild(this.mvc.model.area.cvs)
 
 
@@ -200,17 +203,6 @@ class MyView extends View {
 	}
 
 	update(data) {
-
-		/*while(this.table.firstChild) this.table.removeChild(this.table.firstChild); // empty table
-		data.forEach(el => { // loop data
-			let line = document.createElement("tr"); // create line
-			Object.keys(el).forEach(key => { // loop object keys
-				let cell = document.createElement("td"); // create cell
-				cell.innerHTML = el[key]; // display
-				line.appendChild(cell); // add cell
-			});
-			this.table.appendChild(line); // add line
-		});*/
 	}
 
 	updateIO(value) {
@@ -229,12 +221,24 @@ class MyController extends Controller {
 		super.initialize(mvc);
 
 		this.mvc.model.area.cvs.onclick = () => {
-			let power = 20;
-			let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
-			this.mvc.model.whiteball.vx = Math.cos(angle)*power;
-			this.mvc.model.whiteball.vy = Math.sin(angle)*power;
-			this.mvc.model.whiteball.ismoving = true;
+			if(this.canClick() && this.mvc.model.player.team == this.mvc.model.turn){
+				let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
+				let power = Math.sqrt(Math.pow(window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex) ,2) + Math.pow(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), 2))/20;
+				this.mvc.model.whiteball.vx = Math.cos(angle)*power;
+				this.mvc.model.whiteball.vy = Math.sin(angle)*power;
+				this.mvc.model.whiteball.ismoving = true;
+				this.mvc.model.turn = (this.mvc.model.turn == 1) ? 2 : 1;
+			}
 		}
+	}
+
+	canClick(){
+		for(let i = 0; i<this.mvc.model.balls.length; i++){
+			if(this.mvc.model.balls[i].ismoving){
+				return false;
+			}
+		}
+		return true;
 	}
 
 
