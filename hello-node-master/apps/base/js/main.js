@@ -87,7 +87,7 @@ class MyModel extends Model {
     this.blackball = new Ball(this.area, 1090,413,"black");
 
     this.balls = [
-      /*this.yellowballs[0],
+      this.yellowballs[0],
 			this.yellowballs[1],
 			this.yellowballs[2],
 			this.yellowballs[3],
@@ -100,9 +100,9 @@ class MyModel extends Model {
 			this.redballs[3],
 			this.redballs[4],
 			this.redballs[5],
-			this.redballs[6],*/
-      this.blackball,
-      this.whiteball
+			this.redballs[6],
+			this.whiteball,
+			this.blackball
     ];
 
 		this.display = () => {
@@ -111,8 +111,8 @@ class MyModel extends Model {
 		 for (let i = 0; i < this.balls.length; i++) {
          this.balls[i].draw();
 				 this.balls[i].move(this.balls);
-				 if(i<this.balls.length-1){
-					 this.balls[i].collideWith(this.balls[i+1]);
+				 for(let j = i+1; j<this.balls.length; j++){
+					 this.balls[i].collideWith(this.balls[j]);
 				 }
      }
 		 requestAnimationFrame(this.display);

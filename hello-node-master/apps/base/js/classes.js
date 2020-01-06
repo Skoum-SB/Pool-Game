@@ -24,6 +24,7 @@ class Ball{
   move(allBalls){
 
     if(this.ismoving){
+      //console.log(this.color);
         /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx; this.vx *= 0.95;}
         /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ this.vy = -this.vy; this.vx *= 0.95;}
         /*for(let i=0; i<allBalls.length; i++){
@@ -51,16 +52,16 @@ class Ball{
 
   collideWith(second_ball){
 
+    if(second_ball.ismoving==false && this.ismoving==false){
+      return;
+    }
     let dx = second_ball.x - this.x ;
     let dy = second_ball.y -  this.y  ;
     let distance = Math.sqrt(dx * dx + dy * dy);
-
     if(this!=second_ball && (distance < this.radius*2) ){
       //this.vx = -this.vx;
       //this.vx = -this.vx;
-      if(second_ball.ismoving==false && this.ismoving==false){
-        return;
-      }
+
       let angle = Math.atan2(dy,dx);
       let sin = Math.sin(angle);
       let cos = Math.cos(angle);
@@ -84,10 +85,9 @@ class Ball{
       this.vy = vy1*cos+vx1*sin;
       second_ball.vx = vx2*cos-vy2*sin;
       second_ball.vy = vy2*cos+vx2*sin;
-      this.x += this.vx;
-      this.y += this.vy;
-      second_ball.x += second_ball.vx;
-      second_ball.y += second_ball.vy;
+      //console.log(second_ball.vy, second_ball.vx);
+      this.ismoving = true;
+      second_ball.ismoving = true;
 
 
       return true;
