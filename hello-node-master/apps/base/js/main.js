@@ -210,7 +210,7 @@ class MyView extends View {
 
 		this.stage.appendChild(this.submitInput);
 
-		this.stage.appendChild(this.mvc.model.area.cvs);
+		//this.stage.appendChild(this.mvc.model.area.cvs);
 	}
 
 
@@ -336,6 +336,8 @@ class MyView extends View {
 		*/
 		this.stage.style.backgroundColor = "black";
 		this.stage.innerHTML = "";
+		this.stage.appendChild(this.mvc.model.area.cvs);
+
 		this.display = () => {
 			this.mvc.model.image.onload;
 			trace("yep");
