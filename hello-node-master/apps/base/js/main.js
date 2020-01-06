@@ -273,6 +273,7 @@ class MyView extends View {
 	}
 
 	lobby(){
+		this.stage.style.backgroundColor = "white";
 		this.stage.innerHTML = "";
 		this.stage.appendChild(document.createTextNode("Joueurs actuellement disponibles :"));
 		this.stage.appendChild(document.createElement("br"));
