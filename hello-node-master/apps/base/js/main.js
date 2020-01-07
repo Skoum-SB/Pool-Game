@@ -92,10 +92,15 @@ class MyModel extends Model {
 		this.players = [];
 		this.numPlayer = 0;
 
+
 		this.area = new Area();
 		this.image = document.createElement("img");
 		this.image.src = 'images/sprbackground4.png';
 
+		this.currentPlayer = new Player(this.area,220,5);
+		this.opponent = new Player(this.area,220,770);
+		this.currentPlayer.ballOut = 0;
+		this.opponent.ballOut = 0;
 		this.balls = (function () {var array = []; for(var i=0 ; i < 16 ; i++){array.push(new Ball);} return array;})();
 
 		this.balls.forEach(ball => {
@@ -169,7 +174,7 @@ class MyView extends View {
 		var data = this.mvc.model.players;
 		trace(data);
 
-		document.getElementById("ownName").innerHTML = "Vous : " + this.mvc.model.name;
+		document.getElementById("ownName").innerHTML = "Vous : " + this.mvc.model.currentPlayer.name;
 
 		for(var i = 0 ; i < data.length ; i++){
 			let line = document.createElement("tr"); // create line
@@ -240,6 +245,11 @@ class MyView extends View {
 		this.display = () => {
 			this.mvc.model.area.clear();
 			this.mvc.model.area.draw(this.mvc.model.image);
+			this.mvc.model.currentPlayer.draw();
+		 	//this.mvc.model.currentPlayer.color="red";
+
+			this.mvc.model.opponent.draw();
+		 	//this.opponent.color="yellow";
 			for (let i = 0; i < this.mvc.model.balls.length; i++) {
 				this.mvc.model.balls[i].draw();
 			}
@@ -277,7 +287,7 @@ class MyController extends Controller {
 
 	submitName(name){
 		trace("submit btn click", name);
-		this.mvc.model.name = name;
+		this.mvc.model.currentPlayer.name = name;
 		this.mvc.app.io.emit("login", name);
 		this.mvc.view.lobby();
 	}
@@ -327,7 +337,9 @@ class MyController extends Controller {
 	}
 
 	start(numPlayer){
-		this.mvc.model.numPlayer = numPlayer;
+		this.mvc.model.currentPlayer.number = numPlayer[0];
+		this.mvc.model.opponent.number = (numPlayer == 1) ? 0 : 1;
+		this.mvc.model.opponent.name =  numPlayer[1];
 		this.mvc.view.printGame();
 	}
 
@@ -349,7 +361,6 @@ class MyController extends Controller {
 	playerClick(clickX, clickY){
 		trace("click", clickX, clickY);
 		trace(this.mvc.model.force);
-
 		if(!this.mvc.model.balls[15].out){
 			this.mvc.model.shoot = true;
 			this.mvc.model.stick.origin = 960;

@@ -33,6 +33,26 @@ class Stick{
 	}
 
 	draw(rotate){
-		this.area.draw(this.image, this.x-this.origin, this.y-11, this.rotation, this.origin);
+    if(!this.out){
+      this.area.draw(this.image, this.x-this.origin, this.y-11, this.rotation, this.origin);
+    }
 	}
+}
+
+class Player{
+  constructor(area,x,y){
+    this.number;
+    this.name;
+    this.area = area;
+    this.color="black";
+    this.x = x;
+    this.y = y;
+    this.ballOut;
+    this.image = document.createElement("img");
+    this.image.src = "images/profil.png";
+  }
+
+  draw(){
+    this.area.draw_icon(this.image,this.x,this.y,this.name,this.ballOut,this.color);
+  }
 }

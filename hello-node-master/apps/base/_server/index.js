@@ -129,10 +129,9 @@ class Base extends ModuleBase {
 		this._initBoard(roomId);
 
 		this.gameState[roomId] = 1;
-
 		this._io.to("room-" + (roomId)).emit("state", this.boards[roomId]);
-		this._io.to(socket.id).emit("start", 1);
-		this._io.to(opponentId).emit("start", 2);
+		this._io.to(socket.id).emit("start", [1, packet]);
+		this._io.to(opponentId).emit("start", [2, playerName]);
 
 		//trace(this._io);
 
@@ -155,6 +154,7 @@ class Base extends ModuleBase {
 		var playerIndex;
 
 		var gameLoop = setInterval(() => {
+			trace(opponentId.name);
 			playerIndex = (this.gameState != 1) ? 0 : 1;
 			var sound;
 			for(let i = 0; i < this.boards[roomId].length; i++){
