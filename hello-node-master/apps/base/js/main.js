@@ -21,19 +21,6 @@ class Base {
 
 	}
 
-	/**
-	 * @method test : test server GET fetch
-	 */
-	async test() {
-		console.log("test server hello method");
-		let result = await Comm.get("hello/everyone"); // call server hello method with argument "everyone"
-		console.log("result", result);
-		console.log("response", result.response);
-	}
-
-	/**
-	 * @method onIOConnect : socket is connected
-	 */
 	onIOConnect() {
 		this.io.on("players", packet => this.onLogin(packet));
 	}
@@ -41,8 +28,10 @@ class Base {
 	onLogin(data){
 		this.mvc.controller.getPlayers(data);
 		this.io.on("newplayer", packet => this.onNewPlayer(packet));
+		this.io.on("newplayers", packet => this.onNewPlayers(packet));
 		this.io.on("playerDisconnected", packet => this.onDisconnectedPlayer(packet));
 		this.io.on("start", packet => this.onStart(packet));
+		this.io.on("state", packet => this.onGameState(packet));
 		this.io.on("playersInGame", packet => this.onPlayersInGame(packet));
 	}
 
@@ -51,29 +40,41 @@ class Base {
 		trace("Newcomer !!!");
 	}
 
+	onNewPlayers(data){
+		this.mvc.controller.getNewPlayers(data);
+		trace("Newcomers !!!");
+	}
+
 	onDisconnectedPlayer(data){
 		this.mvc.controller.getDCPlayer(data);
 		trace("DC", data);
 	}
 
-	onStart(room){
-		trace("Starting the game", room);
-		this.mvc.controller.start(room); // send it to controller
+	onStart(numPlayer){
+		trace("You are the player n°" , numPlayer);
 		this.io.removeAllListeners();
-		this.io.on("playerLeft", packet => this.onplayerLeft(packet));
+		this.io.on("state", packet => this.onGameState(packet));
+		this.io.on("end", packet => this.onEnd(packet));
+		this.mvc.controller.start(numPlayer);
+	}
+
+	onGameState(gameData){
+		trace("Receiving State");
+		this.mvc.controller.gameState(gameData); // send it to controller
 	}
 
 	onPlayersInGame(players){
 		this.mvc.controller.playersInGame(players);
 	}
 
-	onplayerLeft(players){
-		trace("Disconnected player");
-		this.mvc.controller.playerLeftGame(players);
+	onEnd(players){
 		this.io.on("newplayer", packet => this.onNewPlayer(packet));
+		this.io.on("newplayers", packet => this.onNewPlayers(packet));
 		this.io.on("playerDisconnected", packet => this.onDisconnectedPlayer(packet));
 		this.io.on("start", packet => this.onStart(packet));
+		this.io.on("state", packet => this.onGameState(packet));
 		this.io.on("playersInGame", packet => this.onPlayersInGame(packet));
+		this.mvc.controller.end(players);
 	}
 }
 
@@ -88,93 +89,27 @@ class MyModel extends Model {
 
 		this.name = "";
 		this.players = [];
-		this.room = 0;
+		this.numPlayer = 0;
 
 		this.area = new Area();
 		this.image = document.createElement("img");
 		this.image.src = 'images/sprbackground4.png';
 
-		this.redballs = [
-		new Ball(this.area, 1056,433,"red"),
-		new Ball(this.area, 1090,374,"red"),
-		new Ball(this.area, 1126,393,"red"),
-		new Ball(this.area, 1126,472,"red"),
-		new Ball(this.area, 1162,335,"red"),
-		new Ball(this.area, 1162,374,"red"),
-		new Ball(this.area, 1162,452,"red")
-		];
-
-		this.yellowballs = [
-		new Ball(this.area, 1022,413,"yellow"),
-		new Ball(this.area, 1056,393,"yellow"),
-		new Ball(this.area, 1090,452,"yellow"),
-		new Ball(this.area, 1126,354,"yellow"),
-		new Ball(this.area, 1126,433,"yellow"),
-		new Ball(this.area, 1162,413,"yellow"),
-		new Ball(this.area, 1162,491,"yellow")
-		];
-
-		this.whiteball = new Ball(this.area, 413,413,"white");
-		this.blackball = new Ball(this.area, 1090,413,"black");
-
-		this.balls = [
-			this.yellowballs[0],
-			this.yellowballs[1],
-			this.yellowballs[2],
-			this.yellowballs[3],
-			this.yellowballs[4],
-			this.yellowballs[5],
-			this.yellowballs[6],
-			this.redballs[0],
-			this.redballs[1],
-			this.redballs[2],
-			this.redballs[3],
-			this.redballs[4],
-			this.redballs[5],
-			this.redballs[6],
-			this.blackball,
-			this.whiteball
-		];
-
-
-	}
-
-	/*async data() {
-		trace("get data");
-		// keep data in class variable ? refresh rate ?
-		let result = await Comm.get("data"); // wait data from server
-		return result.response; // return it to controller
-	}*/
-
-	login(name){
-		this.name = name;
-	}
-
-	addOtherPlayers(otherPlayers){
-		var names = [];
-		otherPlayers.forEach(player => {
-			names.push((player.name));
+		this.balls = (function () {var array = []; for(var i=0 ; i < 16 ; i++){array.push(new Ball);} return array;})();
+		
+		this.balls.forEach(ball => {
+			ball.image = document.createElement("img");
+			ball.area = this.area;
 		});
-		this.players = names;
-	}
 
-	addNewPlayer(newPlayer){
-		this.players.push(newPlayer.name);
+		this.stick = new Stick(this.area, this.balls[15].x, this.balls[15].y);
+		this.force = 0;
+		this.increase = 2;
+		this.strikeSound = new Audio("sound/Strike.wav");
+		this.ballCollideSound = new Audio("sound/BallsCollide.wav");
+		this.mouse_down = false;
+		this.shoot = false;
 	}
-
-	removePlayer(playerName){
-		trace(playerName);
-		for(var i = 0; i < this.players.length; i++){
-			if(this.players[i] == playerName){
-				this.players.splice(i, 1);
-			}
-		}
-	}
-
-	changeRoom(room){
-		this.room = room;
-	}
-
 }
 
 class MyView extends View {
@@ -185,16 +120,6 @@ class MyView extends View {
 
 	initialize(mvc) {
 		super.initialize(mvc);
-
-		/*// create get test btn
-		this.btn = document.createElement("button");
-		this.btn.innerHTML = "get test";
-		this.stage.appendChild(this.btn);
-
-		// create io test btn
-		this.iobtn = document.createElement("button");
-		this.iobtn.innerHTML = "io test";
-		this.stage.appendChild(this.iobtn);*/
 
 		var text = document.createTextNode('Votre Pseudo :');
 		this.stage.appendChild(text);
@@ -209,8 +134,6 @@ class MyView extends View {
 		this.submitInput.innerHTML = "Valider";
 
 		this.stage.appendChild(this.submitInput);
-
-		//this.stage.appendChild(this.mvc.model.area.cvs);
 	}
 
 
@@ -220,11 +143,6 @@ class MyView extends View {
 		this.addListeners(); // listen to events
 	}
 
-	// deactivate
-	deactivate() {
-		super.deactivate();
-		this.removeListeners();
-	}
 
 	addListeners() {
 		this.submitHandler = e => this.submitName(e);
@@ -232,11 +150,6 @@ class MyView extends View {
 
 		this.unloadHandler = e => this.unload(e);
 		this.stage.addEventListener("unload", this.unloadHandler);
-	}
-
-	removeListeners() {
-		/*this.btn.removeEventListener("click", this.getBtnHandler);
-		this.iobtn.removeEventListener("click", this.ioBtnHandler);*/
 	}
 
 	submitName(event){
@@ -273,6 +186,7 @@ class MyView extends View {
 	}
 
 	lobby(){
+		this.stage.style.backgroundColor = "white";
 		this.stage.innerHTML = "";
 		this.stage.appendChild(document.createTextNode("Joueurs actuellement disponibles :"));
 		this.stage.appendChild(document.createElement("br"));
@@ -294,57 +208,35 @@ class MyView extends View {
 		this.stage.appendChild(this.table);
 	}
 
-	/*waitAnswer(){
-		this.stage.innerHTML = "";
-		this.stage.appendChild(document.createTextNode("En attente de la réponse de votre adversaire"));
-	}*/
-
-	startGame(){
-		/*this.stage.innerHTML = "";
-		this.stage.appendChild(document.createTextNode("Vous êtes dans la Room N°" + (this.mvc.model.room + 1)));
-		this.cvs = document.createElement("canvas");
-		this.ctx = this.cvs.getContext("2d");
-		this.img = document.createElement("img");
-		this.img.src = 'images/sprbackground4.png';
-
-		this.img.onload = () => {
-			this.imageRatio = window.innerHeight/this.img.naturalHeight;
-			this.ratio = window.innerWidth/this.img.naturalWidth;
-			this.cvs.width = window.innerWidth;
-			this.cvs.height = window.innerHeight;
-			if(this.img.naturalHeight*this.ratio > window.innerHeight-40){
-				console.log("Oui");
-				this.width = this.img.naturalWidth*this.imageRatio-40;
-				this.height = this.img.naturalHeight*this.imageRatio-40;
-			}
-			else{
-				this.width = this.img.naturalWidth*this.ratio;
-				this.height = this.img.naturalHeight*this.ratio;
-			}
-			this.ctx.drawImage(this.img, 0, 0, this.img.naturalWidth, this.img.naturalHeight, 0, 0, this.width, this.height);
-		}
-
-		window.onresize = () => {
-			this.img.onload();
-		};
-
-		this.stage.appendChild(this.cvs);
-
-		var canvas = document.createElement("canvas");
-		var ctex = canvas.getContext("2d");
-		var image = document.createElement("yellowball.png");
-		*/
+	printGame(){
 		this.stage.style.backgroundColor = "black";
 		this.stage.innerHTML = "";
+
 		this.stage.appendChild(this.mvc.model.area.cvs);
+		this.mvc.model.area.cvs.ondblclick = () => {this.mvc.controller.playerClick(window.event.pageX, window.event.pageY)};
+		this.mvc.model.area.cvs.onmousemove = () => {this.mvc.controller.playerMove(window.event.pageX, window.event.pageY)};
+
 
 		this.display = () => {
-			this.mvc.model.image.onload;
-			trace("yep");
 			this.mvc.model.area.clear();
 			this.mvc.model.area.draw(this.mvc.model.image);
-			for(let i = 0; i < this.mvc.model.balls.length; i++)
+			for (let i = 0; i < this.mvc.model.balls.length; i++) {
 				this.mvc.model.balls[i].draw();
+			}
+			//if(this.allBallNotMoving(this.balls) && !this.whiteball.out){
+			this.mvc.model.shoot = false;
+			this.mvc.model.stick.x=this.mvc.model.balls[15].x;
+			this.mvc.model.stick.y=this.mvc.model.balls[15].y;
+			this.mvc.model.stick.draw();
+
+			if(!this.mvc.controller.mouse_down && !this.mvc.controller.shoot){
+				this.mvc.model.force+=this.mvc.model.increase;
+				if(this.mvc.model.force == 150)
+					this.mvc.model.increase = -this.mvc.model.increase;
+				if(this.mvc.model.force == 0)
+					this.mvc.model.increase = -this.mvc.model.increase;
+				this.mvc.model.stick.origin += this.mvc.model.increase;
+			}	
 			requestAnimationFrame(this.display);
 		}
 		this.display();
@@ -359,22 +251,11 @@ class MyController extends Controller {
 
 	initialize(mvc) {
 		super.initialize(mvc);
-
 	}
-
-	/*async btnWasClicked(params) {
-		trace("btn click", params);
-		//this.mvc.view.update(await this.mvc.model.data()); // wait async request > response from server and update view table values
-	}
-
-	async ioBtnWasClicked(params) {
-		trace("io btn click", params);
-		this.mvc.app.io.emit("dummy", {message: "dummy io click"}); // send socket.io packet
-	}*/
 
 	submitName(name){
 		trace("submit btn click", name);
-		this.mvc.model.login(name);
+		this.mvc.model.name = name;
 		this.mvc.app.io.emit("login", name);
 		this.mvc.view.lobby();
 	}
@@ -384,40 +265,100 @@ class MyController extends Controller {
 	}
 
 	getPlayers(players){
-		this.mvc.model.addOtherPlayers(players);
+		var names = [];
+		players.forEach(player => {
+			names.push((player.name));
+		});
+		this.mvc.model.players = names;
 		this.mvc.view.update();
 	}
 
 	getNewPlayer(player){
-		this.mvc.model.addNewPlayer(player);
+		this.mvc.model.players.push(player.name);
 		this.mvc.view.update();
 	}
 
+	getNewPlayers(players){
+		this.mvc.model.players.push(players[0]);
+		this.mvc.model.players.push(players[1]);
+		this.mvc.view.update();
+	}
+
+	removePlayer(playerName){
+		trace(playerName);
+		for(var i = 0; i < this.mvc.model.players.length; i++){
+			if(this.mvc.model.players[i] == playerName){
+				this.mvc.model.players.splice(i, 1);
+			}
+		}
+	}
+
 	getDCPlayer(playerName){
-		this.mvc.model.removePlayer(playerName);
+		this.removePlayer(playerName);
 		this.mvc.view.update();
 	}
 
 	playersInGame(players){
-		this.mvc.model.removePlayer(players[0]);
-		this.mvc.model.removePlayer(players[1]);
+		this.removePlayer(players[0]);
+		this.removePlayer(players[1]);
 		this.mvc.view.update();
 	}
 
-	start(room){
-		this.mvc.model.changeRoom(room);
-		this.mvc.view.startGame();
-		//this.mvc.view.display();
+	start(numPlayer){
+		this.mvc.model.numPlayer = numPlayer;
+		this.mvc.view.printGame();
+	}
+
+	gameState(gameData){
+		for(var i=0 ; i<gameData.length ; i++)
+			Object.assign(this.mvc.model.balls[i], gameData[i]);
 	}
 
 	challenge(opponent){
 		trace(opponent);
 		this.mvc.app.io.emit("challenge", this.mvc.model.players[opponent]);
-		//this.mvc.view.waitAnswer();
 	}
 
-	playerLeftGame(players){
+	end(players){
 		this.mvc.view.lobby();
 		this.getPlayers(players);
+	}
+
+	playerClick(clickX, clickY){
+		trace("click", clickX, clickY);
+		this.mvc.model.strikeSound.play();
+		this.mvc.model.stick.origin = 960;
+		this.mvc.model.shoot = true;
+		setTimeout(() => { this.mvc.model.stick.out = true; }, 2000);
+		trace(this.mvc.model.force);
+
+		if(!this.mvc.model.balls[15].out){
+			let power = this.mvc.model.force/3;
+			let angle = Math.atan2(clickY - (this.mvc.model.balls[15].y*this.mvc.model.area.scaley), clickX - (this.mvc.model.balls[15].x*this.mvc.model.area.scalex));
+
+			let data = [power, angle];
+			this.mvc.app.io.emit("action", data);
+		}
+		else{
+			var x = window.event.pageX / this.mvc.model.area.scalex;
+			var y = window.event.pageY / this.mvc.model.area.scaley;
+
+			let data = [x, y];
+			this.mvc.app.io.emit("action", data);
+		}
+	}
+
+	playerMove(mouseX, mouseY){
+		if(this.mvc.model.mouse_down){
+			var opposite = mouseY - (this.mvc.model.stick.y*this.mvc.model.area.scaley);
+			var adjacent = mouseX - (this.mvc.model.stick.x*this.mvc.model.area.scalex);
+			this.mvc.model.stick.rotation = Math.atan2(opposite, adjacent);
+		}
+		this.mvc.model.area.cvs.onmousedown = () => {
+			this.mouse_down = true;
+		}
+		this.mvc.model.area.cvs.onmouseup = () => {
+			this.mouse_down = false;
+		}
 	}
 }

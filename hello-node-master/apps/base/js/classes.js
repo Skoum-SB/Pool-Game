@@ -1,106 +1,38 @@
 class Ball{
-  constructor (area, x, y, color){
-    this.x = x;
-    this.y = y;
-    this.out = false;
-    this.color = color;
-    this.image = document.createElement("img");
-    this.image.onload;
-    this.ismoving = false;
-    this.vx = 0;
-    this.vy = 0;
-    this.area = area;
-    this.radius = 19;
-    this.mass=1;
-  }
-
-  draw(){
-    if(!this.out){
-      this.area.draw(this.image, this.x-25, this.y-25);
-      this.image.src = "images/" + this.color + "ball.png";
-    }
-  }
-
-  move(allBalls){
-    this.ismoving = true;
-    this.moveit = () => {
-      //if((Math.abs(y)-slowy > 0) || (Math.abs(x)-slowx > 0)){
-        /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx;}
-        /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ this.vy = -this.vy;}
-        for(let i=0; i<allBalls.length; i++){
-            this.collideWith(allBalls[i],allBalls);
-          }
-        this.x += this.vx;
-        this.y += this.vy;
-        requestAnimationFrame(this.moveit);
-      /*}
-      else{
-        cancelAnimationFrame(this.moveit);
-        this.ismoving = false;
-      }
-    }*/
-    }
-    this.moveit();
-  }
-
-  collideWith(second_ball, allBalls){
-
-    let dx = second_ball.x - this.x ;
-    let dy = second_ball.y -  this.y  ;
-    let distance = Math.sqrt(dx * dx + dy * dy);
-
-    if(this!=second_ball && (distance < this.radius*2) ){
-      //this.vx = -this.vx;
-      //this.vx = -this.vx;
-      if(second_ball.ismoving==0 && this.ismoving==1){
-        second_ball.move(allBalls);
-      }
-      let angle = Math.atan2(dy,dx);
-      let sin = Math.sin(angle);
-      let cos = Math.cos(angle);
-      let x1=0; let y1=0;
-
-      //Rotate velocity
-      let vx1 = this.vx*cos+this.vy*sin;
-      let vy1 = this.vy*cos-this.vx*sin;
-      let vx2 = second_ball.vx*cos+second_ball.vy*sin;
-      let vy2 = second_ball.vy*cos-second_ball.vx*sin;
-
-
-      //resolve 1D velocity, use temp letiables
-      let vx1final = ((this.mass-second_ball.mass)*vx1+2*second_ball.mass*vx2)/(this.mass+second_ball.mass);
-      let vx2final = ((second_ball.mass-this.mass)*vx2+2*this.mass*vx1)/(this.mass+second_ball.mass);
-      // update velocity
-      vx1 = vx1final;
-      vx2 = vx2final;
-
-      this.vx = vx1*cos-vy1*sin;
-      this.vy = vy1*cos+vx1*sin;
-      second_ball.vx = vx2*cos-vy2*sin;
-      second_ball.vy = vy2*cos+vx2*sin;
-
-
-      return true;
-    }
-
-  }
-
+	constructor (area, x, y, color){
+		this.x = x;
+		this.y = y;
+		this.out = false;
+		this.color = color;
+		this.ismoving = false;
+		this.vx = 0;
+		this.vy = 0;
+		this.radius = 19;
+		this.mass=1;
+		this.image = document.createElement("img");
+		this.area = area;
+	}
+	draw(){
+		if(!this.out){
+			this.area.draw(this.image, this.x-25, this.y-25);
+			this.image.src = "images/" + this.color + "ball.png";
+		}
+	}
 }
-
-
 
 class Stick{
-  constructor (force, angle){
-    this.force = force;
-    this.angle = angle;
-  }
+	constructor (area, x, y){
+		this.area = area;
+		this.x = x;
+		this.y = y;
+		this.image = document.createElement("img");
+		this.image.src = "images/stick.png";
+		this.rotation = 0;
+		this.origin = 970;
+		this.out = false;
+	}
 
-}
-
-class Player{
-  cosntructor (name, score, team){
-    this.name = name;
-    this.score = score;
-    this.team = team;
-  }
+	draw(rotate){
+		this.area.draw(this.image, this.x-this.origin, this.y-11, this.rotation, this.origin);
+	}
 }
