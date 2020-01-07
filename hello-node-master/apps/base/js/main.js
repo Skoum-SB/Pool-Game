@@ -243,7 +243,7 @@ class MyView extends View {
 					this.mvc.model.force+=this.mvc.model.increase;
 					if(this.mvc.model.force == 150)
 						this.mvc.model.increase = -this.mvc.model.increase;
-					if(this.mvc.model.force == 0)
+					if(this.mvc.model.force < 0)
 						this.mvc.model.increase = -this.mvc.model.increase;
 					this.mvc.model.stick.origin += this.mvc.model.increase;
 				}
