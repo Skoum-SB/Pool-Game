@@ -152,17 +152,10 @@ class Base extends ModuleBase {
 				i--;
 			}
 		}
-		var firstColorCol;
 		var playerIndex;
 
 		var gameLoop = setInterval(() => {
 			playerIndex = (this.gameState != 1) ? 0 : 1;
-			trace(firstColorCol);
-			trace(this.myBallIn);
-			trace(enneBallIn);
-			trace("Turn == ", this.gameState);
-			trace("Joueur 1 == ", this.gamePlayers[0].color);
-			trace("Joueur 2 == ", this.gamePlayers[1].color);
 			var sound;
 			for(let i = 0; i < this.boards[roomId].length; i++){
 				sound = 0;
