@@ -43,6 +43,12 @@ class Area{
     this.ctx.restore();
   }
 
+
+    draws(){
+      this.ctx.save();
+      this.ctx.scale(this.scalex, this.scaley);
+    }
+
   clear(){
     this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
   }

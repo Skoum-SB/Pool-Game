@@ -208,8 +208,9 @@ class Player{
   }
 
   draw(){
-    this.cvs.width = 100;
-    this.cvs.height = 100;
+    this.area.draw_();
+  //  this.cvs.width = 100;
+  //  this.cvs.height = 100;
     //this.area.draw(this.image, this.x, this.y);
     //this.image.src = "images/" + this.color + "ball.png";
   }
