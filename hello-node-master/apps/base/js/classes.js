@@ -161,10 +161,10 @@ class Stick{
   }
 
   draw(rotate){
-    if(!this.out){
+    //if(!this.out){
       this.area.draw(this.image, this.x-this.origin, this.y-11, this.rotation, this.origin);
 
-    }
+    //}
   }
 
 }

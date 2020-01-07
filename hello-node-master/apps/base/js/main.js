@@ -137,7 +137,12 @@ class MyModel extends Model {
 					 this.balls[i].collideWith(this.balls[j],this.holes);
 				 }
      }
-		 	this.stick.draw();
+		 if(this.allBallNotMoving(this.balls)){
+			this.mvc.controller.shoot = false;
+			this.stick.x=this.whiteball.x;
+			this.stick.y=this.whiteball.y;
+			this.stick.draw();
+
 			if(!this.mvc.controller.mouse_down && !this.mvc.controller.shoot){
 				this.force+=this.increase;
 				if(this.force == 150){
@@ -148,11 +153,21 @@ class MyModel extends Model {
 				}
 					this.stick.origin += this.increase;
 				}
-
+			}
 		 requestAnimationFrame(this.display);
  	 }
 	 this.display();
 
+	}
+
+	allBallNotMoving(balls){
+	//	trace("cheeckingg",balls[i]);
+		for(var i=0; i<balls.length; i++){
+			if(balls[i].ismoving){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	canClick(){
@@ -312,9 +327,8 @@ class MyController extends Controller {
 			}
 
 		}
-
-
 	}
+
 
 	 checkBall(x,y,whiteball,balls,holes){
 		for(var i=0; i<balls.length; i++){
