@@ -24,14 +24,21 @@ class Area{
     this.scaley = this.cvs.height / 825;
   }
 
-  draw(image, x, y){
+  draw(image, x, y, rotate){
 
     x = typeof x !== 'undefined' ? x : 0;
     y = typeof y !== 'undefined' ? y : 0;
+    rotate = typeof rotate !== 'undefined' ? rotate : 0;
 
     this.ctx.save();
     this.ctx.scale(this.scalex, this.scaley);
-    //this.ctx.translate(x, y);
+    if(rotate){
+      this.ctx.translate(-x, -y);
+    }
+    this.ctx.rotate(rotate);
+    if(rotate){
+      this.ctx.translate(x, y);
+    }
     this.ctx.drawImage(image, 0, 0, image.width, image.height, x, y, image.width, image.height);
     this.ctx.restore();
   }

@@ -257,6 +257,12 @@ class MyController extends Controller {
 	initialize(mvc) {
 		super.initialize(mvc);
 
+
+		this.mvc.model.area.cvs.onmousemove = () => {
+			var opposite = window.event.pageY - (this.mvc.model.stick.y*this.mvc.model.area.scaley);
+			var adjacent = window.event.pageX - (this.mvc.model.stick.x*this.mvc.model.area.scalex);
+			this.mvc.model.stick.rotation = Math.atan2(opposite, adjacent);
+		}
 		this.mvc.model.area.cvs.onclick = () => {
 
 			if(!this.mvc.model.whiteball.out){
@@ -264,11 +270,6 @@ class MyController extends Controller {
 				let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
 				this.mvc.model.whiteball.vx = Math.cos(angle)*power;
 				this.mvc.model.whiteball.vy = Math.sin(angle)*power;
-				 	//this.mvc.model.stick.x+=10;
-					this.mvc.model.stick.area.ctx.rotate(90);
-				// this.mvc.model.stick.image.style.transform="rotate("+ 90 +"deg)";
-				// this.mvc.model.stick.image.setAttribute("style", "transform: rotate(" + 90 + "deg)");
-
 				this.mvc.model.whiteball.ismoving = true;
 			}
 			else{
@@ -281,10 +282,6 @@ class MyController extends Controller {
 				}
 			}
 		}
-
-	/*	this.mvc.model.area.cvs.onmousemove = () => {
-			trace("herreee",window.event.pageY);
-		}*/
 
 
 	}
