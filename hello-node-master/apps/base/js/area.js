@@ -43,11 +43,39 @@ class Area{
     this.ctx.restore();
   }
 
+  draw_icon(image, x, y,name,ballOut,color){
+    this.ctx.font = "30px Comic Sans MS";
+    this.ctx.fillStyle = color;
 
-    draws(){
-      this.ctx.save();
-      this.ctx.scale(this.scalex, this.scaley);
+    if(y<500){
+      this.ctx.fillText(name, x+50, 40);
+      this.ctx.fillText(ballOut, x-45, 40);
+      for(let i=0; i<ballOut; i++){
+        this.ctx.arc(800+i*50, 30, 17, 0, 2 * Math.PI);
+        this.ctx.fill();
+      }
     }
+
+      else{
+      this.ctx.fillText(name, x+50, 770);
+      this.ctx.fillText(ballOut, x-45, 770);
+      for(let i=0; i<ballOut; i++){
+        this.ctx.arc(800+i*50, 760, 17, 0, 2 * Math.PI);
+        this.ctx.fill();
+
+      }
+
+    }
+
+
+    this.ctx.save();
+    this.ctx.scale(this.scalex, this.scaley);
+
+    this.ctx.drawImage(image, 0, 0, image.width, image.height, x, y, image.width-1035, image.height-1035);
+    this.ctx.restore();
+  }
+
+
 
   clear(){
     this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);

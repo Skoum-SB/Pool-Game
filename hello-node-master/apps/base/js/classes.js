@@ -198,17 +198,25 @@ class Stick{
 }
 
 class Player{
-  constructor(area,x,y){
+  constructor(area,x,y,name,ballOut){
+    this.name=name;
     this.area = area;
+    this.color="black";
     this.x = x;
     this.y = y;
-    this.ballOut = 0;
-    this.cvs = document.createElement('canvas');
-    this.ctx = this.cvs.getContext('2d');
+    this.ballOut = ballOut;
+    this.image = document.createElement("img");
+    this.image.src = "images/profil.png";
+    //this.image.width = 100;
+  //  this.image.height = 50;
+
+
+    //this.cvs = document.createElement('canvas');
+    //this.ctx = this.cvs.getContext('2d');
   }
 
   draw(){
-    this.area.draw_();
+    this.area.draw_icon(this.image,this.x,this.y,this.name,this.ballOut,this.color);
   //  this.cvs.width = 100;
   //  this.cvs.height = 100;
     //this.area.draw(this.image, this.x, this.y);

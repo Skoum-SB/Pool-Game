@@ -125,16 +125,8 @@ class MyModel extends Model {
 		this.force = 0;
 		this.increase = 2;
 
-		this.gege = new Player(this.area,200,200);
-		//this.gege.area();
-/*		this.gege.cvs.width=200;
-		this.gege.cvs.height=50;
-		this.gege.ctx.fillStyle = 'rgb(200, 0, 0)';
-		this.gege.ctx.fillRect(10, 10, 100, 50	);
-		this.gege.ctx.fillStyle = 'blue';
-		this.gege.ctx.font = "30px Arial";
-		this.gege.ctx.fillText("You", 10, 50);*/
-
+		this.first = new Player(this.area,220,5,"mon Prénom",2);
+		this.second = new Player(this.area,220,770,"l'autre prénom",1);
 
 		this.strikeSound = new Audio("sound/Strike.wav");
 		this.ballCollideSound = new Audio("sound/BallsCollide.wav");
@@ -143,7 +135,12 @@ class MyModel extends Model {
 
 		 this.area.clear();
 		 this.area.draw(this.image);
-		 this.gege.draws();
+		 this.first.draw();
+		 this.first.color="red";
+
+		 this.second.draw();
+		 this.second.color="yellow";
+
 		 for (let i = 0; i < this.balls.length; i++) {
          this.balls[i].draw();
 				 this.balls[i].move(this.balls);
@@ -183,6 +180,7 @@ class MyModel extends Model {
 			if(balls[i].ismoving){
 				return false;
 			}
+
 		}
 		return true;
 	}
