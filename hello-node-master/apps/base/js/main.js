@@ -232,21 +232,6 @@ class MyView extends View {
 			for (let i = 0; i < this.mvc.model.balls.length; i++) {
 				this.mvc.model.balls[i].draw();
 			}
-<<<<<<< HEAD
-			//if(this.allBallNotMoving(this.balls) && !this.whiteball.out){
-			this.mvc.model.shoot = false;
-			this.mvc.model.stick.x=this.mvc.model.balls[15].x;
-			this.mvc.model.stick.y=this.mvc.model.balls[15].y;
-			this.mvc.model.stick.draw();
-
-			if(!this.mvc.controller.mouse_down && !this.mvc.controller.shoot){
-				this.mvc.model.force+=this.mvc.model.increase;
-				if(this.mvc.model.force == 150)
-					this.mvc.model.increase = -this.mvc.model.increase;
-				if(this.mvc.model.force < 0)
-					this.mvc.model.increase = -this.mvc.model.increase;
-				this.mvc.model.stick.origin += this.mvc.model.increase;
-=======
 
 			if(this.allBallsNotMoving(this.mvc.model.balls) && !this.mvc.model.balls[15].out){
 				this.mvc.model.shoot = false;
@@ -262,7 +247,6 @@ class MyView extends View {
 						this.mvc.model.increase = -this.mvc.model.increase;
 					this.mvc.model.stick.origin += this.mvc.model.increase;
 				}
->>>>>>> 37f14a108c06b01419551c710e72a0e0675add66
 			}
 			requestAnimationFrame(this.display);
 		}
