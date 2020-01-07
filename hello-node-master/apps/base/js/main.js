@@ -60,8 +60,9 @@ class Base {
 	}
 
 	onGameState(gameData){
-		trace("Receiving State");
+		//trace("Receiving State");
 		this.mvc.controller.gameState(gameData); // send it to controller
+
 	}
 
 	onPlayersInGame(players){
@@ -88,9 +89,7 @@ class MyModel extends Model {
 	async initialize(mvc) {
 		super.initialize(mvc);
 
-		this.name = "";
-		this.players = [];
-		this.numPlayer = 0;
+		this.turn = 1;
 
 
 		this.area = new Area();
@@ -236,6 +235,7 @@ class MyView extends View {
 	printGame(){
 		this.stage.style.backgroundColor = "black";
 		this.stage.innerHTML = "";
+		console.log("Turn ", this.mvc.model.turn);
 
 		this.stage.appendChild(this.mvc.model.area.cvs);
 		this.mvc.model.area.cvs.ondblclick = () => {this.mvc.controller.playerClick(window.event.pageX, window.event.pageY)};
@@ -254,7 +254,17 @@ class MyView extends View {
 				this.mvc.model.balls[i].draw();
 			}
 
+			if(this.mvc.model.turn != this.mvc.model.currentPlayer.number){
+				console.log("Current Player == ", this.mvc.model.currentPlayer.number);
+				console.log("Current Turn == ", this.mvc.model.turn);
+				this.mvc.model.stick.out = true;
+			}
+			else{
+				this.mvc.model.stick.out = false;
+			}
+
 			if(this.allBallsNotMoving(this.mvc.model.balls) && !this.mvc.model.balls[15].out){
+				this.mvc.model.stick.out = false;
 				this.mvc.model.shoot = false;
 				this.mvc.model.stick.x=this.mvc.model.balls[15].x;
 				this.mvc.model.stick.y=this.mvc.model.balls[15].y;
@@ -340,10 +350,13 @@ class MyController extends Controller {
 		this.mvc.model.currentPlayer.number = numPlayer[0];
 		this.mvc.model.opponent.number = (numPlayer == 1) ? 0 : 1;
 		this.mvc.model.opponent.name =  numPlayer[1];
+		this.mvc.model.turn = numPlayer[0];
 		this.mvc.view.printGame();
 	}
 
 	gameState(gameData){
+		//console.log(this.mvc.model.turn);
+		this.mvc.model.turn = (this.mvc.model.turn == 1) ? 2 : 1;
 		for(var i=0 ; i<gameData.length ; i++)
 			Object.assign(this.mvc.model.balls[i], gameData[i]);
 	}
@@ -359,7 +372,6 @@ class MyController extends Controller {
 	}
 
 	playerClick(clickX, clickY){
-		trace("click", clickX, clickY);
 		trace(this.mvc.model.force);
 		if(!this.mvc.model.balls[15].out){
 			this.mvc.model.shoot = true;

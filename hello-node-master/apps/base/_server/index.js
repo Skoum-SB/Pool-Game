@@ -154,7 +154,6 @@ class Base extends ModuleBase {
 		var playerIndex;
 
 		var gameLoop = setInterval(() => {
-			trace(opponentId.name);
 			playerIndex = (this.gameState != 1) ? 0 : 1;
 			var sound;
 			for(let i = 0; i < this.boards[roomId].length; i++){
@@ -170,7 +169,6 @@ class Base extends ModuleBase {
 									firstCollision = false;
 									if(!this.firstIn){
 										if(this.gamePlayers[playerIndex].color != this.boards[roomId][j].color){
-											firstColorCol = this.boards[roomId][j].color;
 											fault = true;
 										}
 									}
