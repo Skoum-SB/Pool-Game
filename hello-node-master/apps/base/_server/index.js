@@ -5,7 +5,7 @@ class Base extends ModuleBase {
 	constructor(app, settings) {
 		super(app, new Map([["name", "baseapp"], ["io", true]]));
 		this.lobbyPlayers = [];
-		this.gamePlayers = [[{id: null, name : null},{id: null, name : null}]];
+		this.gamePlayers = [[{id: null, name : null, color : null},{id: null, name : null, color : null}]];
 		this.gameRooms = [];
 		this.gameState = [];
 		this.boards = [];
@@ -33,7 +33,7 @@ class Base extends ModuleBase {
 
 	_onLogin(socket, packet){
 		trace(socket.id, "pseudo :", packet);
-		
+
 		socket.emit("players", this.lobbyPlayers);
 
 		this.lobbyPlayers.push({id: socket.id, name: packet});
@@ -57,7 +57,7 @@ class Base extends ModuleBase {
 				inLobby = true;
 			}
 		}
-		
+
 		if(inLobby){//In lobby
 			trace(this.lobbyPlayers.length, " players in the lobby actually");
 			socket.broadcast.emit("playerDisconnected", playerDisconnected[0].name);
@@ -71,7 +71,7 @@ class Base extends ModuleBase {
 					socket.to("room-" + i).emit("end", this.lobbyPlayers);
 					this.lobbyPlayers.push({id: this.gamePlayers[i][1].id, name: this.gamePlayers[i][1].name});
 					this.gameRooms[i] = false;
-					this.gamePlayers[i] = [{id: null, name : null},{id: null, name : null}];
+					this.gamePlayers[i] = [{id: null, name : null, color : null},{id: null, name : null, color : null}];
 
 				}
 				else if(socket.id == this.gamePlayers[i][1].id){
@@ -80,7 +80,7 @@ class Base extends ModuleBase {
 					socket.to("room-" + i).emit("end", this.lobbyPlayers);
 					this.lobbyPlayers.push({id: this.gamePlayers[i][0].id, name: this.gamePlayers[i][0].name});
 					this.gameRooms[i] = false;
-					this.gamePlayers[i] = [{id: null, name : null},{id: null, name : null}];
+					this.gamePlayers[i] = [{id: null, name : null, color : null},{id: null, name : null, color : null}];
 				}
 			}
 		}
@@ -88,9 +88,15 @@ class Base extends ModuleBase {
 
 	_onStart(socket, packet){//packet = Name Player 2
 		trace(socket.id, packet);//socket.id = Id Player 1
-		
+
 		var playerName;//Name Player 1
 		var opponentId;//Id Player 2
+		this.firstIn = true;
+		var firstCollision = true;
+		var fault = false;
+		var noCollision = true;
+		var enneBallIn = false;
+		this.myBallIn = false;
 
 		var roomId = 0;
 
@@ -106,7 +112,7 @@ class Base extends ModuleBase {
 		//Prepare next room (If necessary)
 		if(roomId == (this.gamePlayers.length - 1)){
 			trace("INCREASED SIZE");
-			this.gamePlayers.push([{id: null, name : null},{id: null, name : null}]);
+			this.gamePlayers.push([{id: null, name : null, color : null},{id: null, name : null, color : null}]);
 		}
 
 		this.lobbyPlayers.forEach(el => {
@@ -121,7 +127,7 @@ class Base extends ModuleBase {
 		this._io.sockets[opponentId].join("room-" + (roomId));
 
 		this._initBoard(roomId);
-		
+
 		this.gameState[roomId] = 1;
 
 		this._io.to("room-" + (roomId)).emit("state", this.boards[roomId]);
@@ -138,6 +144,7 @@ class Base extends ModuleBase {
 
 		this.gamePlayers[roomId] = [{id: socket.id, name: playerName}, {id: opponentId, name: packet}];
 		trace(roomId, this.gamePlayers[roomId]);
+		this.onTurn = false;
 
 		for(var i = 0; i < this.lobbyPlayers.length; i++){
 			if(this.lobbyPlayers[i].name == gamePlayers[0] || this.lobbyPlayers[i].name == gamePlayers[1]){
@@ -145,8 +152,17 @@ class Base extends ModuleBase {
 				i--;
 			}
 		}
+		var firstColorCol;
+		var playerIndex;
 
 		var gameLoop = setInterval(() => {
+			playerIndex = (this.gameState != 1) ? 0 : 1;
+			trace(firstColorCol);
+			trace(this.myBallIn);
+			trace(enneBallIn);
+			trace("Turn == ", this.gameState);
+			trace("Joueur 1 == ", this.gamePlayers[0].color);
+			trace("Joueur 2 == ", this.gamePlayers[1].color);
 			var sound;
 			for(let i = 0; i < this.boards[roomId].length; i++){
 				sound = 0;
@@ -155,9 +171,50 @@ class Base extends ModuleBase {
 					if(i != j){
 						sound = this.boards[roomId][i].collideWith(this.boards[roomId][j], this.holes);
 						if(sound){
+							if(sound == 1){
+								noCollision = false;
+								if(firstCollision){
+									firstCollision = false;
+									if(!this.firstIn){
+										if(this.gamePlayers[playerIndex].color != this.boards[roomId][j].color){
+											firstColorCol = this.boards[roomId][j].color;
+											fault = true;
+										}
+									}
+								}
+							}
 							this._io.to("room-" + (roomId)).emit("sound", sound);
+							if(sound==2){
+								if(this.firstIn){
+									this.giveColor(roomId);
+								}
+								else{
+									if(this.gamePlayers[playerIndex].color == this.boards[roomId][j].color){
+										this.myBallIn = true;
+									}
+									else{
+										enneBallIn = true;
+									}
+								}
+							}
 						}
 					}
+				}
+			}
+			if(this.onTurn){
+				if(this._notMovingBalls(roomId)){
+					this.onTurn = false;
+					if(this.myBallIn && !enneBallIn){
+						this.gameState[roomId] *= -1;
+					}
+					if(fault || noCollision){
+						this.boards[roomId][15].out = true;
+					}
+					this.myBallIn = false;
+					enneBallIn = false;
+					firstCollision = true;
+					fault = false;
+					noCollision = true;
 				}
 			}
 
@@ -178,12 +235,34 @@ class Base extends ModuleBase {
 		}, 1000 / 80);
 	}
 
+	giveColor(roomId){
+		for(let i =0; i<this.boards[roomId].length; i++){
+			if(this.boards[roomId][i].out){
+				if(this.boards[roomId][i].color != "white" && this.boards[roomId][i].color != "black"){
+					this.firstIn = false;
+					this.myBallIn = true;
+					if(this.boards[roomId][i].color == "yellow"){
+						this.gamePlayers[0].color = (this.gameState == 1) ? "red" : this.boards[roomId][i].color;
+						this.gamePlayers[1].color = (this.gameState == 1) ? this.boards[roomId][i].color : "red";
+					}
+					else{
+						this.gamePlayers[0].color = (this.gameState == 1) ? "yellow" : this.boards[roomId][i].color;
+						this.gamePlayers[1].color = (this.gameState == 1) ? this.boards[roomId][i].color : "yellow";
+					}
+				}
+			}
+		}
+	}
+
 	_onPlayerAction(socket, packet){
 		trace("Action received", packet, socket.id);
 		var roomId = 0;
 
 		for(let i=0 ; i<this.gamePlayers.length ; i++){
 			if(socket.id == this.gamePlayers[i][0].id && this.gameState[roomId] == 1 && this._notMovingBalls(roomId) || socket.id == this.gamePlayers[i][1].id && this.gameState[roomId] == -1 && this._notMovingBalls(roomId)){
+				if(!this.boards[roomId][15].out){
+					this.onTurn = true;
+				}
 				roomId = i;
 
 				if(!this.boards[roomId][15].out){
@@ -320,7 +399,6 @@ class Ball{
 		for(var i=0; i<holes.length; i++){
 			var distance_ = Math.sqrt((this.x-holes[i].x)*(this.x-holes[i].x) + (this.y-holes[i].y)*(this.y-holes[i].y));
 			if( distance_ < (this.radius+holes[i].radius)){
-				trace("Empoché !!!");
 				this.ismoving=0;
 				this.out=true;
 				this.x=0; this.y=0;
@@ -329,8 +407,6 @@ class Ball{
 		}
 
 		if(this!=second_ball && (distance < this.radius*2)){
-			//this.vx = -this.vx;
-			//this.vx = -this.vx;
 			let angle = Math.atan2(dy,dx);
 			let sin = Math.sin(angle);
 			let cos = Math.cos(angle);
@@ -378,8 +454,6 @@ class Ball{
 			//console.log(second_ball.vy, second_ball.vx);
 			this.ismoving = true;
 			second_ball.ismoving = true;
-
-			trace("collision !!!");
 			return 1;
 		}
 		return 0;
@@ -388,7 +462,7 @@ class Ball{
 	whiteCollideWith(x,y,second_ball,holes){
 		/*Left and Right*/ if(x < 55+25 || x > 1395+25){ return true;}
 		/*Top and Bottom*/ if(y < 55+25 || y > 717+25){ return true;}
-		
+
 		let tx = (x + (x*0.01));
 		let ty = (y + (y*0.01));
 		let fx = (second_ball.x + (second_ball.x*0.01));

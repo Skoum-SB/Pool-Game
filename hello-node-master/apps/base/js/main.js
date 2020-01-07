@@ -97,7 +97,7 @@ class MyModel extends Model {
 		this.image.src = 'images/sprbackground4.png';
 
 		this.balls = (function () {var array = []; for(var i=0 ; i < 16 ; i++){array.push(new Ball);} return array;})();
-		
+
 		this.balls.forEach(ball => {
 			ball.image = document.createElement("img");
 			ball.area = this.area;
