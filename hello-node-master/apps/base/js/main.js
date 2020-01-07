@@ -208,6 +208,15 @@ class MyView extends View {
 		this.stage.appendChild(this.table);
 	}
 
+	allBallsNotMoving(){
+		for(var i=0; i<this.mvc.model.balls.length; i++){
+			if(this.mvc.model.balls[i].ismoving){
+				return false;
+			}
+		}
+		return true;
+	}
+
 	printGame(){
 		this.stage.style.backgroundColor = "black";
 		this.stage.innerHTML = "";
@@ -223,20 +232,22 @@ class MyView extends View {
 			for (let i = 0; i < this.mvc.model.balls.length; i++) {
 				this.mvc.model.balls[i].draw();
 			}
-			//if(this.allBallNotMoving(this.balls) && !this.whiteball.out){
-			this.mvc.model.shoot = false;
-			this.mvc.model.stick.x=this.mvc.model.balls[15].x;
-			this.mvc.model.stick.y=this.mvc.model.balls[15].y;
-			this.mvc.model.stick.draw();
 
-			if(!this.mvc.controller.mouse_down && !this.mvc.controller.shoot){
-				this.mvc.model.force+=this.mvc.model.increase;
-				if(this.mvc.model.force == 150)
-					this.mvc.model.increase = -this.mvc.model.increase;
-				if(this.mvc.model.force == 0)
-					this.mvc.model.increase = -this.mvc.model.increase;
-				this.mvc.model.stick.origin += this.mvc.model.increase;
-			}	
+			if(this.allBallsNotMoving(this.mvc.model.balls) && !this.mvc.model.balls[15].out){
+				this.mvc.model.shoot = false;
+				this.mvc.model.stick.x=this.mvc.model.balls[15].x;
+				this.mvc.model.stick.y=this.mvc.model.balls[15].y;
+				this.mvc.model.stick.draw();
+
+				if(!this.mvc.controller.mouse_down && !this.mvc.controller.shoot){
+					this.mvc.model.force+=this.mvc.model.increase;
+					if(this.mvc.model.force == 150)
+						this.mvc.model.increase = -this.mvc.model.increase;
+					if(this.mvc.model.force == 0)
+						this.mvc.model.increase = -this.mvc.model.increase;
+					this.mvc.model.stick.origin += this.mvc.model.increase;
+				}
+			}
 			requestAnimationFrame(this.display);
 		}
 		this.display();
