@@ -125,9 +125,11 @@ class MyModel extends Model {
 		this.force = 0;
 		this.increase = 2;
 
-		this.gege = new Player(this.area,900,900);
+		this.gege = new Player(this.area,200,200);
 		this.gege.ctx.fillStyle = 'rgb(200, 0, 0)';
-		this.gege.ctx.fillRect(10, 10, 50, 50);
+		//this.gege.ctx.fillRect(10, 10, 100, 100);
+		this.gege.ctx.font = "30px Arial";
+		this.gege.ctx.fillText("Hello World", 10, 50);
 
 		this.strikeSound = new Audio("sound/Strike.wav");
 		this.ballCollideSound = new Audio("sound/BallsCollide.wav");
@@ -230,6 +232,8 @@ class MyView extends View {
 	 this.table = document.createElement("table");
 	 //this.stage.appendChild(this.table);
 		// load sprites
+
+		this.stage.appendChild(this.mvc.model.gege.cvs);
 
 		this.stage.appendChild(this.mvc.model.area.cvs)
 
