@@ -102,7 +102,7 @@ class MyModel extends Model {
 
     this.whiteball = new Ball(this.area, 413,413,"white");
     this.blackball = new Ball(this.area, 1090,413,"black");
-		this.stick = new Stick(this.area, this.whiteball.x,this.whiteball.y);
+		this.stick = new Stick(this.area, this.whiteball.x, this.whiteball.y);
 
 
     this.balls = [
@@ -123,6 +123,8 @@ class MyModel extends Model {
 			this.whiteball,
 			this.blackball
     ];
+		this.force = 0;
+		this.increase = 2;
 
 		this.display = () => {
 		 this.area.clear();
@@ -141,6 +143,16 @@ class MyModel extends Model {
 
 		 }*/
 		 	this.stick.draw();
+			if(!this.mvc.controller.mouse_down && !this.mvc.controller.shoot){
+				this.force+=this.increase;
+				if(this.force == 150){
+					this.increase = -this.increase;
+				}
+				if(this.force == 0){
+					this.increase = -this.increase;
+				}
+					this.stick.origin += this.increase;
+				}
 
 		 requestAnimationFrame(this.display);
  	 }
@@ -256,16 +268,28 @@ class MyController extends Controller {
 
 	initialize(mvc) {
 		super.initialize(mvc);
-
+		this.mouse_down = false;
+		this.shoot = false;
 
 		this.mvc.model.area.cvs.onmousemove = () => {
-			var opposite = window.event.pageY - (this.mvc.model.stick.y*this.mvc.model.area.scaley);
-			var adjacent = window.event.pageX - (this.mvc.model.stick.x*this.mvc.model.area.scalex);
-			this.mvc.model.stick.rotation = Math.atan2(opposite, adjacent);
+			if(this.mouse_down){
+				var opposite = window.event.pageY - (this.mvc.model.stick.y*this.mvc.model.area.scaley);
+				var adjacent = window.event.pageX - (this.mvc.model.stick.x*this.mvc.model.area.scalex);
+				this.mvc.model.stick.rotation = Math.atan2(opposite, adjacent);
+			}
+			this.mvc.model.area.cvs.onmousedown = () => {
+				this.mouse_down = true;
+			}
+			this.mvc.model.area.cvs.onmouseup = () => {
+				this.mouse_down = false;
+			}
 		}
-		this.mvc.model.area.cvs.onclick = () => {
-
-			if(!this.mvc.model.whiteball.out){
+		this.mvc.model.area.cvs.ondblclick = () => {
+			this.mvc.model.stick.origin = 955;
+			this.shoot = true;
+			console.log(this.mvc.model.force);
+			//this.mvc.model.stick.origin += 50;
+			/*if(!this.mvc.model.whiteball.out){
 				let power =20;
 				let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
 				this.mvc.model.whiteball.vx = Math.cos(angle)*power;
@@ -280,7 +304,7 @@ class MyController extends Controller {
 					this.mvc.model.whiteball.y =y;
 					this.mvc.model.whiteball.out=false;
 				}
-			}
+			}*/
 		}
 
 

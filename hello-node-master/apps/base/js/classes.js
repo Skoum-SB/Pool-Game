@@ -156,10 +156,11 @@ class Stick{
     this.image = document.createElement("img");
     this.image.src = "images/stick.png";
     this.rotation = 0;
+    this.origin = 970;
   }
 
   draw(rotate){
-      this.area.draw(this.image, this.x, this.y, this.rotation);
+      this.area.draw(this.image, this.x-this.origin, this.y-11, this.rotation, this.origin);
   }
 
 }
