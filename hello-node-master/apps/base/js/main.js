@@ -135,7 +135,7 @@ class MyModel extends Model {
 		 for (let i = 0; i < this.balls.length; i++) {
          this.balls[i].draw();
 				 this.balls[i].move(this.balls);
-				 for(let j = i+1; j<this.balls.length; j++){
+				 for(let j = 0; j<this.balls.length; j++){
 					 if(this.balls[i].collideWith(this.balls[j],this.holes)){
 						 this.ballCollideSound.cloneNode().play();
 					 }
