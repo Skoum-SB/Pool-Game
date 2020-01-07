@@ -96,7 +96,7 @@ class MyModel extends Model {
 		this.image.src = 'images/sprbackground4.png';
 
 		this.balls = (function () {var array = []; for(var i=0 ; i < 16 ; i++){array.push(new Ball);} return array;})();
-		
+
 		this.balls.forEach(ball => {
 			ball.image = document.createElement("img");
 			ball.area = this.area;
@@ -233,10 +233,10 @@ class MyView extends View {
 				this.mvc.model.force+=this.mvc.model.increase;
 				if(this.mvc.model.force == 150)
 					this.mvc.model.increase = -this.mvc.model.increase;
-				if(this.mvc.model.force == 0)
+				if(this.mvc.model.force < 0)
 					this.mvc.model.increase = -this.mvc.model.increase;
 				this.mvc.model.stick.origin += this.mvc.model.increase;
-			}	
+			}
 			requestAnimationFrame(this.display);
 		}
 		this.display();
@@ -326,26 +326,28 @@ class MyController extends Controller {
 
 	playerClick(clickX, clickY){
 		trace("click", clickX, clickY);
-		this.mvc.model.strikeSound.play();
-		this.mvc.model.stick.origin = 960;
-		this.mvc.model.shoot = true;
-		setTimeout(() => { this.mvc.model.stick.out = true; }, 2000);
 		trace(this.mvc.model.force);
 
 		if(!this.mvc.model.balls[15].out){
+			this.mvc.model.shoot = true;
+			this.mvc.model.stick.origin = 960;
+			setTimeout(() => { this.mvc.model.stick.out = true; }, 2000);
+			this.mvc.model.strikeSound.play();
 			let power = this.mvc.model.force/3;
 			let angle = Math.atan2(clickY - (this.mvc.model.balls[15].y*this.mvc.model.area.scaley), clickX - (this.mvc.model.balls[15].x*this.mvc.model.area.scalex));
-
 			let data = [power, angle];
 			this.mvc.app.io.emit("action", data);
+			this.mvc.model.stick.origin = 970;
+			this.mvc.model.force = 0;
 		}
 		else{
 			var x = window.event.pageX / this.mvc.model.area.scalex;
 			var y = window.event.pageY / this.mvc.model.area.scaley;
-
+			this.mvc.model.stick.out = true;
 			let data = [x, y];
 			this.mvc.app.io.emit("action", data);
 		}
+
 	}
 
 	playerMove(mouseX, mouseY){

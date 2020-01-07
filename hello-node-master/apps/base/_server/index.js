@@ -33,7 +33,7 @@ class Base extends ModuleBase {
 
 	_onLogin(socket, packet){
 		trace(socket.id, "pseudo :", packet);
-		
+
 		socket.emit("players", this.lobbyPlayers);
 
 		this.lobbyPlayers.push({id: socket.id, name: packet});
@@ -57,7 +57,7 @@ class Base extends ModuleBase {
 				inLobby = true;
 			}
 		}
-		
+
 		if(inLobby){//In lobby
 			trace(this.lobbyPlayers.length, " players in the lobby actually");
 			socket.broadcast.emit("playerDisconnected", playerDisconnected[0].name);
@@ -88,7 +88,7 @@ class Base extends ModuleBase {
 
 	_onStart(socket, packet){//packet = Name Player 2
 		trace(socket.id, packet);//socket.id = Id Player 1
-		
+
 		var playerName;//Name Player 1
 		var opponentId;//Id Player 2
 
@@ -121,7 +121,7 @@ class Base extends ModuleBase {
 		this._io.sockets[opponentId].join("room-" + (roomId));
 
 		this._initBoard(roomId);
-		
+
 		this.gameState[roomId] = 1;
 
 		this._io.to("room-" + (roomId)).emit("state", this.boards[roomId]);
@@ -167,7 +167,7 @@ class Base extends ModuleBase {
 				this.gamePlayers[roomId] = [{id: null, name : null},{id: null, name : null}];
 				clearInterval(gameLoop);
 			}
-		}, 1000 / 80);
+		}, 1000 / 60);
 	}
 
 	_onPlayerAction(socket, packet){
@@ -377,7 +377,7 @@ class Ball{
 	whiteCollideWith(x,y,second_ball,holes){
 		/*Left and Right*/ if(x < 55+25 || x > 1395+25){ return true;}
 		/*Top and Bottom*/ if(y < 55+25 || y > 717+25){ return true;}
-		
+
 		let tx = (x + (x*0.01));
 		let ty = (y + (y*0.01));
 		let fx = (second_ball.x + (second_ball.x*0.01));
