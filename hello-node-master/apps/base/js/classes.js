@@ -21,17 +21,18 @@ class Ball{
 }
 
 class Stick{
-  constructor (force, angle){
-    this.force = force;
-    this.angle = angle;
-  }
+	constructor (area, x, y){
+		this.area = area;
+		this.x = x;
+		this.y = y;
+		this.image = document.createElement("img");
+		this.image.src = "images/stick.png";
+		this.rotation = 0;
+		this.origin = 970;
+		this.out = false;
+	}
 
-}
-
-class Player{
-  cosntructor (name, score, team){
-    this.name = name;
-    this.score = score;
-    this.team = team;
-  }
+	draw(rotate){
+		this.area.draw(this.image, this.x-this.origin, this.y-11, this.rotation, this.origin);
+	}
 }
