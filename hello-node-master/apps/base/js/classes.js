@@ -24,8 +24,22 @@ class Ball{
   move(allBalls){
     if(this.ismoving){
 
-        /*Left and Right*/ if(this.x < 55+25 || this.x > 1395+25){ this.vx = -this.vx; this.vx *= 0.95;}
-        /*Top and Bottom*/ if(this.y < 55+25 || this.y > 717+25){ this.vy = -this.vy; this.vx *= 0.95;}
+      if(this.x < 76){
+        this.vx = -this.vx; this.vx *= 0.95;
+        this.x = 77;
+      }
+      if(this.x > 1424){
+        this.vx = -this.vx; this.vx *= 0.95;
+        this.x = 1423;
+     }
+      if(this.y < 76){
+        this.vy = -this.vy; this.vy *= 0.95;
+        this.y = 77;
+      }
+      if(this.y > 748){
+        this.vy = -this.vy; this.vx *= 0.95;
+        this.y = 747;
+      }
         this.x += this.vx;
         this.y += this.vy;
         this.vx += (this.vx * 0.0115);

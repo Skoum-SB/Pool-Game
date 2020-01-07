@@ -142,6 +142,7 @@ class MyModel extends Model {
 				 }
      }
 		 if(this.allBallNotMoving(this.balls) && !this.whiteball.out){
+			//this.stick.origin = 970;
 			this.mvc.controller.shoot = false;
 			this.stick.x=this.whiteball.x;
 			this.stick.y=this.whiteball.y;
@@ -149,10 +150,11 @@ class MyModel extends Model {
 
 			if(!this.mvc.controller.mouse_down && !this.mvc.controller.shoot){
 				this.force+=this.increase;
+				trace(this.force);
 				if(this.force == 150){
 					this.increase = -this.increase;
 				}
-				if(this.force == 0){
+				if(this.force < 0){
 					this.increase = -this.increase;
 				}
 					this.stick.origin += this.increase;
@@ -312,7 +314,7 @@ class MyController extends Controller {
 			this.mvc.model.stick.origin = 960;
 			this.shoot = true;
 			setTimeout(() => { this.mvc.model.stick.out = true; }, 2000);
-			console.log(this.mvc.model.force);
+
 			if(!this.mvc.model.whiteball.out){
 				let power =this.mvc.model.force/3;
 				let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
@@ -329,7 +331,9 @@ class MyController extends Controller {
 					this.mvc.model.whiteball.out=false;
 				}
 			}
-
+			this.mvc.model.stick.origin = 970;
+			this.mvc.model.force = 0;
+			console.log(this.mvc.model.stick.origin);
 		}
 	}
 
