@@ -125,8 +125,8 @@ class MyModel extends Model {
 		this.force = 0;
 		this.increase = 2;
 
-		this.first = new Player(this.area,220,5,"mon Prénom",2);
-		this.second = new Player(this.area,220,770,"l'autre prénom",1);
+		this.first = new Player(this.area,220,5,"mon Prénom",1);
+		this.second = new Player(this.area,220,770,"l'autre prénom",3);
 
 		this.strikeSound = new Audio("sound/Strike.wav");
 		this.ballCollideSound = new Audio("sound/BallsCollide.wav");
@@ -135,6 +135,7 @@ class MyModel extends Model {
 
 		 this.area.clear();
 		 this.area.draw(this.image);
+
 		 this.first.draw();
 		 this.first.color="red";
 

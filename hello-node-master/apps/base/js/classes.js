@@ -207,19 +207,9 @@ class Player{
     this.ballOut = ballOut;
     this.image = document.createElement("img");
     this.image.src = "images/profil.png";
-    //this.image.width = 100;
-  //  this.image.height = 50;
-
-
-    //this.cvs = document.createElement('canvas');
-    //this.ctx = this.cvs.getContext('2d');
   }
 
   draw(){
     this.area.draw_icon(this.image,this.x,this.y,this.name,this.ballOut,this.color);
-  //  this.cvs.width = 100;
-  //  this.cvs.height = 100;
-    //this.area.draw(this.image, this.x, this.y);
-    //this.image.src = "images/" + this.color + "ball.png";
   }
 }

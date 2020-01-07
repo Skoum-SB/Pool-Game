@@ -56,13 +56,12 @@ class Area{
       }
     }
 
-      else{
-      this.ctx.fillText(name, x+50, 770);
-      this.ctx.fillText(ballOut, x-45, 770);
+    else{
+      this.ctx.fillText(name, x+50, 732);
+      this.ctx.fillText(ballOut, x-45, 732);
       for(let i=0; i<ballOut; i++){
-        this.ctx.arc(800+i*50, 760, 17, 0, 2 * Math.PI);
+        this.ctx.arc(800+i*50, 715, 17, 0, 2 * Math.PI);
         this.ctx.fill();
-
       }
 
     }
