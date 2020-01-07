@@ -102,7 +102,13 @@ class MyModel extends Model {
 			ball.area = this.area;
 		});
 
-		trace(this.balls);
+		this.stick = new Stick(this.area, this.balls[15].x, this.balls[15].y);
+		this.force = 0;
+		this.increase = 2;
+		this.strikeSound = new Audio("sound/Strike.wav");
+		this.ballCollideSound = new Audio("sound/BallsCollide.wav");
+		this.mouse_down = false;
+		this.shoot = false;
 	}
 }
 
@@ -207,7 +213,9 @@ class MyView extends View {
 		this.stage.innerHTML = "";
 
 		this.stage.appendChild(this.mvc.model.area.cvs);
-		this.mvc.model.area.cvs.onclick = () => {this.mvc.controller.playerClick(window.event.pageX, window.event.pageY)};
+		this.mvc.model.area.cvs.ondblclick = () => {this.mvc.controller.playerClick(window.event.pageX, window.event.pageY)};
+		this.mvc.model.area.cvs.onmousemove = () => {this.mvc.controller.playerMove(window.event.pageX, window.event.pageY)};
+
 
 		this.display = () => {
 			this.mvc.model.area.clear();
@@ -215,6 +223,20 @@ class MyView extends View {
 			for (let i = 0; i < this.mvc.model.balls.length; i++) {
 				this.mvc.model.balls[i].draw();
 			}
+			//if(this.allBallNotMoving(this.balls) && !this.whiteball.out){
+			this.mvc.model.shoot = false;
+			this.mvc.model.stick.x=this.mvc.model.balls[15].x;
+			this.mvc.model.stick.y=this.mvc.model.balls[15].y;
+			this.mvc.model.stick.draw();
+
+			if(!this.mvc.controller.mouse_down && !this.mvc.controller.shoot){
+				this.mvc.model.force+=this.mvc.model.increase;
+				if(this.mvc.model.force == 150)
+					this.mvc.model.increase = -this.mvc.model.increase;
+				if(this.mvc.model.force == 0)
+					this.mvc.model.increase = -this.mvc.model.increase;
+				this.mvc.model.stick.origin += this.mvc.model.increase;
+			}	
 			requestAnimationFrame(this.display);
 		}
 		this.display();
@@ -229,7 +251,6 @@ class MyController extends Controller {
 
 	initialize(mvc) {
 		super.initialize(mvc);
-
 	}
 
 	submitName(name){
@@ -305,9 +326,14 @@ class MyController extends Controller {
 
 	playerClick(clickX, clickY){
 		trace("click", clickX, clickY);
+		this.mvc.model.strikeSound.play();
+		this.mvc.model.stick.origin = 960;
+		this.mvc.model.shoot = true;
+		setTimeout(() => { this.mvc.model.stick.out = true; }, 2000);
+		trace(this.mvc.model.force);
 
 		if(!this.mvc.model.balls[15].out){
-			let power = 20;
+			let power = this.mvc.model.force/3;
 			let angle = Math.atan2(clickY - (this.mvc.model.balls[15].y*this.mvc.model.area.scaley), clickX - (this.mvc.model.balls[15].x*this.mvc.model.area.scalex));
 
 			let data = [power, angle];
@@ -319,6 +345,20 @@ class MyController extends Controller {
 
 			let data = [x, y];
 			this.mvc.app.io.emit("action", data);
+		}
+	}
+
+	playerMove(mouseX, mouseY){
+		if(this.mvc.model.mouse_down){
+			var opposite = mouseY - (this.mvc.model.stick.y*this.mvc.model.area.scaley);
+			var adjacent = mouseX - (this.mvc.model.stick.x*this.mvc.model.area.scalex);
+			this.mvc.model.stick.rotation = Math.atan2(opposite, adjacent);
+		}
+		this.mvc.model.area.cvs.onmousedown = () => {
+			this.mvc.model.mouse_down = true;
+		}
+		this.mvc.model.area.cvs.onmouseup = () => {
+			this.mvc.model.mouse_down = false;
 		}
 	}
 }
