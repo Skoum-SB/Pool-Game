@@ -104,7 +104,6 @@ class MyModel extends Model {
     this.blackball = new Ball(this.area, 1090,413,"black");
 		this.stick = new Stick(this.area, this.whiteball.x, this.whiteball.y);
 
-
     this.balls = [
       this.yellowballs[0],
 			this.yellowballs[1],
@@ -126,6 +125,9 @@ class MyModel extends Model {
 		this.force = 0;
 		this.increase = 2;
 
+		this.strikeSound = new Audio("sound/Strike.wav");
+		this.ballCollideSound = new Audio("sound/BallsCollide.wav");
+
 		this.display = () => {
 
 		 this.area.clear();
@@ -134,10 +136,12 @@ class MyModel extends Model {
          this.balls[i].draw();
 				 this.balls[i].move(this.balls);
 				 for(let j = i+1; j<this.balls.length; j++){
-					 this.balls[i].collideWith(this.balls[j],this.holes);
+					 if(this.balls[i].collideWith(this.balls[j],this.holes)){
+						 this.ballCollideSound.cloneNode().play();
+					 }
 				 }
      }
-		 if(this.allBallNotMoving(this.balls)){
+		 if(this.allBallNotMoving(this.balls) && !this.whiteball.out){
 			this.mvc.controller.shoot = false;
 			this.stick.x=this.whiteball.x;
 			this.stick.y=this.whiteball.y;
@@ -290,7 +294,6 @@ class MyController extends Controller {
 		this.mouse_down = false;
 		this.shoot = false;
 
-
 		this.mvc.model.area.cvs.onmousemove = () => {
 				if(this.mouse_down){
 					var opposite = window.event.pageY - (this.mvc.model.stick.y*this.mvc.model.area.scaley);
@@ -305,6 +308,7 @@ class MyController extends Controller {
 				}
 		}
 		this.mvc.model.area.cvs.ondblclick = () => {
+			this.mvc.model.strikeSound.play();
 			this.mvc.model.stick.origin = 960;
 			this.shoot = true;
 			setTimeout(() => { this.mvc.model.stick.out = true; }, 2000);

@@ -57,10 +57,12 @@ class Ball{
     for(var i=0; i<holes.length; i++){
       var distance_ = Math.sqrt((this.x-holes[i].x)*(this.x-holes[i].x) + (this.y-holes[i].y)*(this.y-holes[i].y));
       if( distance_ < (this.radius+holes[i].radius)){
+        let holeSound = new Audio("sound/Hole.wav");
+        holeSound.cloneNode().play();
         this.ismoving=0;
         this.out=true;
         this.x=0; this.y=0;
-
+        trace("oooooooooooooooooook");
         return true;
       }
     }
@@ -163,16 +165,7 @@ class Stick{
   draw(rotate){
     //if(!this.out){
       this.area.draw(this.image, this.x-this.origin, this.y-11, this.rotation, this.origin);
-
     //}
   }
 
-}
-
-class Player{
-  cosntructor (name, score, team){
-    this.name = name;
-    this.score = score;
-    this.team = team;
-  }
 }
