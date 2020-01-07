@@ -56,11 +56,17 @@ class Base {
 		trace("DC", data);
 	}
 
-	onStart(gameData){
-		trace("Starting the game");
-		this.mvc.controller.start(gameData); // send it to controller
+	onStart(numPlayer){
+		trace("You are the player n°" , numPlayer);
 		this.io.removeAllListeners();
+		this.io.on("state", packet => this.onGameState(packet));
 		this.io.on("playerLeft", packet => this.onplayerLeft(packet));
+		this.mvc.controller.start(numPlayer);
+	}
+
+	onGameState(gameData){
+		trace("Receiving State");
+		this.mvc.controller.gameState(gameData); // send it to controller
 	}
 
 	onPlayersInGame(players){
@@ -88,6 +94,7 @@ class MyModel extends Model {
 
 		this.name = "";
 		this.players = [];
+		this.numPlayer = 0;
 
 		this.area = new Area();
 		this.image = document.createElement("img");
@@ -284,7 +291,7 @@ class MyView extends View {
 		this.stage.appendChild(this.table);
 	}
 
-	startGame(){
+	printGame(){
 		this.stage.style.backgroundColor = "black";
 		this.stage.innerHTML = "";
 
@@ -360,13 +367,14 @@ class MyController extends Controller {
 		this.mvc.view.update();
 	}
 
-	start(gameData){
-		trace(gameData);
-		//Object.assign(this.mvc.model.balls, gameData);
+	start(numPlayer){
+		this.mvc.model.numPlayer = numPlayer;
+	}
+
+	gameState(gameData){
 		for(var i=0 ; i<gameData.length ; i++)
 			Object.assign(this.mvc.model.balls[i], gameData[i]);
-		trace(this.mvc.model.balls);
-		this.mvc.view.startGame();
+		this.mvc.view.printGame();
 	}
 
 	challenge(opponent){
@@ -383,8 +391,11 @@ class MyController extends Controller {
 		trace("click", clickX, clickY);
 		let power = 20;
 		let angle = Math.atan2(clickY - (this.mvc.model.balls[15].y*this.mvc.model.area.scaley), clickX - (this.mvc.model.balls[15].x*this.mvc.model.area.scalex));
-		this.mvc.model.balls[15].vx = Math.cos(angle)*power;
-		this.mvc.model.balls[15].vy = Math.sin(angle)*power;
-		this.mvc.model.balls[15].ismoving = true;
+
+		let data = [power, angle];
+		this.mvc.app.io.emit("action", data);
+		//this.mvc.model.balls[15].vx = Math.cos(angle)*power;
+		//this.mvc.model.balls[15].vy = Math.sin(angle)*power;
+		//this.mvc.model.balls[15].ismoving = true;
 	}
 }

@@ -7,6 +7,7 @@ class Base extends ModuleBase {
 		this.lobbyPlayers = [];
 		this.gamePlayers = [[{id: null, name : null},{id: null, name : null}]];
 		this.gameRooms = [];
+		this.gameState = [];
 		this.boards = [];
 	}
 
@@ -64,6 +65,7 @@ class Base extends ModuleBase {
 
 		socket.on("disconnect", packet => this._onDisconnect(socket, packet));
 		socket.on("challenge", packet => this._onChallenge(socket, packet));
+		socket.on("action", packet => this._onPlayerAction(socket, packet));
 	}
 
 	_onDisconnect(socket, packet){
@@ -143,8 +145,13 @@ class Base extends ModuleBase {
 		this._io.sockets[opponentId].join("room-" + (roomId));
 
 		this._initBoard(roomId);
-		//trace(this.boards[roomId]);
-		this._io.to("room-" + (roomId)).emit("start", this.boards[roomId]);//!!!!!!!!
+		
+		this.gameState[roomId] = 1;
+		
+		this._io.to(socket.id).emit("start", 1);
+		this._io.to(opponentId).emit("start", 2);
+
+		this._io.to("room-" + (roomId)).emit("state", this.boards[roomId]);
 
 		//trace(this._io);
 
@@ -163,6 +170,34 @@ class Base extends ModuleBase {
 				i--;
 			}
 		}
+	}
+
+	_gameLoop(socket, roomId){
+		if(this.gameState[roomId] == 1){//Player 1 Turn
+			this.gamePlayers[roomId][0].id.on("action", packet => this._onPlayerAction(packet));
+		}
+	}
+
+	_onPlayerAction(socket, packet){
+		trace("Action received", packet, socket.id);
+
+		var roomId = 0;
+
+		for(let i=0 ; i<this.gamePlayers.length ; i++){
+			if(socket.id == this.gamePlayers[i][0].id && this.gameState[roomId] == 1 || socket.id == this.gamePlayers[i][1].id && this.gameState[roomId] == 2){
+				roomId = i;
+				trace("Player 2", this.gamePlayers[i][1].id);
+				trace("accepted !!!");
+				break;
+			}
+		}
+
+		var power = packet[0];
+		var angle = packet[1];
+
+		this.boards[roomId][15].vx = Math.cos(angle)*power;
+		this.boards[roomId][15].vy = Math.sin(angle)*power;
+		this.boards[roomId][15].ismoving = true;
 	}
 
 	_initBoard(room){
