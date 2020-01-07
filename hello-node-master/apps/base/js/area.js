@@ -49,21 +49,12 @@ class Area{
 
     if(y<500){
       this.ctx.fillText(name, x+50, 40);
-      this.ctx.fillText(ballOut, x-45, 40);
-      for(let i=0; i<ballOut; i++){
-        this.ctx.arc(800+i*50, 30, 17, 0, 2 * Math.PI);
-        this.ctx.fill();
-      }
+      this.ctx.fillText(ballOut, x-50, 40);
     }
 
     else{
       this.ctx.fillText(name, x+50, 732);
-      this.ctx.fillText(ballOut, x-45, 732);
-      for(let i=0; i<ballOut; i++){
-        this.ctx.arc(800+i*50, 715, 17, 0, 2 * Math.PI);
-        this.ctx.fill();
-      }
-
+      this.ctx.fillText(ballOut, x-50, 732);
     }
 
 
