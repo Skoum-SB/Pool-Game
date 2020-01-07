@@ -157,10 +157,14 @@ class Stick{
     this.image.src = "images/stick.png";
     this.rotation = 0;
     this.origin = 970;
+    this.out = false;
   }
 
   draw(rotate){
+    if(!this.out){
       this.area.draw(this.image, this.x-this.origin, this.y-11, this.rotation, this.origin);
+
+    }
   }
 
 }

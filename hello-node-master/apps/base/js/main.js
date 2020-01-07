@@ -127,6 +127,7 @@ class MyModel extends Model {
 		this.increase = 2;
 
 		this.display = () => {
+
 		 this.area.clear();
 		 this.area.draw(this.image);
 		 for (let i = 0; i < this.balls.length; i++) {
@@ -136,12 +137,6 @@ class MyModel extends Model {
 					 this.balls[i].collideWith(this.balls[j],this.holes);
 				 }
      }
-
-	/*	 if(!this.whiteball.out && !this.whiteball.ismoving){
-			 this.mvc.model.stick.x=this.mvc.model.whiteball.x;
-			 this.mvc.model.stick.y=this.mvc.model.whiteball.y;
-
-		 }*/
 		 	this.stick.draw();
 			if(!this.mvc.controller.mouse_down && !this.mvc.controller.shoot){
 				this.force+=this.increase;
@@ -158,6 +153,15 @@ class MyModel extends Model {
  	 }
 	 this.display();
 
+	}
+
+	canClick(){
+	  for(let i = 0; i<this.balls.length; i++){
+	    if(this.balls[i].ismoving){
+	      return false;
+	    }
+	  }
+	  return true;
 	}
 
 	async data() {
@@ -271,26 +275,27 @@ class MyController extends Controller {
 		this.mouse_down = false;
 		this.shoot = false;
 
+
 		this.mvc.model.area.cvs.onmousemove = () => {
-			if(this.mouse_down){
-				var opposite = window.event.pageY - (this.mvc.model.stick.y*this.mvc.model.area.scaley);
-				var adjacent = window.event.pageX - (this.mvc.model.stick.x*this.mvc.model.area.scalex);
-				this.mvc.model.stick.rotation = Math.atan2(opposite, adjacent);
-			}
-			this.mvc.model.area.cvs.onmousedown = () => {
-				this.mouse_down = true;
-			}
-			this.mvc.model.area.cvs.onmouseup = () => {
-				this.mouse_down = false;
-			}
+				if(this.mouse_down){
+					var opposite = window.event.pageY - (this.mvc.model.stick.y*this.mvc.model.area.scaley);
+					var adjacent = window.event.pageX - (this.mvc.model.stick.x*this.mvc.model.area.scalex);
+					this.mvc.model.stick.rotation = Math.atan2(opposite, adjacent);
+				}
+				this.mvc.model.area.cvs.onmousedown = () => {
+					this.mouse_down = true;
+				}
+				this.mvc.model.area.cvs.onmouseup = () => {
+					this.mouse_down = false;
+				}
 		}
 		this.mvc.model.area.cvs.ondblclick = () => {
-			this.mvc.model.stick.origin = 955;
+			this.mvc.model.stick.origin = 960;
 			this.shoot = true;
+			setTimeout(() => { this.mvc.model.stick.out = true; }, 2000);
 			console.log(this.mvc.model.force);
-			//this.mvc.model.stick.origin += 50;
-			/*if(!this.mvc.model.whiteball.out){
-				let power =20;
+			if(!this.mvc.model.whiteball.out){
+				let power =this.mvc.model.force/3;
 				let angle = Math.atan2(window.event.pageY - (this.mvc.model.whiteball.y*this.mvc.model.area.scaley), window.event.pageX - (this.mvc.model.whiteball.x*this.mvc.model.area.scalex));
 				this.mvc.model.whiteball.vx = Math.cos(angle)*power;
 				this.mvc.model.whiteball.vy = Math.sin(angle)*power;
@@ -299,12 +304,13 @@ class MyController extends Controller {
 			else{
 				var x = window.event.pageX / this.mvc.model.area.scalex;
 				var y = window.event.pageY / this.mvc.model.area.scaley;
-				if(this.mvc.controller.checkBall(x,y,this.mvc.model.whiteball,this.mvc.model.balls,this.mvc.model.holes)==true){
+				if(this.checkBall(x,y,this.mvc.model.whiteball,this.mvc.model.balls,this.mvc.model.holes)==true){
 					this.mvc.model.whiteball.x = x;
 					this.mvc.model.whiteball.y =y;
 					this.mvc.model.whiteball.out=false;
 				}
-			}*/
+			}
+
 		}
 
 
@@ -320,6 +326,10 @@ class MyController extends Controller {
 			}
 		}
 		return true;
+	}
+
+	increaseForce(){
+
 	}
 
 	async btnWasClicked(params) {
