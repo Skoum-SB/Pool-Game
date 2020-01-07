@@ -162,6 +162,20 @@ class Ball{
       return false;
     }
 
+
+    firstCollision(color){
+      let tx = (x + (x*0.01));
+      let ty = (y + (y*0.01));
+      let fx = (second_ball.x + (second_ball.x*0.01));
+      let fy = (second_ball.y + (second_ball.y*0.01));
+      let dx = fx - tx;
+      let dy = fy - ty;
+      let distance = Math.sqrt(dx * dx + dy * dy);
+      if(this!=second_ball && (distance < this.radius*2) ){
+        return second_ball.color;
+      }
+  	}
+
 }
 
 class Stick{
