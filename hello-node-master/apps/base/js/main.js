@@ -55,6 +55,7 @@ class Base {
 		this.io.removeAllListeners();
 		this.io.on("state", packet => this.onGameState(packet));
 		this.io.on("end", packet => this.onEnd(packet));
+		this.io.on("sound", packet => this.mvc.controller.sound(packet));
 		this.mvc.controller.start(numPlayer);
 	}
 
@@ -96,7 +97,7 @@ class MyModel extends Model {
 		this.image.src = 'images/sprbackground4.png';
 
 		this.balls = (function () {var array = []; for(var i=0 ; i < 16 ; i++){array.push(new Ball);} return array;})();
-
+		
 		this.balls.forEach(ball => {
 			ball.image = document.createElement("img");
 			ball.area = this.area;
@@ -105,8 +106,11 @@ class MyModel extends Model {
 		this.stick = new Stick(this.area, this.balls[15].x, this.balls[15].y);
 		this.force = 0;
 		this.increase = 2;
+
 		this.strikeSound = new Audio("sound/Strike.wav");
 		this.ballCollideSound = new Audio("sound/BallsCollide.wav");
+		this.holeSound = new Audio("sound/Hole.wav");
+
 		this.mouse_down = false;
 		this.shoot = false;
 	}
@@ -215,6 +219,13 @@ class MyView extends View {
 			}
 		}
 		return true;
+	}
+
+	playSound(sound){
+		if(sound == 1)
+			this.mvc.model.ballCollideSound.cloneNode().play();
+		else
+			this.mvc.model.holeSound.cloneNode().play();
 	}
 
 	printGame(){
@@ -358,7 +369,6 @@ class MyController extends Controller {
 			let data = [x, y];
 			this.mvc.app.io.emit("action", data);
 		}
-
 	}
 
 	playerMove(mouseX, mouseY){
@@ -373,5 +383,9 @@ class MyController extends Controller {
 		this.mvc.model.area.cvs.onmouseup = () => {
 			this.mvc.model.mouse_down = false;
 		}
+	}
+
+	sound(sound){
+		this.mvc.view.playSound(sound);
 	}
 }
