@@ -195,5 +195,20 @@ class Stick{
       this.area.draw(this.image, this.x-this.origin, this.y-11, this.rotation, this.origin);
     //}
   }
+}
 
+class Player{
+  constructor(area,x,y){
+    this.area = area;
+    this.x = x;
+    this.y = y;
+    this.ballOut = 0;
+    this.cvs = document.createElement('canvas');
+    this.ctx = this.cvs.getContext('2d');
+  }
+
+  draw(){
+    //this.area.draw(this.image, this.x, this.y);
+    //this.image.src = "images/" + this.color + "ball.png";
+  }
 }

@@ -125,6 +125,10 @@ class MyModel extends Model {
 		this.force = 0;
 		this.increase = 2;
 
+		this.gege = new Player(this.area,900,900);
+		this.gege.ctx.fillStyle = 'rgb(200, 0, 0)';
+		this.gege.ctx.fillRect(10, 10, 50, 50);
+
 		this.strikeSound = new Audio("sound/Strike.wav");
 		this.ballCollideSound = new Audio("sound/BallsCollide.wav");
 
@@ -132,6 +136,7 @@ class MyModel extends Model {
 
 		 this.area.clear();
 		 this.area.draw(this.image);
+		 this.gege.draw();
 		 for (let i = 0; i < this.balls.length; i++) {
          this.balls[i].draw();
 				 this.balls[i].move(this.balls);
@@ -150,7 +155,7 @@ class MyModel extends Model {
 
 			if(!this.mvc.controller.mouse_down && !this.mvc.controller.shoot){
 				this.force+=this.increase;
-				trace(this.force);
+			//	trace(this.force);
 				if(this.force == 150){
 					this.increase = -this.increase;
 				}
@@ -167,7 +172,6 @@ class MyModel extends Model {
 	}
 
 	allBallNotMoving(balls){
-	//	trace("cheeckingg",balls[i]);
 		for(var i=0; i<balls.length; i++){
 			if(balls[i].ismoving){
 				return false;
@@ -350,7 +354,7 @@ class MyController extends Controller {
 		return true;
 	}
 
-	
+
 
 	increaseForce(){
 
