@@ -44,7 +44,7 @@ class Player{
     this.number;
     this.name;
     this.area = area;
-    this.color="black";
+    this.color="white";
     this.x = x;
     this.y = y;
     this.ballOut;

@@ -151,10 +151,10 @@ class Base extends ModuleBase {
 				i--;
 			}
 		}
-		var playerIndex;
+		this.playerIndex;
 
 		var gameLoop = setInterval(() => {
-			playerIndex = (this.gameState != 1) ? 0 : 1;
+			this.playerIndex = (this.gameState != 1) ? 0 : 1;
 			var sound;
 			for(let i = 0; i < this.boards[roomId].length; i++){
 				sound = 0;
@@ -168,7 +168,7 @@ class Base extends ModuleBase {
 								if(firstCollision){
 									firstCollision = false;
 									if(!this.firstIn){
-										if(this.gamePlayers[playerIndex].color != this.boards[roomId][j].color){
+										if(this.gamePlayers[this.playerIndex].color != this.boards[roomId][j].color){
 											fault = true;
 										}
 									}
@@ -180,7 +180,7 @@ class Base extends ModuleBase {
 									this.giveColor(roomId);
 								}
 								else{
-									if(this.gamePlayers[playerIndex].color == this.boards[roomId][j].color){
+									if(this.gamePlayers[this.playerIndex].color == this.boards[roomId][j].color){
 										this.myBallIn = true;
 									}
 									else{
@@ -192,6 +192,7 @@ class Base extends ModuleBase {
 					}
 				}
 			}
+
 			if(this.onTurn){
 				if(this._notMovingBalls(roomId)){
 					this.onTurn = false;
@@ -209,7 +210,9 @@ class Base extends ModuleBase {
 				}
 			}
 
+			this._io.to("room-" + (roomId)).emit("turn", this.gameState[roomId]);
 			this._io.to("room-" + (roomId)).emit("state", this.boards[roomId]);
+
 
 			if(this.boards[roomId][14].out){
 				var players = [this.gamePlayers[roomId][0].name, this.gamePlayers[roomId][1].name];
@@ -240,6 +243,7 @@ class Base extends ModuleBase {
 						this.gamePlayers[0].color = (this.gameState == 1) ? "yellow" : this.boards[roomId][i].color;
 						this.gamePlayers[1].color = (this.gameState == 1) ? this.boards[roomId][i].color : "yellow";
 					}
+					this._io.to("room-" + (roomId)).emit("color", [this.playerIndex+1, this.gamePlayers[0].color]);
 				}
 			}
 		}

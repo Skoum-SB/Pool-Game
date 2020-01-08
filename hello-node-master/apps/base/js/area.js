@@ -42,24 +42,37 @@ class Area{
 		this.ctx.restore();
 	}
 
+	draw_turn(turn, gamerTurn){
+		this.ctx.font = "30px Comic Sans MS";
+    this.ctx.fillStyle = "white";
+		this.ctx.save();
+    this.ctx.scale(this.scalex, this.scaley);
+		if(turn == gamerTurn){
+			this.ctx.fillText("It's your turn.", 700, 400);
+		}
+		else{
+			this.ctx.fillText("It's opponent's turn.", 700, 400);
+		}
+		this.ctx.restore();
+	}
+
 	draw_icon(image, x, y,name,ballOut,color){
     this.ctx.font = "30px Comic Sans MS";
     this.ctx.fillStyle = color;
 
-    if(y<500){
-      this.ctx.fillText(name, x+50, 40);
-      this.ctx.fillText(ballOut, x-50, 40);
-    }
-
-    else{
-      this.ctx.fillText(name, x+50, 732);
-      this.ctx.fillText(ballOut, x-50, 732);
-    }
 
 
     this.ctx.save();
     this.ctx.scale(this.scalex, this.scaley);
+		if(y<500){
+			this.ctx.fillText(name, x+70, 40);
+			this.ctx.fillText(ballOut, x-50, 40);
+		}
 
+		else{
+			this.ctx.fillText(name, x+70, 810);
+			this.ctx.fillText(ballOut, x-50, 810);
+		}
     this.ctx.drawImage(image, 0, 0, image.width, image.height, x, y, image.width-1035, image.height-1035);
     this.ctx.restore();
   }

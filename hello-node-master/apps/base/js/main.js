@@ -51,11 +51,13 @@ class Base {
 	}
 
 	onStart(numPlayer){
-		trace("You are the player n°" , numPlayer);
+		trace("You are the player n°" , numPlayer[0], " ", this.mvc.model.currentPlayer.name);
 		this.io.removeAllListeners();
 		this.io.on("state", packet => this.onGameState(packet));
 		this.io.on("end", packet => this.onEnd(packet));
 		this.io.on("sound", packet => this.mvc.controller.sound(packet));
+		this.io.on("color", packet => this.mvc.controller.color(packet));
+		this.io.on("turn", packet => this.mvc.controller.turn(packet));
 		this.mvc.controller.start(numPlayer);
 	}
 
@@ -89,13 +91,11 @@ class MyModel extends Model {
 	async initialize(mvc) {
 		super.initialize(mvc);
 
-		this.turn = 1;
-
-
+		this.players = [];
 		this.area = new Area();
 		this.image = document.createElement("img");
 		this.image.src = 'images/sprbackground4.png';
-
+		this.turn = 1;
 		this.currentPlayer = new Player(this.area,220,5);
 		this.opponent = new Player(this.area,220,770);
 		this.currentPlayer.ballOut = 0;
@@ -235,7 +235,6 @@ class MyView extends View {
 	printGame(){
 		this.stage.style.backgroundColor = "black";
 		this.stage.innerHTML = "";
-		console.log("Turn ", this.mvc.model.turn);
 
 		this.stage.appendChild(this.mvc.model.area.cvs);
 		this.mvc.model.area.cvs.ondblclick = () => {this.mvc.controller.playerClick(window.event.pageX, window.event.pageY)};
@@ -243,20 +242,19 @@ class MyView extends View {
 
 
 		this.display = () => {
+			console.log(this.mvc.model.turn);
+			//console.log(this.mvc.model.turn);
+			this.mvc.controller.ballCount();
 			this.mvc.model.area.clear();
 			this.mvc.model.area.draw(this.mvc.model.image);
+			this.mvc.model.area.draw_turn(this.mvc.model.turn, this.mvc.model.currentPlayer.number);
 			this.mvc.model.currentPlayer.draw();
-		 	//this.mvc.model.currentPlayer.color="red";
-
 			this.mvc.model.opponent.draw();
-		 	//this.opponent.color="yellow";
 			for (let i = 0; i < this.mvc.model.balls.length; i++) {
 				this.mvc.model.balls[i].draw();
 			}
 
 			if(this.mvc.model.turn != this.mvc.model.currentPlayer.number){
-				console.log("Current Player == ", this.mvc.model.currentPlayer.number);
-				console.log("Current Turn == ", this.mvc.model.turn);
 				this.mvc.model.stick.out = true;
 			}
 			else{
@@ -264,7 +262,6 @@ class MyView extends View {
 			}
 
 			if(this.allBallsNotMoving(this.mvc.model.balls) && !this.mvc.model.balls[15].out){
-				this.mvc.model.stick.out = false;
 				this.mvc.model.shoot = false;
 				this.mvc.model.stick.x=this.mvc.model.balls[15].x;
 				this.mvc.model.stick.y=this.mvc.model.balls[15].y;
@@ -350,13 +347,10 @@ class MyController extends Controller {
 		this.mvc.model.currentPlayer.number = numPlayer[0];
 		this.mvc.model.opponent.number = (numPlayer == 1) ? 0 : 1;
 		this.mvc.model.opponent.name =  numPlayer[1];
-		this.mvc.model.turn = numPlayer[0];
 		this.mvc.view.printGame();
 	}
 
 	gameState(gameData){
-		//console.log(this.mvc.model.turn);
-		this.mvc.model.turn = (this.mvc.model.turn == 1) ? 2 : 1;
 		for(var i=0 ; i<gameData.length ; i++)
 			Object.assign(this.mvc.model.balls[i], gameData[i]);
 	}
@@ -372,7 +366,6 @@ class MyController extends Controller {
 	}
 
 	playerClick(clickX, clickY){
-		trace(this.mvc.model.force);
 		if(!this.mvc.model.balls[15].out){
 			this.mvc.model.shoot = true;
 			this.mvc.model.stick.origin = 960;
@@ -394,6 +387,24 @@ class MyController extends Controller {
 		}
 	}
 
+	ballCount(){
+		let red = 0;
+		let yellow = 0;
+		for(let i = 0; i<this.mvc.model.balls.length; i++){
+			if(this.mvc.model.balls[i].out){
+				if(this.mvc.model.balls[i].color == "yellow"){
+					yellow++;
+					this.mvc.model.currentPlayer.ballOut++;
+				}
+				else if(this.mvc.model.balls[i].color == "red"){
+					red++;
+				}
+			}
+		}
+		this.mvc.model.currentPlayer.ballOut = (this.mvc.model.currentPlayer.color == "yellow") ? yellow : red;
+		this.mvc.model.opponent.ballOut = (this.mvc.model.opponent.color == "yellow") ? yellow : red;
+	}
+
 	playerMove(mouseX, mouseY){
 		if(this.mvc.model.mouse_down){
 			var opposite = mouseY - (this.mvc.model.stick.y*this.mvc.model.area.scaley);
@@ -410,5 +421,23 @@ class MyController extends Controller {
 
 	sound(sound){
 		this.mvc.view.playSound(sound);
+	}
+
+	turn(turn){
+
+		this.mvc.model.turn = (turn != 1) ? 2 : 1;
+
+	}
+
+	color(color){
+		console.log(color);
+		if(color[0] != this.mvc.model.currentPlayer.number){
+			this.mvc.model.currentPlayer.color = color[1];
+			this.mvc.model.opponent.color = (this.mvc.model.currentPlayer.color == "yellow") ? "red" : "yellow";
+		}
+		else{
+			this.mvc.model.opponent.color = color[1];
+			this.mvc.model.currentPlayer.color = (this.mvc.model.opponent.color == "yellow") ? "red" : "yellow";
+		}
 	}
 }
