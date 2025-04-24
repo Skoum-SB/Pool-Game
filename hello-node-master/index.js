@@ -2,6 +2,7 @@
 const Connect = 	require("connect"); 	// middlewares
 const MimeTypes = 	require("mime-types"); 	// mime types
 const SocketIO = 	require("socket.io");	// socket.io
+const cors = require('cors');           // CORS middleware
 
 // native modules
 const http = 		require("http"); 		// http server
@@ -27,17 +28,34 @@ const App = require(path.join(appPath, "_server")); // load app module
 class Server {
 
 	constructor() {
-		this._port = 80; // http port
+		this._port = 3000; // http port
 		trace("start http", this._port);
 		
 		this._connect = Connect(); // connect instance
+		this._connect.use(cors({
+			origin: '*',
+			methods: ['GET', 'POST', 'OPTIONS'],
+			allowedHeaders: ['Content-Type', 'Authorization'],
+			credentials: true
+		}));  // Enable CORS for all routes
+		this._connect.use((req, res, next) => {
+			res.setHeader('Access-Control-Allow-Origin', '*');
+			res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+			res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+			next();
+		});
 		this._connect.use(this.handle.bind(this)); // handle request
 		this._connect.use(this.serve.bind(this)); // check request is file
 		this._connect.use(this.unhandled.bind(this)); // unhandled request
 
 		this._server = http.createServer(this._connect).listen(this._port); // start http server
 
-		this._io = SocketIO(this._server);
+		this._io = SocketIO(this._server, {
+			cors: {
+				origin: "*",
+				methods: ["GET", "POST"]
+			}
+		});
 
 		this._app = new App(this, new Map()); // load app
 

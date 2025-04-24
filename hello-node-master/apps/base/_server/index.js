@@ -123,27 +123,24 @@ class Base extends ModuleBase {
 		});
 		trace(opponentId);
 
-		socket.join("room-" + (roomId));
-		this._io.sockets[opponentId].join("room-" + (roomId));
+		this.gamePlayers[roomId][0] = {id: socket.id, name: playerName, color: null};
+		this.gamePlayers[roomId][1] = {id: opponentId, name: packet, color: null};
+
+		socket.join("room-" + roomId);
+		this._io.in(opponentId).socketsJoin("room-" + roomId);
 
 		this._initBoard(roomId);
-
 		this.gameState[roomId] = 1;
-		this._io.to("room-" + (roomId)).emit("state", this.boards[roomId]);
-		this._io.to(socket.id).emit("start", [1, packet]);
+
+		this._io.to("room-" + roomId).emit("state", this.boards[roomId]);
+		socket.emit("start", [1, packet]);
 		this._io.to(opponentId).emit("start", [2, playerName]);
 
-		//trace(this._io);
-
-		var gamePlayers = [playerName, packet];//Name of the 2 players
+		const gamePlayers = [playerName, packet];//Name of the 2 players
 		trace(gamePlayers);
 		trace(this.gameRooms);
 
 		socket.broadcast.emit("playersInGame", gamePlayers);
-
-		this.gamePlayers[roomId] = [{id: socket.id, name: playerName}, {id: opponentId, name: packet}];
-		trace(roomId, this.gamePlayers[roomId]);
-		this.onTurn = false;
 
 		for(var i = 0; i < this.lobbyPlayers.length; i++){
 			if(this.lobbyPlayers[i].name == gamePlayers[0] || this.lobbyPlayers[i].name == gamePlayers[1]){
